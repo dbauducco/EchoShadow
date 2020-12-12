@@ -21,8 +21,8 @@
   },
   "plugins": [
     "react",
+    "@typescript-eslint",
     "prettier",
-    "@typescript-eslint"
   ],
   "rules": {
     "react/prop-types": "off",

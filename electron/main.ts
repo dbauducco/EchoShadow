@@ -1,3 +1,52 @@
+/***********************************************************************
+ ************************ECHO SHADOW CODE*******************************
+ ***********************************************************************/
+import EchoInstanceClient from './clients/EchoInstanceClient';
+import EchoDataRepository from './repositories/EchoDataRepository';
+import Config from './utilities/Config';
+import { log } from './utilities/log';
+import EchoFollowManager from './managers/EchoFollowManager';
+
+const setup = async () => {
+  const config = new Config();
+  await config.init();
+  if (!config.options) {
+    log.error({ message: 'Error initializing config' });
+    throw new Error('Error initializing config');
+  }
+  log.info({ loadedConfig: config.options });
+  const echoInstanceClient = new EchoInstanceClient(config.options.echoPath);
+  const remoteEchoDataRepository = new EchoDataRepository(
+    config.options.remoteApiIpAddress
+  );
+  const localEchoDataRepository = new EchoDataRepository(
+    config.options.localApiIpAddress
+  );
+  return {
+    echoInstanceClient,
+    remoteEchoDataRepository,
+    localEchoDataRepository,
+  };
+};
+
+const start = async () => {
+  const {
+    echoInstanceClient,
+    remoteEchoDataRepository,
+    localEchoDataRepository,
+  } = await setup();
+  const followManager = new EchoFollowManager(
+    remoteEchoDataRepository,
+    localEchoDataRepository,
+    echoInstanceClient
+  );
+  await followManager.startFollowing();
+};
+
+/***********************************************************************
+ *(********************BOILERPLATE ELECTRON*****************************
+ ***********************************************************************/
+
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
@@ -17,6 +66,7 @@ function createWindow() {
       nodeIntegration: true,
     },
   });
+  // mainWindow.webContents.openDevTools();
 
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:4000');
@@ -33,6 +83,9 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  // start Echo Shadow
+  start();
 }
 
 app
@@ -41,11 +94,11 @@ app
   .then(() => {
     if (process.env.NODE_ENV === 'development') {
       installExtension(REACT_DEVELOPER_TOOLS)
-        .then((name) => console.log(`Added Extension:  ${name}`))
-        .catch((err) => console.log('An error occurred: ', err));
+        .then(name => console.log(`Added Extension:  ${name}`))
+        .catch(err => console.log('An error occurred: ', err));
       installExtension(REDUX_DEVTOOLS)
-        .then((name) => console.log(`Added Extension:  ${name}`))
-        .catch((err) => console.log('An error occurred: ', err));
+        .then(name => console.log(`Added Extension:  ${name}`))
+        .catch(err => console.log('An error occurred: ', err));
     }
   });
 app.allowRendererProcessReuse = true;
