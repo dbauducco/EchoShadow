@@ -1,5 +1,5 @@
 const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
+// const CopyPlugin = require('copy-webpack-plugin');
 
 const rootPath = path.resolve(__dirname, '..');
 
@@ -25,14 +25,14 @@ module.exports = {
     __dirname: false,
   },
   plugins: [
-    new CopyPlugin({
-      patterns: [
-        {
-          from: './node_modules/node-process-windows/windows-console-app',
-          to: './windows-console-app',
-        },
-      ],
-    }),
+    // new CopyPlugin({
+    //   patterns: [
+    //     {
+    //       from: './node_modules/node-process-windows/windows-console-app',
+    //       to: './windows-console-app',
+    //     },
+    //   ],
+    // }),
   ],
   output: {
     path: path.resolve(rootPath, 'dist'),

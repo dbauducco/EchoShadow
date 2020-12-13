@@ -6,6 +6,7 @@ import { log } from '../utilities/log';
 export default class EchoFollowManager {
   // Settings for the EchoFollowManager
   WAIT_TIME_SECONDS = 5;
+
   localTimedOutCounter = 0;
 
   constructor(
@@ -29,17 +30,15 @@ export default class EchoFollowManager {
         log.info({ scenario: '1.8', action: 'none' });
         this.localTimedOutCounter++;
         return undefined;
-      } else {
-        // Scenario 1.9
-        log.info({ scenario: '1.9', action: 'close' });
-        this.localTimedOutCounter = 0;
-        await this.echoInstanceClient.close();
-        return undefined;
       }
-    } else {
-      // Reset counter and continue with checks
+      // Scenario 1.9
+      log.info({ scenario: '1.9', action: 'close' });
       this.localTimedOutCounter = 0;
+      await this.echoInstanceClient.close();
+      return undefined;
     }
+    // Reset counter and continue with checks
+    this.localTimedOutCounter = 0;
 
     // Scenario 1.7
     if (isEchoRunning && !remoteDataSnapshot) {
@@ -71,13 +70,12 @@ export default class EchoFollowManager {
         // Scenario 1.3
         log.info({ scenario: '1.3', action: 'none' });
         return undefined;
-      } else {
-        // Scenario 1.4 && Scenario 1.2
-        log.info({ scenario: '1.4 && 1.2', action: 'close and open' });
-        await this.echoInstanceClient.close();
-        await this.echoInstanceClient.open(remoteDataSnapshot);
-        return undefined;
       }
+      // Scenario 1.4 && Scenario 1.2
+      log.info({ scenario: '1.4 && 1.2', action: 'close and open' });
+      await this.echoInstanceClient.close();
+      await this.echoInstanceClient.open(remoteDataSnapshot);
+      return undefined;
     }
 
     // ???? What the heck? What did we miss?

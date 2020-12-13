@@ -1,11 +1,22 @@
-/***********************************************************************
+/* eslint-disable no-console */
+/** *********************************************************************
  ************************ECHO SHADOW CODE*******************************
- ***********************************************************************/
+ ********************************************************************** */
+import { app, BrowserWindow } from 'electron';
+import * as path from 'path';
+import * as url from 'url';
+import installExtension, {
+  REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
+} from 'electron-devtools-installer';
+import { log, Config } from '../src/utilities';
 import EchoInstanceClient from '../src/clients/EchoInstanceClient';
 import EchoDataRepository from '../src/repositories/EchoDataRepository';
-import Config from '../src/utilities/Config';
-import { log } from '../src/utilities/log';
 import EchoFollowManager from '../src/managers/EchoFollowManager';
+
+/** *********************************************************************
+ *(********************BOILERPLATE ELECTRON*****************************
+ ********************************************************************** */
 
 const setup = async () => {
   const config = new Config();
@@ -50,18 +61,6 @@ const start = async () => {
     });
   }
 };
-
-/***********************************************************************
- *(********************BOILERPLATE ELECTRON*****************************
- ***********************************************************************/
-
-import { app, BrowserWindow } from 'electron';
-import * as path from 'path';
-import * as url from 'url';
-import installExtension, {
-  REACT_DEVELOPER_TOOLS,
-  REDUX_DEVTOOLS,
-} from 'electron-devtools-installer';
 
 let mainWindow: Electron.BrowserWindow | null;
 

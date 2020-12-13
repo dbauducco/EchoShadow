@@ -7,6 +7,7 @@ axios.defaults.adapter = require('axios/lib/adapters/http');
 
 export default class EchoDataRepository {
   private apiSessionUrl: string;
+
   private DEFAULT_PORT = '6721';
 
   constructor(private echoIpAddress: string) {
@@ -61,7 +62,7 @@ export default class EchoDataRepository {
    */
   private getIndexOfPlayer(echoApiResult: any, playerName?: string): number {
     // Store the player name we are searching for
-    playerName = playerName ? playerName : echoApiResult.client_name;
+    const playerToSearchFor = playerName || echoApiResult.client_name;
 
     // Check the orange team first
     const orangeTeamPlayers = echoApiResult.data.teams[1].players;
@@ -71,7 +72,7 @@ export default class EchoDataRepository {
           return p.name;
         }
       );
-      const orangeTeamIndex = orangeTeamNames.indexOf(playerName) + 1;
+      const orangeTeamIndex = orangeTeamNames.indexOf(playerToSearchFor) + 1;
       if (orangeTeamIndex !== 0) {
         return orangeTeamIndex;
       }
@@ -85,7 +86,7 @@ export default class EchoDataRepository {
           return p.name;
         }
       );
-      const blueTeamIndex = blueTeamNames.indexOf(playerName) + 6;
+      const blueTeamIndex = blueTeamNames.indexOf(playerToSearchFor) + 6;
       if (blueTeamIndex !== 5) {
         return blueTeamIndex;
       }
@@ -102,12 +103,13 @@ export default class EchoDataRepository {
   private sessionTypeByName(name: string): EchoSessionType {
     if (name === 'Echo_Arena') {
       return EchoSessionType.Arena_Match;
-    } else if (name === 'Echo_Arena_Private') {
-      return EchoSessionType.Private_Arena_Match;
-    } else if (name === 'Social_2.0') {
-      return EchoSessionType.Lobby;
-    } else {
-      return EchoSessionType.Unknown;
     }
+    if (name === 'Echo_Arena_Private') {
+      return EchoSessionType.Private_Arena_Match;
+    }
+    if (name === 'Social_2.0') {
+      return EchoSessionType.Lobby;
+    }
+    return EchoSessionType.Unknown;
   }
 }

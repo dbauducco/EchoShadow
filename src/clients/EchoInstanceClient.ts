@@ -1,14 +1,11 @@
-// Typescript is stupid sometimes so we are just going to "require" instead of "import" this to avoid compiling errors
-const processWindows = require('node-process-windows');
-
-import { promisify } from 'util';
-import { log } from '../utilities/log';
+import { getProcessId, log } from '../utilities';
 import { EchoSessionType, IEchoDataSnapshot } from '../types';
 import EchoExeClient from './EchoExeClient';
 
 export default class EchoInstanceClient {
   private exeRepository: EchoExeClient;
-  private currentInstanceProcess: any | undefined;
+
+  private currentInstanceProcessId: string | undefined;
 
   constructor(echoPath: string) {
     this.exeRepository = new EchoExeClient(echoPath);
@@ -26,7 +23,7 @@ export default class EchoInstanceClient {
       ? snapshotData?.sessionId
       : undefined;
     await this.exeRepository.open(sessionID);
-    this.currentInstanceProcess = await this.findProcess();
+    this.currentInstanceProcessId = await this.findEchoProcessId();
   };
 
   /**
@@ -35,20 +32,18 @@ export default class EchoInstanceClient {
    * of EchoVR running on the computer, not only the instance that we opened.
    */
   close = async () => {
-    await this.exeRepository.close(this.currentInstanceProcess);
-    this.currentInstanceProcess = undefined;
+    if (this.currentInstanceProcessId) {
+      await this.exeRepository.close(this.currentInstanceProcessId);
+      this.currentInstanceProcessId = undefined;
+    }
   };
 
   /**
    * Method to get the PID of the current instance of EchoVR.exe
    */
-  private findProcess = async () => {
-    const getActiveProcesses = promisify(processWindows.getProcesses);
-    const runningProcesses = await getActiveProcesses();
-    const echoProcess = runningProcesses.find(
-      (p: { processName: string }) => p.processName == 'echovr'
-    );
-    return echoProcess;
+  private findEchoProcessId = async () => {
+    const echoPid = await getProcessId('echovr.exe');
+    return echoPid;
   };
 
   /**
@@ -57,7 +52,7 @@ export default class EchoInstanceClient {
   isRunning = async () => {
     try {
       await this.syncPID();
-      return this.currentInstanceProcess !== undefined;
+      return this.currentInstanceProcessId !== undefined;
     } catch (error) {
       log.error({
         message: 'error determining running state',
@@ -71,7 +66,7 @@ export default class EchoInstanceClient {
    * Method used in testing to sync the method
    */
   private syncPID = async () => {
-    this.currentInstanceProcess = await this.findProcess();
+    this.currentInstanceProcessId = await this.findEchoProcessId();
   };
 
   private isJoinable = (session?: IEchoDataSnapshot) => {
@@ -80,8 +75,8 @@ export default class EchoInstanceClient {
     }
 
     return (
-      session.sessionType == EchoSessionType.Arena_Match ||
-      session.sessionType == EchoSessionType.Private_Arena_Match
+      session.sessionType === EchoSessionType.Arena_Match ||
+      session.sessionType === EchoSessionType.Private_Arena_Match
     );
   };
 }

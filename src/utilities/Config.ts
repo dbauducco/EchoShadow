@@ -1,21 +1,22 @@
 import * as os from 'os';
 import * as fse from 'fs-extra';
-import { IConfigInfo } from '../types';
+import * as path from 'path';
+import { IConfigInfo, LogLevel } from '../types';
 import { log, initLogger } from './log';
-import { LogLevel } from '../types';
 
-const path = require('path');
-
-export default class Config {
+export class Config {
   private DEFAULT_ECHO_PATH = path.join(
     'C:/Program Files/Oculus/Software/Software/ready-at-dawn-echo-arena/bin/win7/echovr.exe',
     ''
   );
+
   private DEFAULT_PC_ECHO_IP_ADDRESS = '127.0.0.1';
+
   private CONFIG_PATH = path.join(
     os.homedir(),
     'AppData/Local/EchoShadow/config.json'
   );
+
   private DEFAULT_LOG_LEVEL: LogLevel = LogLevel.INFO;
 
   public options?: IConfigInfo;

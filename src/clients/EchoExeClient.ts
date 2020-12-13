@@ -1,14 +1,9 @@
-// typescript is stupid sometimes so we are just going to "require" instead of "import" this to avoid compiling errors
-const taskkill = require('taskkill');
-
-import { exec as execNative } from 'child_process';
-import { promisify } from 'util';
-const exec = promisify(execNative);
-
 import { log } from '../utilities/log';
+import { exec, killProcess } from '../utilities/utils';
 
 export default class EchoExeClient {
   private SPECTATOR_FLAG = ' --spectatorstream';
+
   private LOBBY_FLAG = ' --lobbyid ';
 
   constructor(private echoPath: string) {
@@ -33,6 +28,7 @@ export default class EchoExeClient {
         message: 'error opening exe',
         error: error.message || error,
       });
+      throw error;
     }
   };
 
@@ -56,13 +52,9 @@ export default class EchoExeClient {
    * Warning: Will close any and all intances of EchoVR running on the computer, not
    * only the instance that we opened.
    */
-  close = async (process?: any) => {
-    // If a pid is defined, we will only kill that specific process.
-    const killId = process ? process.pid : 'echovr.exe';
+  close = async (processId: string) => {
     try {
-      // {tree:true} will also kill any process started by the EchoVR process. Known
-      // as tree killing.
-      await taskkill(killId, { tree: true });
+      await killProcess(processId);
     } catch (error) {
       const errorDescription =
         'Error: Instance of EchoVR was not running when close was called.';
