@@ -2,6 +2,7 @@
 const processWindows = require('node-process-windows');
 
 import { promisify } from 'util';
+import { log } from '../utilities/log';
 import { EchoSessionType, IEchoDataSnapshot } from '../types';
 import EchoExeClient from './EchoExeClient';
 
@@ -54,8 +55,16 @@ export default class EchoInstanceClient {
    * Method to return wether or not a current EchoVR process is running
    */
   isRunning = async () => {
-    await this.syncPID();
-    return this.currentInstanceProcess !== undefined;
+    try {
+      await this.syncPID();
+      return this.currentInstanceProcess !== undefined;
+    } catch (error) {
+      log.error({
+        message: 'error determining running state',
+        error: error.message || error,
+      });
+      return false;
+    }
   };
 
   /**

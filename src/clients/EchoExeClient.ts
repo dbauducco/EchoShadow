@@ -24,9 +24,16 @@ export default class EchoExeClient {
    * the game will open to a random public match.
    */
   open = async (sessionID?: string) => {
-    const openCommand = this.buildCommand(sessionID);
-    const execResult = await exec(openCommand);
-    return execResult;
+    try {
+      const openCommand = this.buildCommand(sessionID);
+      const execResult = await exec(openCommand);
+      return execResult;
+    } catch (error) {
+      log.error({
+        message: 'error opening exe',
+        error: error.message || error,
+      });
+    }
   };
 
   /**

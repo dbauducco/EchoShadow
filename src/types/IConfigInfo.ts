@@ -1,6 +1,8 @@
+import { LogLevel } from './LogLevel';
+
 export interface IConfigInfo {
   echoPath: string;
   remoteApiIpAddress: string;
   localApiIpAddress: string;
-  useLogFile: boolean;
+  logLevel: LogLevel;
 }

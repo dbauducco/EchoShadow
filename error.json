@@ -1,0 +1,6 @@
+{
+  "message": "error determining running state",
+  "error": "Command failed: C:\\Users\\alexw\\AppData\\Local\\Programs\\echo-shadow\\resources\\app.asar\\dist\\windows-console-app\\windows-console-app\\bin\\Release\\windows-console-app.exe --processinfo\nThe system cannot find the path specified.\r\n",
+  "level": "error",
+  "timestamp": "2020-12-13T19:46:02.860Z"
+}

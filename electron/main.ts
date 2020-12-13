@@ -1,11 +1,11 @@
 /***********************************************************************
  ************************ECHO SHADOW CODE*******************************
  ***********************************************************************/
-import EchoInstanceClient from './clients/EchoInstanceClient';
-import EchoDataRepository from './repositories/EchoDataRepository';
-import Config from './utilities/Config';
-import { log } from './utilities/log';
-import EchoFollowManager from './managers/EchoFollowManager';
+import EchoInstanceClient from '../src/clients/EchoInstanceClient';
+import EchoDataRepository from '../src/repositories/EchoDataRepository';
+import Config from '../src/utilities/Config';
+import { log } from '../src/utilities/log';
+import EchoFollowManager from '../src/managers/EchoFollowManager';
 
 const setup = async () => {
   const config = new Config();
@@ -23,6 +23,7 @@ const setup = async () => {
     config.options.localApiIpAddress
   );
   return {
+    log,
     echoInstanceClient,
     remoteEchoDataRepository,
     localEchoDataRepository,
@@ -30,17 +31,24 @@ const setup = async () => {
 };
 
 const start = async () => {
-  const {
-    echoInstanceClient,
-    remoteEchoDataRepository,
-    localEchoDataRepository,
-  } = await setup();
-  const followManager = new EchoFollowManager(
-    remoteEchoDataRepository,
-    localEchoDataRepository,
-    echoInstanceClient
-  );
-  await followManager.startFollowing();
+  try {
+    const {
+      echoInstanceClient,
+      remoteEchoDataRepository,
+      localEchoDataRepository,
+    } = await setup();
+    const followManager = new EchoFollowManager(
+      remoteEchoDataRepository,
+      localEchoDataRepository,
+      echoInstanceClient
+    );
+    await followManager.startFollowing();
+  } catch (error) {
+    log.error({
+      message: 'unhandled exception',
+      error: error.messsage || error,
+    });
+  }
 };
 
 /***********************************************************************
@@ -66,7 +74,7 @@ function createWindow() {
       nodeIntegration: true,
     },
   });
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:4000');
@@ -83,15 +91,12 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
-
-  // start Echo Shadow
-  start();
 }
 
 app
   .on('ready', createWindow)
   .whenReady()
-  .then(() => {
+  .then(async () => {
     if (process.env.NODE_ENV === 'development') {
       installExtension(REACT_DEVELOPER_TOOLS)
         .then(name => console.log(`Added Extension:  ${name}`))
@@ -100,5 +105,7 @@ app
         .then(name => console.log(`Added Extension:  ${name}`))
         .catch(err => console.log('An error occurred: ', err));
     }
+    // start Echo Shadow
+    await start();
   });
 app.allowRendererProcessReuse = true;

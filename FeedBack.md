@@ -1,0 +1,3 @@
+1. Tamy says echo will randomly close in the middle of a pub match
+2. Tamy says that it takes over 1 minute for the bot to join when he is in a pub match
+3. On .exe log stops running before we even get to scenario 1. All we get is "{"message":{"remoteDataSnapshot":{"sessionId":"ACC7A6CF-DED2-414D-A8A0-88D6CD49A8C9","sessionType":"Arena_Match","clientName":"chocalte_pretzels","clientIndexId":-1},"localDataSnapshot":{"sessionId":"ACC7A6CF-DED2-414D-A8A0-88D6CD49A8C9","sessionType":"Arena_Match","clientName":"chocalte_pretzels","clientIndexId":-1}},"level":"info","timestamp":"2020-12-13T07:06:37.566Z"}"

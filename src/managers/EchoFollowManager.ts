@@ -11,15 +11,17 @@ export default class EchoFollowManager {
   constructor(
     public remoteDataRepository: EchoDataRepository,
     public localDataRepository: EchoDataRepository,
-    public echoInstanceClient: EchoInstanceClient,
+    public echoInstanceClient: EchoInstanceClient
   ) {}
 
   public async handleFollowLogic(
     remoteDataSnapshot?: IEchoDataSnapshot,
-    localDataSnapshot?: IEchoDataSnapshot,
+    localDataSnapshot?: IEchoDataSnapshot
   ) {
+    log.debug('before echoInstanceClient.isRunning');
     // Let's cache the result to prevent multiple calls
     const isEchoRunning = await this.echoInstanceClient.isRunning();
+    log.debug('after echoInstanceClient.isRunning');
 
     if (isEchoRunning && !localDataSnapshot) {
       if (this.localTimedOutCounter <= 4) {
@@ -88,7 +90,7 @@ export default class EchoFollowManager {
     return undefined;
   }
 
-  public async startFollowing() {
+  public startFollowing() {
     setTimeout(async () => {
       const remoteDataSnapshot = await this.remoteDataRepository.getSnapshot();
       const localDataSnapshot = await this.localDataRepository.getSnapshot();
@@ -99,7 +101,7 @@ export default class EchoFollowManager {
       });
 
       await this.handleFollowLogic(remoteDataSnapshot, localDataSnapshot);
-      this.startFollowing();
+      await this.startFollowing();
     }, this.WAIT_TIME_SECONDS * 1000);
   }
 

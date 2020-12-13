@@ -1,7 +1,9 @@
 import * as os from 'os';
 import * as fse from 'fs-extra';
 import { IConfigInfo } from '../types';
-import { log } from '../utilities/log';
+import { log, initLogger } from './log';
+import { LogLevel } from '../types';
+
 const path = require('path');
 
 export default class Config {
@@ -14,6 +16,7 @@ export default class Config {
     os.homedir(),
     'AppData/Local/EchoShadow/config.json'
   );
+  private DEFAULT_LOG_LEVEL: LogLevel = LogLevel.INFO;
 
   public options?: IConfigInfo;
 
@@ -21,7 +24,7 @@ export default class Config {
     private overrideEchoPath?: string,
     private overrideRemoteApiIpAddress?: string,
     private overrideLocalApiIpAddress?: string,
-    private overrideUseLogFile?: boolean
+    private overrideLogLevel?: LogLevel
   ) {}
 
   /**
@@ -34,6 +37,7 @@ export default class Config {
     if (!this.options) {
       this.options = await this.writeDefaultConfig();
     }
+    initLogger(this.options?.logLevel);
   }
 
   private async writeDefaultConfig() {
@@ -45,7 +49,7 @@ export default class Config {
           this.overrideRemoteApiIpAddress || this.DEFAULT_PC_ECHO_IP_ADDRESS,
         localApiIpAddress:
           this.overrideLocalApiIpAddress || this.DEFAULT_PC_ECHO_IP_ADDRESS,
-        useLogFile: this.overrideUseLogFile || false,
+        logLevel: this.overrideLogLevel || this.DEFAULT_LOG_LEVEL,
       };
       // Write the output file
       await fse.outputFile(
@@ -80,7 +84,9 @@ export default class Config {
           this.overrideRemoteApiIpAddress || configData.remoteApiIpAddress,
         localApiIpAddress:
           this.overrideLocalApiIpAddress || configData.localApiIpAddress,
-        useLogFile: this.overrideUseLogFile || configData.useLogFile,
+        logLevel:
+          this.overrideLogLevel ||
+          (configData.logLevel.toLowerCase() as LogLevel),
       };
       return overridenConfigData;
     } catch (error) {
