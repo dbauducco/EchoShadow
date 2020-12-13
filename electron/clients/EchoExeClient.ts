@@ -25,7 +25,8 @@ export default class EchoExeClient {
    */
   open = async (sessionID?: string) => {
     const openCommand = this.buildCommand(sessionID);
-    exec(openCommand);
+    const execResult = await exec(openCommand);
+    return execResult;
   };
 
   /**
@@ -35,10 +36,9 @@ export default class EchoExeClient {
    * defined, no lobbyId flag gets added to the end of the command string.
    */
   private buildCommand = (sessionID?: string) => {
-    const openCommandWithSpecatator = this.echoPath + this.SPECTATOR_FLAG; // Add ---spectatorstream to the end
+    const openCommandWithSpecatator = `"${this.echoPath}"${this.SPECTATOR_FLAG}`; // Add ---spectatorstream to the end
     if (sessionID) {
-      const openCommandWithSpectatorAndLobby =
-        openCommandWithSpecatator + this.LOBBY_FLAG + sessionID; // If we have lobby, add --lobbyid {lobbyId}
+      const openCommandWithSpectatorAndLobby = `${openCommandWithSpecatator}${this.LOBBY_FLAG}${sessionID}`; // If we have lobby, add --lobbyid {lobbyId}
       return openCommandWithSpectatorAndLobby;
     }
     return openCommandWithSpecatator;

@@ -15,9 +15,6 @@
     "strict": true ,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "moduleResolution": "node",
-    "paths": {
-      "*": ["node_modules/*"]
-    }
+    "moduleResolution": "node"
   }
 }

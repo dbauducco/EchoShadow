@@ -6,7 +6,7 @@ const path = require('path');
 
 export default class Config {
   private DEFAULT_ECHO_PATH = path.join(
-    '"C:/Program Files/Oculus/Software/Software/ready-at-dawn-echo-arena/bin/win7/echovr.exe"',
+    'C:/Program Files/Oculus/Software/Software/ready-at-dawn-echo-arena/bin/win7/echovr.exe',
     ''
   );
   private DEFAULT_PC_ECHO_IP_ADDRESS = '127.0.0.1';

@@ -21,10 +21,9 @@ export default class EchoInstanceClient {
    * the game will open to a random public match.
    */
   open = async (snapshotData?: IEchoDataSnapshot) => {
-    const sessionID =
-      snapshotData?.sessionType === EchoSessionType.Arena_Match
-        ? snapshotData?.sessionId
-        : undefined;
+    const sessionID = this.isJoinable(snapshotData)
+      ? snapshotData?.sessionId
+      : undefined;
     await this.exeRepository.open(sessionID);
     this.currentInstanceProcess = await this.findProcess();
   };
@@ -46,7 +45,7 @@ export default class EchoInstanceClient {
     const getActiveProcesses = promisify(processWindows.getProcesses);
     const runningProcesses = await getActiveProcesses();
     const echoProcess = runningProcesses.find(
-      (p: { processName: string }) => p.processName == 'echovr',
+      (p: { processName: string }) => p.processName == 'echovr'
     );
     return echoProcess;
   };
@@ -62,7 +61,18 @@ export default class EchoInstanceClient {
   /**
    * Method used in testing to sync the method
    */
-  public syncPID = async () => {
+  private syncPID = async () => {
     this.currentInstanceProcess = await this.findProcess();
+  };
+
+  private isJoinable = (session?: IEchoDataSnapshot) => {
+    if (!session) {
+      return false;
+    }
+
+    return (
+      session.sessionType == EchoSessionType.Arena_Match ||
+      session.sessionType == EchoSessionType.Private_Arena_Match
+    );
   };
 }
