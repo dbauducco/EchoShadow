@@ -3,27 +3,37 @@ import { EchoSessionType, IEchoDataSnapshot } from '../types';
 import EchoExeClient from './EchoExeClient';
 
 export default class EchoInstanceClient {
-  private exeRepository: EchoExeClient;
+  private exeClient: EchoExeClient;
 
   private currentInstanceProcessId: string | undefined;
 
   constructor(echoPath: string) {
-    this.exeRepository = new EchoExeClient(echoPath);
+    this.exeClient = new EchoExeClient(echoPath);
   }
 
   /**
    * Method to open EchoVR.exe with spectator stream automatically set. Using
-   * the lobby id parameter allows the game to automatically join a specific
+   * the lobby id parameter allofindEchoProcessIdws the game to automatically join a specific
    * match.
    * @param snapshotData (Optional) The snapshotData for the match which to join. If not defined,
    * the game will open to a random public match.
    */
   open = async (snapshotData?: IEchoDataSnapshot) => {
-    const sessionID = this.isJoinable(snapshotData)
-      ? snapshotData?.sessionId
-      : undefined;
-    await this.exeRepository.open(sessionID);
-    this.currentInstanceProcessId = await this.findEchoProcessId();
+    try {
+      const sessionID = this.isJoinable(snapshotData)
+        ? snapshotData?.sessionId
+        : undefined;
+      await this.exeClient.open(sessionID);
+      log.debug({ message: 'after exeClient.open' });
+      this.currentInstanceProcessId = await this.findEchoProcessId();
+      log.debug({ message: 'after EchoInstanceClient.findEchoProcessId' });
+    } catch (error) {
+      log.error({
+        message: 'error while opening echo',
+        error: error.message || error,
+      });
+      throw error;
+    }
   };
 
   /**
@@ -33,7 +43,7 @@ export default class EchoInstanceClient {
    */
   close = async () => {
     if (this.currentInstanceProcessId) {
-      await this.exeRepository.close(this.currentInstanceProcessId);
+      await this.exeClient.close(this.currentInstanceProcessId);
       this.currentInstanceProcessId = undefined;
     }
   };
@@ -42,8 +52,16 @@ export default class EchoInstanceClient {
    * Method to get the PID of the current instance of EchoVR.exe
    */
   private findEchoProcessId = async () => {
-    const echoPid = await getProcessId('echovr.exe');
-    return echoPid;
+    try {
+      const echoPid = await getProcessId('echovr.exe');
+      return echoPid;
+    } catch (error) {
+      log.error({
+        message: 'error while finding echo process id',
+        error: error.message || error,
+      });
+      throw error;
+    }
   };
 
   /**

@@ -58,6 +58,7 @@ export default class EchoFollowManager {
       if (this.isJoinable(remoteDataSnapshot.sessionType)) {
         log.info({ scenario: '1.1', action: 'open' });
         await this.echoInstanceClient.open(remoteDataSnapshot);
+        log.debug({ message: 'after echoInstanceClient.open' });
         return undefined;
       }
       // Scenario 1.6
@@ -89,18 +90,26 @@ export default class EchoFollowManager {
   }
 
   public startFollowing() {
-    setTimeout(async () => {
-      const remoteDataSnapshot = await this.remoteDataRepository.getSnapshot();
-      const localDataSnapshot = await this.localDataRepository.getSnapshot();
+    try {
+      setTimeout(async () => {
+        const remoteDataSnapshot = await this.remoteDataRepository.getSnapshot();
+        const localDataSnapshot = await this.localDataRepository.getSnapshot();
 
-      log.info({
-        remoteDataSnapshot: remoteDataSnapshot || null,
-        localDataSnapshot: localDataSnapshot || null,
+        log.info({
+          remoteDataSnapshot: remoteDataSnapshot || null,
+          localDataSnapshot: localDataSnapshot || null,
+        });
+
+        await this.handleFollowLogic(remoteDataSnapshot, localDataSnapshot);
+        await this.startFollowing();
+      }, this.WAIT_TIME_SECONDS * 1000);
+    } catch (error) {
+      log.error({
+        message: 'error while permorming follow logic',
+        error: error.message || error,
       });
-
-      await this.handleFollowLogic(remoteDataSnapshot, localDataSnapshot);
-      await this.startFollowing();
-    }, this.WAIT_TIME_SECONDS * 1000);
+      throw error;
+    }
   }
 
   private isJoinable(sessionType: EchoSessionType) {

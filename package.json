@@ -85,7 +85,7 @@
     "winston": "^3.3.3"
   },
   "build": {
-    "appId": "your.id",
+    "appId": "com.electron.echo-shadow",
     "mac": {
       "category": "public.app-category.video"
     },
@@ -95,7 +95,8 @@
     "files": [
       "package.json",
       "dist/**"
-    ]
+    ],
+    "productName": "Echo Shadow"
   },
   "husky": {
     "hooks": {

@@ -1,0 +1,815 @@
+[
+  {
+    "message": {
+      "loadedConfig": {
+        "echoPath": "C:\\Program Files\\Oculus\\Software\\Software\\ready-at-dawn-echo-arena\\bin\\win7\\echovr.exe",
+        "remoteApiIpAddress": "192.168.1.195",
+        "localApiIpAddress": "127.0.0.1",
+        "logLevel": "debug"
+      }
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:15:39.178Z"
+  },
+  {
+    "message": {
+      "loadedConfig": {
+        "echoPath": "C:\\Program Files\\Oculus\\Software\\Software\\ready-at-dawn-echo-arena\\bin\\win7\\echovr.exe",
+        "remoteApiIpAddress": "192.168.1.195",
+        "localApiIpAddress": "127.0.0.1",
+        "logLevel": "debug"
+      }
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:15:41.167Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:15:46.605Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:15:46.606Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:15:47.585Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:15:48.265Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:15:48.266Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:15:48.816Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:15:54.643Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:15:54.644Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:15:55.673Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:15:55.874Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:15:55.875Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:15:56.371Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:02.736Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:02.736Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:03.430Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:03.431Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:03.564Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:04.311Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:10.639Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:10.640Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:11.363Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:11.364Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:11.696Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:12.259Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:18.760Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:18.761Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:19.313Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:19.313Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:19.875Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:20.436Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:26.931Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:26.932Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:27.504Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:27.505Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:28.050Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:28.663Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:35.115Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:35.116Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:35.721Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "A5D4DE53-282A-4DFB-A600-D149B61CE3D6",
+        "sessionType": "Lobby",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:35.722Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:36.171Z"
+  },
+  {
+    "message": { "scenario": "1.6", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:36.840Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:43.234Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:43.235Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:43.901Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:43.902Z"
+  },
+  {
+    "message": { "scenario": "1.1", "action": "open" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:44.280Z"
+  },
+  {
+    "message": { "scenario": "1.1", "action": "open" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:44.948Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:52.327Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:52.328Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:16:52.735Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:52.736Z"
+  },
+  {
+    "message": { "scenario": "1.8", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:53.227Z"
+  },
+  {
+    "message": { "scenario": "1.8", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:16:53.668Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:17:00.304Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:00.304Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "Request failed with status code 404"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:17:00.813Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:00.814Z"
+  },
+  {
+    "message": { "scenario": "1.8", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:01.117Z"
+  },
+  {
+    "message": { "scenario": "1.8", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:01.614Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "Request failed with status code 404"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:17:06.278Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:06.278Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "Request failed with status code 404"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:17:06.754Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:06.754Z"
+  },
+  {
+    "message": { "scenario": "1.8", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:07.001Z"
+  },
+  {
+    "message": { "scenario": "1.8", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:07.575Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:17:14.061Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:14.061Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:17:14.634Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:14.634Z"
+  },
+  {
+    "message": { "scenario": "1.8", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:14.863Z"
+  },
+  {
+    "message": { "scenario": "1.8", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:15.458Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:17:21.928Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:21.928Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:17:22.507Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:22.508Z"
+  },
+  {
+    "message": { "scenario": "1.8", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:22.704Z"
+  },
+  {
+    "message": { "scenario": "1.8", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:23.441Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:17:29.792Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:29.792Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:17:30.545Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:30.546Z"
+  },
+  {
+    "message": { "scenario": "1.9", "action": "close" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:30.813Z"
+  },
+  {
+    "message": { "scenario": "1.9", "action": "close" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:31.419Z"
+  },
+  {
+    "message": "error while closing echo",
+    "error":
+      "Command failed: taskkill /pid 37672 /t\n" +
+      "ERROR: The process with PID 37672 (child process of PID 41168) could not be terminated.\r\n" +
+      "Reason: This process can only be terminated forcefully (with /F option).\r\n",
+    "level": "error",
+    "timestamp": "2020-12-14T21:17:31.770Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:17:38.234Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:38.234Z"
+  },
+  {
+    "message": {
+      "description": "Error retrieving snapshot",
+      "error": "connect ECONNREFUSED 127.0.0.1:6721"
+    },
+    "level": "error",
+    "timestamp": "2020-12-14T21:17:38.841Z"
+  },
+  {
+    "message": {
+      "remoteDataSnapshot": {
+        "sessionId": "F26B8E53-E826-4C1A-890B-C7C87FADBA7A",
+        "sessionType": "Private_Arena_Match",
+        "clientName": "MostCalm",
+        "clientIndexId": -1
+      },
+      "localDataSnapshot": null
+    },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:38.841Z"
+  },
+  {
+    "message": { "scenario": "1.8", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:39.210Z"
+  },
+  {
+    "message": { "scenario": "1.8", "action": "none" },
+    "level": "info",
+    "timestamp": "2020-12-14T21:17:40.010Z"
+  }
+]

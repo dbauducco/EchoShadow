@@ -21,8 +21,9 @@ export default class EchoExeClient {
   open = async (sessionID?: string) => {
     try {
       const openCommand = this.buildCommand(sessionID);
-      const execResult = await exec(openCommand);
-      return execResult;
+      // don't call await on exec or it will get hung up, just let it open at it's leisure
+      exec(openCommand);
+      log.debug({ message: 'after EchoExeClient.open.exec' });
     } catch (error) {
       log.error({
         message: 'error opening exe',
@@ -56,10 +57,8 @@ export default class EchoExeClient {
     try {
       await killProcess(processId);
     } catch (error) {
-      const errorDescription =
-        'Error: Instance of EchoVR was not running when close was called.';
       log.error({
-        description: errorDescription,
+        message: 'error while closing echo',
         error: error.message ? error.message : error,
       });
     }
