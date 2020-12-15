@@ -1,13 +1,4 @@
-import styled, { keyframes } from 'styled-components';
-
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`;
+import styled from 'styled-components';
 
 export const Container = styled.div`
   height: 100vh;
@@ -18,13 +9,8 @@ export const Container = styled.div`
   justify-content: center;
 `;
 
-export const Image = styled.img`
-  width: 300px;
-  animation: ${rotate} 15s linear infinite;
-  opacity: 0.1;
-`;
 export const Text = styled.p`
-  margin-top: 35px;
+  margin-top: 0px;
   font-size: 20px;
   font-weight: bold;
 `;
