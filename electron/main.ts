@@ -73,9 +73,10 @@ function createWindow() {
     backgroundColor: '#191622',
     webPreferences: {
       nodeIntegration: true,
+      enableRemoteModule: true,
     },
   });
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:4000');

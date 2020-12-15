@@ -4,7 +4,12 @@ import { Container, Text } from './styles';
 const Greetings: React.FC = () => {
   return (
     <Container>
-      <Text>EchoShadow is running 🏃</Text>
+      <Text>
+        EchoShadow is running
+        <span role="img" aria-label="running">
+          🏃
+        </span>
+      </Text>
     </Container>
   );
 };
