@@ -1,13 +1,15 @@
+import { BrowserWindow } from 'electron';
 import EchoDataRepository from '../repositories/EchoDataRepository';
 import { EchoSessionType, IEchoDataSnapshot } from '../types';
 import EchoInstanceClient from '../clients/EchoInstanceClient';
 import { log } from '../utilities/log';
-import { ipcMain, BrowserWindow, TouchBarScrubber, remote } from 'electron';
 
 export default class EchoFollowManager {
   // Settings for the EchoFollowManager
   WAIT_TIME_SECONDS = 5;
+
   localTimedOutCounter = 0;
+
   shadowStatus = {
     statusMessage: '',
     remoteStatus: '',
@@ -133,10 +135,13 @@ export default class EchoFollowManager {
         await this.handleFollowLogic(remoteDataSnapshot, localDataSnapshot);
         await this.startFollowing();
 
-        BrowserWindow.getFocusedWindow()?.webContents.send(
-          'shadowStatusUpdate',
-          this.shadowStatus
-        );
+        const focusedWindow = BrowserWindow.getFocusedWindow();
+        if (focusedWindow) {
+          focusedWindow.webContents.send(
+            'shadowStatusUpdate',
+            this.shadowStatus
+          );
+        }
       }, this.WAIT_TIME_SECONDS * 1000);
     } catch (error) {
       log.error({

@@ -1,17 +1,17 @@
 import React from 'react';
+import { remote } from 'electron';
 import { TopRightButton } from './styles';
-const { BrowserWindow } = require('electron').remote;
 
 // Function to close the EchoShadowWindow
 const closeEchoShadow = () => {
-  console.log('SHOULD CLOSE!');
-  const currentWindow = BrowserWindow.getFocusedWindow();
-  currentWindow?.close();
+  const currentWindow = remote.BrowserWindow.getFocusedWindow();
+  if (currentWindow) {
+    currentWindow.close();
+  }
 };
 
-const CloseButton: React.FC = () => {
-  console.log('Built component!');
-  return <TopRightButton onClick={closeEchoShadow}>X</TopRightButton>;
-};
+const CloseButton: React.FC = () => (
+  <TopRightButton onClick={closeEchoShadow}>X</TopRightButton>
+);
 
 export default CloseButton;

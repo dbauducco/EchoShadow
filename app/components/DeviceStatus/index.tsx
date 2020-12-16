@@ -13,9 +13,9 @@ const DeviceStatus: React.FC<DeviceStatusProps> = ({
   status,
   deviceType,
   ipAddress,
-}) => {
+}: DeviceStatusProps) => {
   let logoColor = 'grey';
-  if (status == 'nominal') {
+  if (status === 'nominal') {
     logoColor = '#5DBB63';
   } else if (status == 'warning') {
     logoColor = '#F5D752';
@@ -28,10 +28,10 @@ const DeviceStatus: React.FC<DeviceStatusProps> = ({
   return (
     <DeviceStatusContainer>
       {deviceType === 'computer' && (
-        <ComputerLogo height={80} width={80} fill={logoColor}></ComputerLogo>
+        <ComputerLogo height={80} width={80} fill={logoColor} />
       )}
       {deviceType === 'headset' && (
-        <HeadsetLogo height={80} width={80} fill={logoColor}></HeadsetLogo>
+        <HeadsetLogo height={80} width={80} fill={logoColor} />
       )}
       <DeviceStatusIP>{ipAddress}</DeviceStatusIP>
     </DeviceStatusContainer>
@@ -39,10 +39,3 @@ const DeviceStatus: React.FC<DeviceStatusProps> = ({
 };
 
 export default DeviceStatus;
-
-/*
-Okay, gonna add it rn
-
-https://www.npmjs.com/package/react-svg-loader --> 157,000+ downloads per week
-
-*/
