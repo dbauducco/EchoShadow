@@ -43,10 +43,10 @@ const Greetings: React.FC = () => {
           ipAddress={remoteIp}
           status={remoteStatus}
         />
-        {statusMessage != 'Synced' && (
+        {statusMessage !== 'Synced' && (
           <ImpulseSpinner loading frontColor="#655d80" backColor="#282436" />
         )}
-        {statusMessage == 'Synced' && <SwapSpinner loading color="#5DBB63" />}
+        {statusMessage === 'Synced' && <SwapSpinner loading color="#5DBB63" />}
         <DeviceStatus
           deviceType={DeviceTypeEnum.Computer}
           ipAddress={localIp}

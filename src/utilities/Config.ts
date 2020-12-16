@@ -1,10 +1,10 @@
 import * as os from 'os';
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import { ipcMain } from 'electron';
 import { IConfigInfo, LogLevel } from '../types';
 import { log, initLogger } from './log';
 import { exec } from './utils';
-import { ipcMain } from 'electron';
 
 export class Config {
   private DEFAULT_ECHO_PATH = path.join(

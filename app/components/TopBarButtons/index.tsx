@@ -1,6 +1,6 @@
 import React from 'react';
-import { remote } from 'electron';
-import { ipcRenderer } from 'electron';
+import { remote, ipcRenderer } from 'electron';
+
 import { TopRightContainer, InvisibleButton } from './styles';
 import CloseSVG from '../../assets/close.svg';
 import SettingsSVG from '../../assets/settings.svg';
