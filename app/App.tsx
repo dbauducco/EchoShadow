@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import { GlobalStyle } from './styles/GlobalStyle';
 
 import Greetings from './components/Greetings/index';
-import CloseButton from './components/CloseButton';
+import TopBarButtons from './components/TopBarButtons';
 
 const mainElement = document.createElement('div');
 mainElement.setAttribute('id', 'root');
@@ -13,7 +13,7 @@ const App = () => {
   return (
     <>
       <GlobalStyle />
-      <CloseButton />
+      <TopBarButtons />
       <Greetings />
     </>
   );

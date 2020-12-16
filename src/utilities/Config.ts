@@ -3,6 +3,8 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import { IConfigInfo, LogLevel } from '../types';
 import { log, initLogger } from './log';
+import { exec } from './utils';
+import { ipcMain } from 'electron';
 
 export class Config {
   private DEFAULT_ECHO_PATH = path.join(
@@ -26,7 +28,9 @@ export class Config {
     private overrideRemoteApiIpAddress?: string,
     private overrideLocalApiIpAddress?: string,
     private overrideLogLevel?: LogLevel
-  ) {}
+  ) {
+    ipcMain.on('open-config', this.openConfigFile);
+  }
 
   /**
    * initializes the Config options. This must be called in order to use the config class
@@ -97,5 +101,9 @@ export class Config {
       });
       return undefined;
     }
+  }
+
+  public openConfigFile() {
+    exec('start %APPDATA%/../local/EchoShadow/config.json');
   }
 }
