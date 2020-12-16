@@ -2,18 +2,16 @@ import React from 'react';
 import { ipcRenderer } from 'electron';
 import { Container, Text, HorizontalContainer } from './styles';
 import DeviceStatus from '../DeviceStatus';
+import { DeviceStatusEnum, DeviceTypeEnum } from '../../types';
 
-type GreetingState = {
-  statusMessage: any;
-  localStatus: any;
-  remoteStatus: any;
-  localIp: any;
-  remoteIp: any;
-};
-const Greetings: React.FC<GreetingState> = () => {
+const Greetings: React.FC = () => {
   const [statusMessage, setStatusMessage] = React.useState('Default message');
-  const [localStatus, setLocalStatus] = React.useState('Unknown');
-  const [remoteStatus, setRemoteStatus] = React.useState('Unknown');
+  const [localStatus, setLocalStatus] = React.useState<DeviceStatusEnum>(
+    DeviceStatusEnum.Inactive
+  );
+  const [remoteStatus, setRemoteStatus] = React.useState<DeviceStatusEnum>(
+    DeviceStatusEnum.Inactive
+  );
   const [localIp, setLocalIp] = React.useState('Unknown');
   const [remoteIp, setRemoteIp] = React.useState('Unknown');
 
@@ -38,12 +36,12 @@ const Greetings: React.FC<GreetingState> = () => {
     <Container>
       <HorizontalContainer>
         <DeviceStatus
-          deviceType="headset"
+          deviceType={DeviceTypeEnum.Headset}
           ipAddress={remoteIp}
           status={remoteStatus}
         />
         <DeviceStatus
-          deviceType="computer"
+          deviceType={DeviceTypeEnum.Computer}
           ipAddress={localIp}
           status={localStatus}
         />
