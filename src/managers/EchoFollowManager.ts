@@ -58,7 +58,7 @@ export default class EchoFollowManager {
         this.localTimedOutCounter = 0;
         await this.echoInstanceClient.close();
         this.shadowStatus.localStatus = 'warning';
-        this.shadowStatus.statusMessage = 'Relaunching Echo...';
+        this.shadowStatus.statusMessage = 'Forcing Echo to Close...';
         return undefined;
       }
     // Reset counter and continue with checks

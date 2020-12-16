@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Text, HorizontalContainer } from './styles';
 import { ipcRenderer } from 'electron';
+import { ImpulseSpinner } from 'react-spinners-kit';
 import DeviceStatus from '../DeviceStatus';
 
 type GreetingState = {
@@ -46,6 +47,11 @@ class Greetings extends React.Component<{}, GreetingState> {
             ipAddress={this.state?.remoteIp}
             status={this.state?.remoteStatus}
           ></DeviceStatus>
+          <ImpulseSpinner
+            loading={true}
+            frontColor="#655d80"
+            backColor="#282436"
+          ></ImpulseSpinner>
           <DeviceStatus
             deviceType="computer"
             ipAddress={this.state?.localIp}
