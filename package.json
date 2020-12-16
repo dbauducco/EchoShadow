@@ -39,6 +39,7 @@
     "@testing-library/jest-dom": "^5.11.0",
     "@testing-library/react": "^10.4.3",
     "@types/electron-devtools-installer": "^2.2.0",
+    "@types/ffi-napi": "^2.4.3",
     "@types/jest": "^26.0.3",
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.6",
@@ -79,6 +80,7 @@
   "dependencies": {
     "@svgr/webpack": "^5.5.0",
     "axios": "^0.21.0",
+    "ffi-napi": "^3.1.0",
     "file-loader": "^6.2.0",
     "fs-extra": "^9.0.1",
     "react": "^16.13.1",
