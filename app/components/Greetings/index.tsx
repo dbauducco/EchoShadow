@@ -1,67 +1,60 @@
 import React from 'react';
-import { Container, Text, HorizontalContainer } from './styles';
 import { ipcRenderer } from 'electron';
+import { Container, Text, HorizontalContainer } from './styles';
 import { ImpulseSpinner } from 'react-spinners-kit';
 import DeviceStatus from '../DeviceStatus';
+import { DeviceStatusEnum, DeviceTypeEnum } from '../../types';
 
-type GreetingState = {
-  statusMessage: any;
-  localStatus: any;
-  remoteStatus: any;
-  localIp: any;
-  remoteIp: any;
-};
+const Greetings: React.FC = () => {
+  const [statusMessage, setStatusMessage] = React.useState('Default message');
+  const [localStatus, setLocalStatus] = React.useState<DeviceStatusEnum>(
+    DeviceStatusEnum.Inactive
+  );
+  const [remoteStatus, setRemoteStatus] = React.useState<DeviceStatusEnum>(
+    DeviceStatusEnum.Inactive
+  );
+  const [localIp, setLocalIp] = React.useState('Unknown');
+  const [remoteIp, setRemoteIp] = React.useState('Unknown');
 
-class Greetings extends React.Component<{}, GreetingState> {
-  // Constructor for the greetings class
-  constructor(props: any) {
-    super(props);
-
-    this.state = {
-      statusMessage: 'Default message',
-      localStatus: 'Unknown',
-      remoteStatus: 'Unknown',
-      localIp: 'Unknown',
-      remoteIp: 'Unknown',
-    };
-
-    ipcRenderer.on('shadowStatusUpdate', this.receiveData.bind(this));
-  }
-
-  receiveData(event: Electron.IpcRendererEvent, args: any) {
-    this.setState({
-      statusMessage: args.statusMessage,
-      localStatus: args.localStatus,
-      remoteStatus: args.remoteStatus,
-      localIp: args.localIp,
-      remoteIp: args.remoteIp,
-    });
-  }
-
-  render() {
-    return (
-      <Container>
-        <HorizontalContainer>
-          <DeviceStatus
-            deviceType="headset"
-            ipAddress={this.state?.remoteIp}
-            status={this.state?.remoteStatus}
-          ></DeviceStatus>
-          <ImpulseSpinner
-            loading={true}
-            frontColor="#655d80"
-            backColor="#282436"
-          ></ImpulseSpinner>
-          <DeviceStatus
-            deviceType="computer"
-            ipAddress={this.state?.localIp}
-            status={this.state?.localStatus}
-          ></DeviceStatus>
-        </HorizontalContainer>
-        <Text>{this.state?.statusMessage}</Text>
-      </Container>
+  React.useEffect(() => {
+    ipcRenderer.on(
+      'shadowStatusUpdate',
+      (event: Electron.IpcRendererEvent, args: any) => {
+        setStatusMessage(args.statusMessage);
+        setLocalStatus(args.localStatus);
+        setRemoteStatus(args.remoteStatus);
+        setLocalIp(args.localIp);
+        setRemoteIp(args.remoteIp);
+      }
     );
-  }
-}
+    return function cleanup() {
+      // we might or might not need this, I just saw it in a stack overflow
+      ipcRenderer.removeAllListeners('shadowStatusUpdate');
+    };
+  }, []);
+
+  return (
+    <Container>
+      <HorizontalContainer>
+        <DeviceStatus
+          deviceType={DeviceTypeEnum.Headset}
+          ipAddress={remoteIp}
+          status={remoteStatus}
+        />
+        <ImpulseSpinner
+          loading={true}
+          frontColor="#655d80"
+          backColor="#282436"
+        ></ImpulseSpinner>
+        <DeviceStatus
+          deviceType={DeviceTypeEnum.Computer}
+          ipAddress={localIp}
+          status={localStatus}
+        />
+      </HorizontalContainer>
+      <Text>{statusMessage}</Text>
+    </Container>
+  );
+};
 
 export default Greetings;

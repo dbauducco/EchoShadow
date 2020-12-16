@@ -753,10 +753,7 @@
   },
   {
     "message": "error while closing echo",
-    "error":
-      "Command failed: taskkill /pid 37672 /t\n" +
-      "ERROR: The process with PID 37672 (child process of PID 41168) could not be terminated.\r\n" +
-      "Reason: This process can only be terminated forcefully (with /F option).\r\n",
+    "error": "Command failed: taskkill /pid 37672 /t ERROR: The process with PID 37672 (child process of PID 41168) could not be terminated. Reason: This process can only be terminated forcefully (with /F option).",
     "level": "error",
     "timestamp": "2020-12-14T21:17:31.770Z"
   },
@@ -1074,9 +1071,7 @@
   },
   {
     "message": "error while closing echo",
-    "error":
-      "Command failed: taskkill /pid 35864 /t\n" +
-      "ERROR: The process \"35864\" not found.\r\n",
+    "error": "Command failed: taskkill /pid 35864 ERROR: The process 35864 not found.",
     "level": "error",
     "timestamp": "2020-12-14T21:18:21.271Z"
   },
