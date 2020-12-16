@@ -1,7 +1,7 @@
 import React from 'react';
 import { ipcRenderer } from 'electron';
-import { Container, Text, HorizontalContainer } from './styles';
 import { ImpulseSpinner } from 'react-spinners-kit';
+import { Container, Text, HorizontalContainer } from './styles';
 import DeviceStatus from '../DeviceStatus';
 import { DeviceStatusEnum, DeviceTypeEnum } from '../../types';
 
@@ -41,11 +41,7 @@ const Greetings: React.FC = () => {
           ipAddress={remoteIp}
           status={remoteStatus}
         />
-        <ImpulseSpinner
-          loading={true}
-          frontColor="#655d80"
-          backColor="#282436"
-        ></ImpulseSpinner>
+        <ImpulseSpinner loading frontColor="#655d80" backColor="#282436" />
         <DeviceStatus
           deviceType={DeviceTypeEnum.Computer}
           ipAddress={localIp}
