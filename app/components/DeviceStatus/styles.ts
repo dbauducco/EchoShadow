@@ -4,9 +4,9 @@ export const DeviceStatusContainer = styled.div`
   height: 100px;
   padding: 25px;
   display: flex;
-  margin-right: 20px;
+  margin-right: 30px;
   padding: 0px 0px 0px 0px;
-  margin-left: 20px;
+  margin-left: 30px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
