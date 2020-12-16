@@ -1,6 +1,6 @@
 import React from 'react';
 import { ipcRenderer } from 'electron';
-import { ImpulseSpinner } from 'react-spinners-kit';
+import { ImpulseSpinner, SwapSpinner } from 'react-spinners-kit';
 import { Container, Text, HorizontalContainer } from './styles';
 import DeviceStatus from '../DeviceStatus';
 import { DeviceStatusEnum, DeviceTypeEnum } from '../../types';
@@ -43,7 +43,10 @@ const Greetings: React.FC = () => {
           ipAddress={remoteIp}
           status={remoteStatus}
         />
-        <ImpulseSpinner loading frontColor="#655d80" backColor="#282436" />
+        {statusMessage != 'Synced' && (
+          <ImpulseSpinner loading frontColor="#655d80" backColor="#282436" />
+        )}
+        {statusMessage == 'Synced' && <SwapSpinner loading color="#5DBB63" />}
         <DeviceStatus
           deviceType={DeviceTypeEnum.Computer}
           ipAddress={localIp}
