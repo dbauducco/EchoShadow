@@ -7,6 +7,8 @@ type GreetingState = {
   statusMessage: any;
   localStatus: any;
   remoteStatus: any;
+  localIp: any;
+  remoteIp: any;
 };
 
 class Greetings extends React.Component<{}, GreetingState> {
@@ -18,6 +20,8 @@ class Greetings extends React.Component<{}, GreetingState> {
       statusMessage: 'Default message',
       localStatus: 'Unknown',
       remoteStatus: 'Unknown',
+      localIp: 'Unknown',
+      remoteIp: 'Unknown',
     };
 
     ipcRenderer.on('shadowStatusUpdate', this.receiveData.bind(this));
@@ -28,6 +32,8 @@ class Greetings extends React.Component<{}, GreetingState> {
       statusMessage: args.statusMessage,
       localStatus: args.localStatus,
       remoteStatus: args.remoteStatus,
+      localIp: args.localIp,
+      remoteIp: args.remoteIp,
     });
   }
 
@@ -37,13 +43,13 @@ class Greetings extends React.Component<{}, GreetingState> {
         <HorizontalContainer>
           <DeviceStatus
             deviceType="headset"
-            ipAddress="192.168.1.1"
-            status="nominal"
+            ipAddress={this.state?.remoteIp}
+            status={this.state?.remoteStatus}
           ></DeviceStatus>
           <DeviceStatus
             deviceType="computer"
-            ipAddress="192.168.1.1"
-            status="nominal"
+            ipAddress={this.state?.localIp}
+            status={this.state?.localStatus}
           ></DeviceStatus>
         </HorizontalContainer>
         <Text>{this.state?.statusMessage}</Text>

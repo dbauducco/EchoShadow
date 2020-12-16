@@ -17,6 +17,12 @@ const DeviceStatus: React.FC<DeviceStatusProps> = ({
   let logoColor = 'grey';
   if (status == 'nominal') {
     logoColor = '#5DBB63';
+  } else if (status == 'warning') {
+    logoColor = '#F5D752';
+  } else if (status == 'error') {
+    logoColor = '#FF7961';
+  } else if (status == 'inactive') {
+    logoColor = '#4a4461';
   }
 
   return (

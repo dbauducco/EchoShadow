@@ -31,6 +31,9 @@ export const DeviceStatusContainer = styled.div`
 // Ah k
 
 export const DeviceStatusIP = styled.p`
-  color: grey;
-  font-size: 10px;
+  color: #8a84a3;
+  font-size: 15px;
+  background-color: #282436;
+  border-radius: 10px;
+  padding: 5px 5px 5px 5px;
 `;

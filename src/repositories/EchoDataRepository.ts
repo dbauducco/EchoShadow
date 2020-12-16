@@ -10,8 +10,8 @@ export default class EchoDataRepository {
 
   private DEFAULT_PORT = '6721';
 
-  constructor(private echoIpAddress: string) {
-    this.apiSessionUrl = `http://${this.echoIpAddress}:${this.DEFAULT_PORT}/session`;
+  constructor(public endpointIpAddress: string) {
+    this.apiSessionUrl = `http://${this.endpointIpAddress}:${this.DEFAULT_PORT}/session`;
   }
 
   /**

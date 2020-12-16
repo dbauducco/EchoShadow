@@ -67,7 +67,7 @@ let mainWindow: Electron.BrowserWindow | null;
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 450,
-    height: 200,
+    height: 240,
     frame: false,
     resizable: false,
     backgroundColor: '#191622',
@@ -76,7 +76,7 @@ function createWindow() {
       enableRemoteModule: true,
     },
   });
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:4000');

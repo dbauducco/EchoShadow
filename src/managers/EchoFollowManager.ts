@@ -2,7 +2,7 @@ import EchoDataRepository from '../repositories/EchoDataRepository';
 import { EchoSessionType, IEchoDataSnapshot } from '../types';
 import EchoInstanceClient from '../clients/EchoInstanceClient';
 import { log } from '../utilities/log';
-import { ipcMain, BrowserWindow } from 'electron';
+import { ipcMain, BrowserWindow, TouchBarScrubber, remote } from 'electron';
 
 export default class EchoFollowManager {
   // Settings for the EchoFollowManager
@@ -12,13 +12,18 @@ export default class EchoFollowManager {
     statusMessage: '',
     remoteStatus: '',
     localStatus: '',
+    localIp: '',
+    remoteIp: '',
   };
 
   constructor(
     public remoteDataRepository: EchoDataRepository,
     public localDataRepository: EchoDataRepository,
     public echoInstanceClient: EchoInstanceClient
-  ) {}
+  ) {
+    this.shadowStatus.localIp = localDataRepository.endpointIpAddress;
+    this.shadowStatus.remoteIp = remoteDataRepository.endpointIpAddress;
+  }
 
   public async handleFollowLogic(
     remoteDataSnapshot?: IEchoDataSnapshot,
@@ -29,6 +34,14 @@ export default class EchoFollowManager {
     const isEchoRunning = await this.echoInstanceClient.isRunning();
     log.debug('after echoInstanceClient.isRunning');
 
+    // ShadowStatus sets
+    this.shadowStatus.localStatus = 'nominal';
+    if (remoteDataSnapshot) {
+      this.shadowStatus.remoteStatus = 'nominal';
+    } else {
+      this.shadowStatus.remoteStatus = 'inactive';
+    }
+
     // Update status
     if (isEchoRunning)
       if (isEchoRunning && !localDataSnapshot) {
@@ -36,12 +49,15 @@ export default class EchoFollowManager {
           // Scenario 1.8
           log.info({ scenario: '1.8', action: 'none' });
           this.localTimedOutCounter++;
+          this.shadowStatus.localStatus = 'nominal';
+          this.shadowStatus.statusMessage = 'Launching Echo...';
           return undefined;
         }
         // Scenario 1.9
         log.info({ scenario: '1.9', action: 'close' });
         this.localTimedOutCounter = 0;
         await this.echoInstanceClient.close();
+        this.shadowStatus.localStatus = 'warning';
         this.shadowStatus.statusMessage = 'Relaunching Echo...';
         return undefined;
       }
@@ -67,7 +83,7 @@ export default class EchoFollowManager {
       // Scenario 1.1
       if (this.isJoinable(remoteDataSnapshot.sessionType)) {
         log.info({ scenario: '1.1', action: 'open' });
-        await this.echoInstanceClient.open(remoteDataSnapshot);
+        this.echoInstanceClient.open(remoteDataSnapshot);
         log.debug({ message: 'after echoInstanceClient.open' });
         this.shadowStatus.statusMessage = 'Launching Echo...';
         return undefined;
@@ -88,7 +104,7 @@ export default class EchoFollowManager {
       // Scenario 1.4 && Scenario 1.2
       log.info({ scenario: '1.4 && 1.2', action: 'close and open' });
       await this.echoInstanceClient.close();
-      await this.echoInstanceClient.open(remoteDataSnapshot);
+      this.echoInstanceClient.open(remoteDataSnapshot);
       this.shadowStatus.statusMessage = 'Relaunching Echo...';
       return undefined;
     }
