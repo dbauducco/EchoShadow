@@ -78,6 +78,9 @@ function createWindow() {
   });
   // mainWindow.webContents.openDevTools();
 
+  // Set the main window to stay ontop
+  mainWindow.setAlwaysOnTop(true, 'screen-saver');
+
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:4000');
   } else {
