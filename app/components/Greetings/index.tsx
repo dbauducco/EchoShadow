@@ -6,15 +6,17 @@ import DeviceStatus from '../DeviceStatus';
 import { DeviceStatusEnum, DeviceTypeEnum } from '../../types';
 
 const Greetings: React.FC = () => {
-  const [statusMessage, setStatusMessage] = React.useState('Default message');
+  const [statusMessage, setStatusMessage] = React.useState(
+    'Starting Up EchoShadow...'
+  );
   const [localStatus, setLocalStatus] = React.useState<DeviceStatusEnum>(
     DeviceStatusEnum.Inactive
   );
   const [remoteStatus, setRemoteStatus] = React.useState<DeviceStatusEnum>(
     DeviceStatusEnum.Inactive
   );
-  const [localIp, setLocalIp] = React.useState('Unknown');
-  const [remoteIp, setRemoteIp] = React.useState('Unknown');
+  const [localIp, setLocalIp] = React.useState('Loading');
+  const [remoteIp, setRemoteIp] = React.useState('Loading');
 
   React.useEffect(() => {
     ipcRenderer.on(
