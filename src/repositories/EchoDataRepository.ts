@@ -21,7 +21,9 @@ export default class EchoDataRepository {
    */
   public async getSnapshot(): Promise<IEchoDataSnapshot | undefined> {
     try {
-      const echoApiResult = await axios.get(this.apiSessionUrl);
+      const echoApiResult = await axios.get(this.apiSessionUrl, {
+        timeout: 500,
+      });
       const snapshotData = {
         sessionId: echoApiResult.data.sessionid,
         sessionType: this.sessionTypeByName(echoApiResult.data.match_type),
