@@ -22,7 +22,7 @@ export default class EchoDataRepository {
   public async getSnapshot(): Promise<IEchoDataSnapshot | undefined> {
     try {
       const echoApiResult = await axios.get(this.apiSessionUrl, {
-        timeout: 50,
+        timeout: 200,
       });
       const snapshotData = {
         sessionId: echoApiResult.data.sessionid,
