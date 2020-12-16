@@ -77,7 +77,9 @@
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
+    "@svgr/webpack": "^5.5.0",
     "axios": "^0.21.0",
+    "file-loader": "^6.2.0",
     "fs-extra": "^9.0.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

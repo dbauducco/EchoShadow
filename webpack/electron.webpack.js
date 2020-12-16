@@ -1,5 +1,4 @@
 const path = require('path');
-// const CopyPlugin = require('copy-webpack-plugin');
 
 const rootPath = path.resolve(__dirname, '..');
 
@@ -19,21 +18,23 @@ module.exports = {
           loader: 'babel-loader',
         },
       },
+      {
+        test: /\.(png|jp(e*)g|gif)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'images/[hash]-[name].[ext]',
+            },
+          },
+        ],
+      },
     ],
   },
   node: {
     __dirname: false,
   },
-  plugins: [
-    // new CopyPlugin({
-    //   patterns: [
-    //     {
-    //       from: './node_modules/node-process-windows/windows-console-app',
-    //       to: './windows-console-app',
-    //     },
-    //   ],
-    // }),
-  ],
+  plugins: [],
   output: {
     path: path.resolve(rootPath, 'dist'),
     filename: '[name].js',

@@ -1,7 +1,6 @@
 import React from 'react';
 import { TopRightButton } from './styles';
-const { remote } = require('electron');
-const { BrowserWindow } = remote;
+const { BrowserWindow } = require('electron').remote;
 
 // Function to close the EchoShadowWindow
 const closeEchoShadow = () => {
