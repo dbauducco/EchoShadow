@@ -2,17 +2,24 @@
 /** *********************************************************************
  ************************ECHO SHADOW CODE*******************************
  ********************************************************************** */
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, remote } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
   REDUX_DEVTOOLS,
 } from 'electron-devtools-installer';
-import { log, Config } from '../src/utilities';
-import EchoInstanceClient from '../src/clients/EchoInstanceClient';
+import { log, Config, EventLogger } from '../src/utilities';
+
+// Repository Imports
 import EchoDataRepository from '../src/repositories/EchoDataRepository';
-import EchoFollowManager from '../src/managers/EchoFollowManager';
+
+// Manager Imports
+import EchoVRManager from '../src/managers/EchoVRManager';
+import ShadowManager from '../src/managers/ShadowEventManager';
+import OBSManager from '../src/managers/OBSManager';
+import SpectatorManager from '../src/managers/SpectatorManager';
+import EchoDataEventManager from '../src/managers/EchoDataEventManager';
 
 /** *********************************************************************
  *(********************BOILERPLATE ELECTRON*****************************
@@ -26,7 +33,7 @@ const setup = async () => {
     throw new Error('Error initializing config');
   }
   log.info({ loadedConfig: config.options });
-  const echoInstanceClient = new EchoInstanceClient(config.options.echoPath);
+  const echoVRManager = new EchoVRManager(config.options.echoPath);
   const remoteEchoDataRepository = new EchoDataRepository(
     config.options.remoteApiIpAddress
   );
@@ -35,7 +42,7 @@ const setup = async () => {
   );
   return {
     log,
-    echoInstanceClient,
+    echoVRManager,
     remoteEchoDataRepository,
     localEchoDataRepository,
   };
@@ -44,16 +51,19 @@ const setup = async () => {
 const start = async () => {
   try {
     const {
-      echoInstanceClient,
+      echoVRManager,
       remoteEchoDataRepository,
       localEchoDataRepository,
     } = await setup();
-    const followManager = new EchoFollowManager(
-      remoteEchoDataRepository,
+    const eventLogger = new EventLogger();
+    const shadowManager = new ShadowManager();
+    const obsManager = new OBSManager();
+    const spectatorManager = new SpectatorManager(echoVRManager);
+    const echoDataEventManager = new EchoDataEventManager(
       localEchoDataRepository,
-      echoInstanceClient
+      remoteEchoDataRepository
     );
-    await followManager.startFollowing();
+    await echoDataEventManager.start();
   } catch (error) {
     log.error({
       message: 'unhandled exception',

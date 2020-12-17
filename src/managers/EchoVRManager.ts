@@ -1,15 +1,43 @@
-import { getProcessId, log } from '../utilities';
-import { EchoSessionType, IEchoDataSnapshot } from '../types';
-import EchoExeClient from './EchoExeClient';
+import { exec, getProcessId, log } from '../utilities';
+import {
+  EchoSessionType,
+  IEchoDataSnapshot,
+  IEchoMatchChangedEventData,
+} from '../types';
+import EchoVRClient from '../clients/EchoVRClient';
+import Events from '../utilities/Events';
 
-export default class EchoInstanceClient {
-  private exeClient: EchoExeClient;
-
+export default class EchoVRManager {
+  private echoVRClient: EchoVRClient;
   private currentInstanceProcessId: string | undefined;
 
   constructor(echoPath: string) {
-    this.exeClient = new EchoExeClient(echoPath);
+    this.echoVRClient = new EchoVRClient(echoPath);
+    Events.on('remoteJoinedMatch', this.remoteJoinedMatch.bind(this));
+    Events.on('remoteLeftMatch', this.remoteLeftMatch.bind(this));
   }
+
+  // Logic:
+  async remoteJoinedMatch(data: IEchoMatchChangedEventData) {
+    if (
+      this.currentInstanceProcessId &&
+      data.newLocalSnapshot &&
+      data.newRemoteSnapshot
+    ) {
+      if (data.newRemoteSnapshot.sessionId != data.newLocalSnapshot.sessionId) {
+        // We are gonna close the game first
+        this.close();
+      }
+    }
+    await this.open(data.newRemoteSnapshot);
+  }
+
+  async remoteLeftMatch(data: IEchoMatchChangedEventData) {
+    // Remote left the match. Let's close Echo
+    this.close();
+  }
+
+  //***********************************************************************************************/
 
   /**
    * Method to open EchoVR.exe with spectator stream automatically set. Using
@@ -18,15 +46,16 @@ export default class EchoInstanceClient {
    * @param snapshotData (Optional) The snapshotData for the match which to join. If not defined,
    * the game will open to a random public match.
    */
-  open = async (snapshotData?: IEchoDataSnapshot) => {
+  private open = async (snapshotData?: IEchoDataSnapshot) => {
     try {
       const sessionID = this.isJoinable(snapshotData)
         ? snapshotData?.sessionId
         : undefined;
-      await this.exeClient.open(sessionID);
-      log.debug({ message: 'after exeClient.open' });
+      Events.emit('localWillJoinMatch');
+      await this.echoVRClient.open(sessionID);
+      //log.debug({ message: 'after exeClient.open' });
       this.currentInstanceProcessId = await this.findEchoProcessId();
-      log.debug({ message: 'after EchoInstanceClient.findEchoProcessId' });
+      //log.debug({ message: 'after EchoInstanceClient.findEchoProcessId' });
     } catch (error) {
       log.error({
         message: 'error while opening echo',
@@ -41,9 +70,10 @@ export default class EchoInstanceClient {
    * Warning: If our current instance PID is undefined, it will close any and all intances
    * of EchoVR running on the computer, not only the instance that we opened.
    */
-  close = async () => {
+  private close = async () => {
     if (this.currentInstanceProcessId) {
-      await this.exeClient.close(this.currentInstanceProcessId);
+      Events.emit('localWillLeaveMatch');
+      await this.echoVRClient.close(this.currentInstanceProcessId);
       this.currentInstanceProcessId = undefined;
     }
   };

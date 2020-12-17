@@ -1,11 +1,15 @@
 import axios from 'axios';
-import { EchoSessionType, IEchoDataSnapshot } from '../types';
+import {
+  EchoSessionType,
+  IEchoDataRepository,
+  IEchoDataSnapshot,
+} from '../types';
 import { log } from '../utilities/log';
 
 // Necessary for electron
 axios.defaults.adapter = require('axios/lib/adapters/http');
 
-export default class EchoDataRepository {
+export default class EchoDataRepository implements IEchoDataRepository {
   private apiSessionUrl: string;
 
   private DEFAULT_PORT = '6721';
@@ -32,10 +36,15 @@ export default class EchoDataRepository {
       };
       return snapshotData;
     } catch (error) {
-      log.error({
-        description: 'Error retrieving snapshot',
-        error: error.message ? error.message : error,
-      });
+      // Messaged timed out
+      if (error.code == 'ECONNABORTED') {
+        // Message timed out
+      } else {
+        log.error({
+          description: 'Error retrieving snapshot',
+          error: error.message ? error.message : error,
+        });
+      }
       return undefined;
     }
   }

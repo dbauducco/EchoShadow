@@ -1,7 +1,7 @@
 import { log } from '../utilities/log';
 import { exec, killProcess } from '../utilities/utils';
 
-export default class EchoExeClient {
+export default class EchoVRClient {
   private SPECTATOR_FLAG = ' --spectatorstream';
 
   private LOBBY_FLAG = ' --lobbyid ';
@@ -22,7 +22,7 @@ export default class EchoExeClient {
     try {
       const openCommand = this.buildCommand(sessionID);
       // don't call await on exec or it will get hung up, just let it open at it's leisure
-      exec(openCommand);
+      await exec(openCommand);
       log.debug({ message: 'after EchoExeClient.open.exec' });
     } catch (error) {
       log.error({
