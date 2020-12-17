@@ -7,5 +7,6 @@ module.exports = {
   plugins: [
     '@babel/plugin-proposal-class-properties',
     '@babel/transform-runtime',
+    'babel-plugin-styled-components',
   ],
 };

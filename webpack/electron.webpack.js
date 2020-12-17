@@ -32,9 +32,8 @@ module.exports = {
     ],
   },
   node: {
-    __dirname: false,
+    __dirname: true,
   },
-  plugins: [],
   output: {
     path: path.resolve(rootPath, 'dist'),
     filename: '[name].js',

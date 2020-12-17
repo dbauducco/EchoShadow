@@ -5,11 +5,6 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import installExtension, {
-  REACT_DEVELOPER_TOOLS,
-  REDUX_DEVTOOLS,
-} from 'electron-devtools-installer';
-import * as ffi from 'ffi-napi';
 import { log, Config } from '../src/utilities';
 import EchoInstanceClient from '../src/clients/EchoInstanceClient';
 import EchoDataRepository from '../src/repositories/EchoDataRepository';
@@ -99,63 +94,11 @@ function createWindow() {
   });
 }
 
-const testFocus = () => {
-  const user32 = new ffi.Library('user32', {
-    GetTopWindow: ['long', ['long']],
-    FindWindowA: ['long', ['string', 'string']],
-    SetActiveWindow: ['long', ['long']],
-    SetForegroundWindow: ['bool', ['long']],
-    BringWindowToTop: ['bool', ['long']],
-    ShowWindow: ['bool', ['long', 'int']],
-    SwitchToThisWindow: ['void', ['long', 'bool']],
-    GetForegroundWindow: ['long', []],
-    AttachThreadInput: ['bool', ['int', 'long', 'bool']],
-    GetWindowThreadProcessId: ['int', ['long', 'int']],
-    SetWindowPos: [
-      'bool',
-      ['long', 'long', 'int', 'int', 'int', 'int', 'uint'],
-    ],
-    SetFocus: ['long', ['long']],
-  });
-
-  const kernel32 = new ffi.Library('Kernel32.dll', {
-    GetCurrentThreadId: ['int', []],
-  });
-
-  const winToSetOnTop = user32.FindWindowA(null, 'calculator');
-  const foregroundHWnd = user32.GetForegroundWindow();
-  const currentThreadId = kernel32.GetCurrentThreadId();
-  const windowThreadProcessId = user32.GetWindowThreadProcessId(
-    foregroundHWnd,
-    null
-  );
-  const showWindow = user32.ShowWindow(winToSetOnTop, 9);
-  const setWindowPos1 = user32.SetWindowPos(winToSetOnTop, -1, 0, 0, 0, 0, 3);
-  const setWindowPos2 = user32.SetWindowPos(winToSetOnTop, -2, 0, 0, 0, 0, 3);
-  const setForegroundWindow = user32.SetForegroundWindow(winToSetOnTop);
-  const attachThreadInput = user32.AttachThreadInput(
-    windowThreadProcessId,
-    currentThreadId,
-    0
-  );
-  const setFocus = user32.SetFocus(winToSetOnTop);
-  const setActiveWindow = user32.SetActiveWindow(winToSetOnTop);
-};
-
 app
   .on('ready', createWindow)
   .whenReady()
   .then(async () => {
-    if (process.env.NODE_ENV === 'development') {
-      installExtension(REACT_DEVELOPER_TOOLS)
-        .then(name => console.log(`Added Extension:  ${name}`))
-        .catch(err => console.log('An error occurred: ', err));
-      installExtension(REDUX_DEVTOOLS)
-        .then(name => console.log(`Added Extension:  ${name}`))
-        .catch(err => console.log('An error occurred: ', err));
-    }
     // start Echo Shadow
     await start();
-    testFocus();
   });
 app.allowRendererProcessReuse = true;
