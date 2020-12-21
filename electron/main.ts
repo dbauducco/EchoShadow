@@ -73,7 +73,7 @@ function createWindow() {
       enableRemoteModule: true,
     },
   });
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // Set the main window to stay ontop
   mainWindow.setAlwaysOnTop(true, 'screen-saver');
