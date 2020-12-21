@@ -84,6 +84,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-spinners-kit": "^1.9.1",
+    "robotjs": "^0.6.0",
     "styled-components": "^5.1.1",
     "winston": "^3.3.3"
   },

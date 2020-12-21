@@ -6,6 +6,7 @@ import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import { log, Config } from '../src/utilities';
+import * as utils from '../src/utilities/utils';
 import EchoInstanceClient from '../src/clients/EchoInstanceClient';
 import EchoDataRepository from '../src/repositories/EchoDataRepository';
 import EchoFollowManager from '../src/managers/EchoFollowManager';
@@ -98,6 +99,14 @@ app
   .on('ready', createWindow)
   .whenReady()
   .then(async () => {
+    const go = async () => {
+      await utils.sleep(3000);
+      await utils.focusWindow('Calculator');
+      await utils.keyboard.typeString('23+37=');
+    };
+
+    await go();
+
     // start Echo Shadow
     await start();
   });

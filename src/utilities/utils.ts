@@ -1,7 +1,9 @@
 import { exec as execNative } from 'child_process';
 import { promisify } from 'util';
 import * as ffi from 'ffi-napi';
-import KeyboardAction from './keyboard/keyboard-action.class';
+import * as robotjs from 'robotjs';
+
+const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 const exec = promisify(execNative);
 
@@ -25,7 +27,7 @@ const killProcess = async (processId: string) => {
   await exec(`taskkill /pid ${processId} /t`);
 };
 
-const focusWindow = (windowName: string) => {
+const focusWindow = async (windowName: string) => {
   const user32 = new ffi.Library('user32', {
     GetTopWindow: ['long', ['long']],
     FindWindowA: ['long', ['string', 'string']],
@@ -62,8 +64,10 @@ const focusWindow = (windowName: string) => {
   user32.AttachThreadInput(windowThreadProcessId, currentThreadId, 0);
   user32.SetFocus(winToSetOnTop);
   user32.SetActiveWindow(winToSetOnTop);
+
+  await sleep(3000);
 };
 
-const keyboard = new KeyboardAction();
+const keyboard = robotjs;
 
-export { exec, getProcessId, killProcess, focusWindow, keyboard };
+export { exec, getProcessId, killProcess, focusWindow, keyboard, sleep };
