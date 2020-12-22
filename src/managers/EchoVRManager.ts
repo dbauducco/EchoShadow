@@ -1,40 +1,77 @@
-import { exec, getProcessId, log } from '../utilities';
+import { getProcessId, log } from '../utilities';
 import {
   EchoSessionType,
   IEchoDataSnapshot,
-  IEchoMatchChangedEventData,
+  IEchoMatchData,
+  IEchoNewSnapshotEventData,
 } from '../types';
 import EchoVRClient from '../clients/EchoVRClient';
 import Events from '../utilities/Events';
+import { EventType } from '../types/EventType';
+import { ShadowStateType } from '../types/ShadowStateType';
 
 export default class EchoVRManager {
   private echoVRClient: EchoVRClient;
   private currentInstanceProcessId: string | undefined;
+  private isLoadingIntoMatch = false;
+
+  // Used for checking if the game is stuck
+  private undefinedAPICounter = 0;
 
   constructor(echoPath: string) {
     this.echoVRClient = new EchoVRClient(echoPath);
-    Events.on('remoteJoinedMatch', this.remoteJoinedMatch.bind(this));
-    Events.on('remoteLeftMatch', this.remoteLeftMatch.bind(this));
+    Events.on(EventType.RemoteJoinedMatch, this.remoteJoinedMatch.bind(this));
+    Events.on(EventType.RemoteLeftMatch, this.remoteLeftMatch.bind(this));
+    Events.on(
+      EventType.LocalIsUnsynced,
+      this.localIsUnsyncedWithRemote.bind(this)
+    );
+    Events.on(
+      EventType.LocalIsDisconnected,
+      this.localAPIIsUndefined.bind(this)
+    );
   }
 
   // Logic:
-  async remoteJoinedMatch(data: IEchoMatchChangedEventData) {
+  async remoteJoinedMatch(data: IEchoMatchData) {
     if (
       this.currentInstanceProcessId &&
-      data.newLocalSnapshot &&
-      data.newRemoteSnapshot
+      data.isLocalInMatch == false &&
+      data.isRemoteInMatch == true
     ) {
-      if (data.newRemoteSnapshot.sessionId != data.newLocalSnapshot.sessionId) {
-        // We are gonna close the game first
-        this.close();
-      }
+      // We are gonna close the game first
+      this.close();
     }
-    await this.open(data.newRemoteSnapshot);
+    await this.open(data);
   }
 
-  async remoteLeftMatch(data: IEchoMatchChangedEventData) {
+  async remoteLeftMatch(data: IEchoMatchData) {
     // Remote left the match. Let's close Echo
     this.close();
+  }
+
+  async localIsUnsyncedWithRemote(data: IEchoNewSnapshotEventData) {
+    // Ignore this event if we are currently loading into a match
+    if (this.isLoadingIntoMatch) return;
+
+    this.close();
+  }
+
+  async localAPIIsDefined() {
+    this.undefinedAPICounter = 0;
+    this.isLoadingIntoMatch = false;
+  }
+
+  async localAPIIsUndefined() {
+    if (await this.isRunning()) {
+      this.undefinedAPICounter++;
+      // If after 10 API calls, the result is still undefined but Echo is running,
+      // let's close Echo. Either Echo got stuck loading, or something else.
+      if (this.undefinedAPICounter > 4) {
+        this.close();
+        this.undefinedAPICounter = 0;
+      }
+    }
   }
 
   //***********************************************************************************************/
@@ -46,15 +83,19 @@ export default class EchoVRManager {
    * @param snapshotData (Optional) The snapshotData for the match which to join. If not defined,
    * the game will open to a random public match.
    */
-  private open = async (snapshotData?: IEchoDataSnapshot) => {
+  private open = async (matchData?: IEchoMatchData) => {
+    // Let's check first that we can join the snapshot
+    if (!matchData) {
+      return;
+    }
+
     try {
-      const sessionID = this.isJoinable(snapshotData)
-        ? snapshotData?.sessionId
-        : undefined;
-      Events.emit('localWillJoinMatch');
-      await this.echoVRClient.open(sessionID);
+      Events.emit(EventType.NewShadowState, ShadowStateType.JoiningRemote);
+      Events.emit(EventType.LocalWillJoinMatch);
+      this.isLoadingIntoMatch = true;
+      await this.echoVRClient.open(matchData.sessionID);
       //log.debug({ message: 'after exeClient.open' });
-      this.currentInstanceProcessId = await this.findEchoProcessId();
+      await this.syncPID();
       //log.debug({ message: 'after EchoInstanceClient.findEchoProcessId' });
     } catch (error) {
       log.error({
@@ -72,35 +113,19 @@ export default class EchoVRManager {
    */
   private close = async () => {
     if (this.currentInstanceProcessId) {
-      Events.emit('localWillLeaveMatch');
+      Events.emit(EventType.LocalWillLeaveMatch);
       await this.echoVRClient.close(this.currentInstanceProcessId);
       this.currentInstanceProcessId = undefined;
     }
   };
 
   /**
-   * Method to get the PID of the current instance of EchoVR.exe
-   */
-  private findEchoProcessId = async () => {
-    try {
-      const echoPid = await getProcessId('echovr.exe');
-      return echoPid;
-    } catch (error) {
-      log.error({
-        message: 'error while finding echo process id',
-        error: error.message || error,
-      });
-      throw error;
-    }
-  };
-
-  /**
    * Method to return wether or not a current EchoVR process is running
    */
-  isRunning = async () => {
+  private isRunning = async () => {
     try {
       await this.syncPID();
-      return this.currentInstanceProcessId !== undefined;
+      return this.currentInstanceProcessId != undefined;
     } catch (error) {
       log.error({
         message: 'error determining running state',
@@ -114,7 +139,7 @@ export default class EchoVRManager {
    * Method used in testing to sync the method
    */
   private syncPID = async () => {
-    this.currentInstanceProcessId = await this.findEchoProcessId();
+    this.currentInstanceProcessId = await this.echoVRClient.findPID();
   };
 
   private isJoinable = (session?: IEchoDataSnapshot) => {
@@ -127,4 +152,6 @@ export default class EchoVRManager {
       session.sessionType === EchoSessionType.Private_Arena_Match
     );
   };
+
+  private verifyUserLeft = () => {};
 }

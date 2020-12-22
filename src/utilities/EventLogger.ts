@@ -1,6 +1,7 @@
 import {
-  IEchoMatchChangedEventData,
-  IEchoSnapshotChangedEventData,
+  IEchoMatchData,
+  IEchoNewSnapshotEventData,
+  IEchoSnapshotOverviewsEventData,
 } from '../types';
 import { EventType } from '../types/EventType';
 import { log } from '../utilities';
@@ -23,68 +24,54 @@ export class EventLogger {
       EventType.LocalWillJoinMatch,
       this.logLocalWillJoinMatch.bind(this)
     );
-    Events.on(
-      EventType.LocalSnapshotChanged,
-      this.logLocalSnapshotChanged.bind(this)
-    );
-    Events.on(
-      EventType.RemoteSnapshotChanged,
-      this.logRemoteSnapshotChanged.bind(this)
-    );
+    Events.on(EventType.NewMatchData, this.logNewMatchData.bind(this));
   }
 
-  private logRemoteJoinedMatch(data: IEchoMatchChangedEventData) {
+  private logRemoteJoinedMatch(data: IEchoNewSnapshotEventData) {
     log.info({
       event: EventType.RemoteJoinedMatch,
       eventData: data,
     });
   }
 
-  private logRemoteLeftMatch(data: IEchoMatchChangedEventData) {
+  private logRemoteLeftMatch(data: IEchoNewSnapshotEventData) {
     log.info({
       event: EventType.RemoteLeftMatch,
       eventData: data,
     });
   }
 
-  private logLocalJoinedMatch(data: IEchoMatchChangedEventData) {
+  private logLocalJoinedMatch(data: IEchoNewSnapshotEventData) {
     log.info({
       event: EventType.LocalJoinedMatch,
       eventData: data,
     });
   }
 
-  private logLocalLeftMatch(data: IEchoMatchChangedEventData) {
+  private logLocalLeftMatch(data: IEchoNewSnapshotEventData) {
     log.info({
       event: EventType.LocalLeftMatch,
       eventData: data,
     });
   }
 
-  private logLocalWillLeaveMatch(data: IEchoMatchChangedEventData) {
+  private logLocalWillLeaveMatch() {
     log.info({
       event: EventType.LocalWillLeaveMatch,
-      eventData: data,
+      eventData: {},
     });
   }
 
-  private logLocalWillJoinMatch(data: IEchoMatchChangedEventData) {
+  private logLocalWillJoinMatch() {
     log.info({
       event: EventType.LocalWillJoinMatch,
-      eventData: data,
+      eventData: {},
     });
   }
 
-  private logLocalSnapshotChanged(data: IEchoSnapshotChangedEventData) {
+  private logNewMatchData(data: IEchoMatchData) {
     log.info({
-      event: EventType.LocalSnapshotChanged,
-      eventData: data,
-    });
-  }
-
-  private logRemoteSnapshotChanged(data: IEchoSnapshotChangedEventData) {
-    log.info({
-      event: EventType.RemoteSnapshotChanged,
+      event: EventType.NewMatchData,
       eventData: data,
     });
   }

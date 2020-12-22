@@ -1,18 +1,15 @@
 import {
   EchoSessionType,
   IEchoDataSnapshot,
-  IEchoMatchChangedEventData,
-  IEchoSnapshotChangedEventData,
+  IEchoSnapshotOverviewsEventData,
+  IEchoNewSnapshotEventData,
 } from '../types';
-import { log } from '../utilities/log';
 import Events from '../utilities/Events';
 import { EventType } from '../types/EventType';
+import { ShadowStateType } from '../types/ShadowStateType';
 
 export default class ShadowEventManager {
   WAIT_TIME_SECONDS = 5;
-  localTimedOutCounter = 0;
-  currentInterval: number | undefined = undefined;
-  currentData: IEchoMatchChangedEventData;
 
   constructor() {
     // Creating current data to be empty
@@ -22,15 +19,13 @@ export default class ShadowEventManager {
       oldRemoteSnapshot: undefined,
       oldLocalSnapshot: undefined,
     };
+    this.currentState = ShadowStateType.StartingUp;
 
-    Events.on(EventType.LocalSnapshotChanged, this.newLocalSnapshot.bind(this));
-    Events.on(
-      EventType.RemoteSnapshotChanged,
-      this.newRemoteSnapshot.bind(this)
-    );
+    Events.on(EventType.NewSnapshotData, this.checkSync.bind(this));
   }
 
-  public async newLocalSnapshot(snapshots: IEchoSnapshotChangedEventData) {
+  /*
+  public async newLocalSnapshot(snapshots: IEchoSingleSnapshotEventData) {
     this.currentData.newLocalSnapshot = snapshots.newSnapshot;
 
     // Check if local instance joined a match
@@ -54,12 +49,21 @@ export default class ShadowEventManager {
     }
 
     this.currentData.oldLocalSnapshot = snapshots.newSnapshot;
+    this.checkSync();
   }
 
-  public async newRemoteSnapshot(snapshots: IEchoSnapshotChangedEventData) {
+  public async newRemoteSnapshot(snapshots: IEchoSingleSnapshotEventData) {
     this.currentData.newRemoteSnapshot = snapshots.newSnapshot;
 
-    // Check if local instance joined a match
+    // Check if new shapshot is undefined
+    if (!this.currentData.newRemoteSnapshot) {
+      this.currentState = ShadowStateType.WaitingForRemoteData;
+    } // Check if new shapshot is not in match
+    else if (!this.inMatch(this.currentData.newRemoteSnapshot)) {
+      this.currentState = ShadowStateType.WaitingForRemoteMatch;
+    }
+
+    // Check if remote instance joined a match
     if (
       this.joinedANewMatch(
         this.currentData.oldRemoteSnapshot,
@@ -69,7 +73,7 @@ export default class ShadowEventManager {
       Events.emit(EventType.RemoteJoinedMatch, this.currentData);
     }
 
-    // Check if local instance left a match
+    // Check if remote instance left a match
     if (
       this.leftAMatch(
         this.currentData.oldRemoteSnapshot,
@@ -80,9 +84,24 @@ export default class ShadowEventManager {
     }
 
     this.currentData.oldRemoteSnapshot = snapshots.newSnapshot;
+    this.checkSync();
+  }*/
+
+  /** Sync Checkers **/
+  public checkSync(data: IEchoNewSnapshotEventData) {
+    // Check if local and remote are in matches
+    if (data.localSnapshot?.inMatch && data.remoteSnapshot?.inMatch)
+      if (data.localSnapshot.sessionId == data.remoteSnapshot.sessionId) {
+        // Our local instance is synced with the remote
+        Events.emit(EventType.LocalIsSynced, data);
+        Events.emit(EventType.NewShadowState, ShadowStateType.SyncedWithRemote);
+      } else {
+        // Our local instance is somehow unsycned with the remote
+        Events.emit(EventType.LocalIsUnsynced, data);
+      }
   }
 
-  /** State Change Checkers **/
+  /*
   private joinedANewMatch(
     oldSnapshot: IEchoDataSnapshot | undefined,
     newSnapshot: IEchoDataSnapshot | undefined
@@ -113,7 +132,6 @@ export default class ShadowEventManager {
     return false;
   }
 
-  /** General Helper Methods **/
   private inMatch(snapshot: IEchoDataSnapshot | undefined) {
     if (!snapshot) {
       return false;
@@ -128,4 +146,5 @@ export default class ShadowEventManager {
       sessionType === EchoSessionType.Private_Arena_Match
     );
   }
+  */
 }

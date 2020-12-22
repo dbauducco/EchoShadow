@@ -79,6 +79,7 @@
   "dependencies": {
     "@svgr/webpack": "^5.5.0",
     "axios": "^0.21.0",
+    "axios-retry": "^3.1.9",
     "file-loader": "^6.2.0",
     "fs-extra": "^9.0.1",
     "react": "^16.13.1",

@@ -1,5 +1,4 @@
-import { log } from '../utilities/log';
-import { exec, killProcess } from '../utilities/utils';
+import { getProcessId, log, exec, killProcess } from '../utilities/';
 
 export default class EchoVRClient {
   private SPECTATOR_FLAG = ' --spectatorstream';
@@ -22,7 +21,7 @@ export default class EchoVRClient {
     try {
       const openCommand = this.buildCommand(sessionID);
       // don't call await on exec or it will get hung up, just let it open at it's leisure
-      await exec(openCommand);
+      exec(openCommand);
       log.debug({ message: 'after EchoExeClient.open.exec' });
     } catch (error) {
       log.error({
@@ -61,6 +60,22 @@ export default class EchoVRClient {
         message: 'error while closing echo',
         error: error.message ? error.message : error,
       });
+    }
+  };
+
+  /**
+   * Method to get the PID of the current instance of EchoVR.exe
+   */
+  public findPID = async () => {
+    try {
+      const echoPid = await getProcessId('echovr.exe');
+      return echoPid;
+    } catch (error) {
+      log.error({
+        message: 'error while finding echo process id',
+        error: error.message || error,
+      });
+      throw error;
     }
   };
 }

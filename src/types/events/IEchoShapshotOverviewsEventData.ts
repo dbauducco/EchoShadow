@@ -1,6 +1,6 @@
 import { IEchoDataSnapshot } from '../IEchoDataSnapshot';
 
-export interface IEchoMatchChangedEventData {
+export interface IEchoSnapshotOverviewsEventData {
   oldRemoteSnapshot: IEchoDataSnapshot | undefined;
   newRemoteSnapshot: IEchoDataSnapshot | undefined;
   oldLocalSnapshot: IEchoDataSnapshot | undefined;

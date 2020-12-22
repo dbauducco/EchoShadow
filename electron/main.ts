@@ -17,9 +17,11 @@ import EchoDataRepository from '../src/repositories/EchoDataRepository';
 // Manager Imports
 import EchoVRManager from '../src/managers/EchoVRManager';
 import ShadowManager from '../src/managers/ShadowEventManager';
+import MatchEventManager from '../src/managers/MatchEventManager';
 import OBSManager from '../src/managers/OBSManager';
 import SpectatorManager from '../src/managers/SpectatorManager';
 import EchoDataEventManager from '../src/managers/EchoDataEventManager';
+import UIUpdaterMananger from '../src/managers/UIUpdaterManager';
 
 /** *********************************************************************
  *(********************BOILERPLATE ELECTRON*****************************
@@ -28,23 +30,25 @@ import EchoDataEventManager from '../src/managers/EchoDataEventManager';
 const setup = async () => {
   const config = new Config();
   await config.init();
-  if (!config.options) {
+  const configData = config.options;
+  if (!configData) {
     log.error({ message: 'Error initializing config' });
     throw new Error('Error initializing config');
   }
-  log.info({ loadedConfig: config.options });
-  const echoVRManager = new EchoVRManager(config.options.echoPath);
+  log.info({ loadedConfig: configData });
+  const echoVRManager = new EchoVRManager(configData.echoPath);
   const remoteEchoDataRepository = new EchoDataRepository(
-    config.options.remoteApiIpAddress
+    configData.remoteApiIpAddress
   );
   const localEchoDataRepository = new EchoDataRepository(
-    config.options.localApiIpAddress
+    configData.localApiIpAddress
   );
   return {
     log,
     echoVRManager,
     remoteEchoDataRepository,
     localEchoDataRepository,
+    configData,
   };
 };
 
@@ -54,11 +58,14 @@ const start = async () => {
       echoVRManager,
       remoteEchoDataRepository,
       localEchoDataRepository,
+      configData,
     } = await setup();
     const eventLogger = new EventLogger();
     const shadowManager = new ShadowManager();
     const obsManager = new OBSManager();
+    const uiUpdaterMananger = new UIUpdaterMananger(configData);
     const spectatorManager = new SpectatorManager(echoVRManager);
+    const matchEventManger = new MatchEventManager(localEchoDataRepository);
     const echoDataEventManager = new EchoDataEventManager(
       localEchoDataRepository,
       remoteEchoDataRepository

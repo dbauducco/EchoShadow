@@ -1,18 +1,18 @@
 # Events
 
-## remoteJoinedMatch [IEchoMatchChangedEventData]
+## remoteJoinedMatch [IEchoMatchData]
 
     Event is called when the remote joins the match
 
-## remoteLeftMatch [IEchoMatchChangedEventData]
+## remoteLeftMatch [IEchoMatchData]
 
     Event is called when the remote leaves the match
 
-## localJoinedMatch [IEchoMatchChangedEventData]
+## localJoinedMatch [IEchoMatchData]
 
     Event is called when local has joined a match
 
-## localLeftMatch [IEchoMatchChangedEventData]
+## localLeftMatch [IEchoMatchData]
 
     Event is called when local has left a match
 
@@ -24,6 +24,18 @@
 
     Event is called before local will join a match
 
-## localSnapshotChanged [IEchoSnapshotChangedEventData]
+## newSnapshotInformation
 
-## remoteSnapshotChanged [IEchoSnapshotChangedEventData]
+## localIsConnected []
+
+## localIsDisconnected []
+
+## remoteIsConnected []
+
+## remoteIsDisconnected []
+
+## localIsSynced [IEchoNewSnapshotEventData]
+
+## localIsUnsynced [IEchoNewSnapshotEventData]
+
+## newShadowState [ShadowStateType]
