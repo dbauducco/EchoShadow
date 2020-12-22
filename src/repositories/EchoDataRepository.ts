@@ -1,18 +1,20 @@
-import axios, { AxiosAdapter, AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
+import axiosRetry, { isNetworkOrIdempotentRequestError } from 'axios-retry';
 import {
   EchoSessionType,
   IEchoDataRepository,
   IEchoDataSnapshot,
 } from '../types';
 import { log } from '../utilities/log';
-import axiosRetry, { isNetworkOrIdempotentRequestError } from 'axios-retry';
 
 // Necessary for electron
 axios.defaults.adapter = require('axios/lib/adapters/http');
 
 export default class EchoDataRepository implements IEchoDataRepository {
   private apiSessionUrl: string;
+
   private deviceAPI: AxiosInstance;
+
   private DEFAULT_PORT = '6721';
 
   constructor(private endpointIpAddress: string) {
@@ -51,13 +53,13 @@ export default class EchoDataRepository implements IEchoDataRepository {
       snapshotData.inMatch = this.isInMatch(snapshotData.sessionType);
       return snapshotData;
     } catch (error) {
-      if (error.code == 'ECONNABORTED') {
+      if (error.code === 'ECONNABORTED') {
         // Message timed out
         // log.error({
         //   networkError: 'timed out',
         //   ip: this.endpointIpAddress,
         // });
-      } else if (error.code == 'ECONNREFUSED') {
+      } else if (error.code === 'ECONNREFUSED') {
         // log.error({
         //   networkError: 'refused to connect',
         //   ip: this.endpointIpAddress,

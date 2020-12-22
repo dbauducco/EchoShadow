@@ -3,13 +3,12 @@ import {
   IEchoDataRepository,
   IEchoDataSnapshot,
   IEchoNewSnapshotEventData,
-  IEchoSnapshotOverviewsEventData,
+  IEchoMatchData,
+  EventType,
 } from '../types';
 import Events from '../utilities/Events';
-import { IEchoMatchData, EventType } from '../types';
-import { isRetryableError } from 'axios-retry';
 
-export default class ShadowEventManager {
+export default class MatchEventManager {
   // Storing the current match state
   currentMatchData: IEchoMatchData | undefined;
 

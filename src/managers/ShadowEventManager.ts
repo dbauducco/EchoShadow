@@ -12,15 +12,6 @@ export default class ShadowEventManager {
   WAIT_TIME_SECONDS = 5;
 
   constructor() {
-    // Creating current data to be empty
-    this.currentData = {
-      newRemoteSnapshot: undefined,
-      newLocalSnapshot: undefined,
-      oldRemoteSnapshot: undefined,
-      oldLocalSnapshot: undefined,
-    };
-    this.currentState = ShadowStateType.StartingUp;
-
     Events.on(EventType.NewSnapshotData, this.checkSync.bind(this));
   }
 
@@ -85,9 +76,9 @@ export default class ShadowEventManager {
 
     this.currentData.oldRemoteSnapshot = snapshots.newSnapshot;
     this.checkSync();
-  }*/
+  } */
 
-  /** Sync Checkers **/
+  /** Sync Checkers * */
   public checkSync(data: IEchoNewSnapshotEventData) {
     // Check if local and remote are in matches
     if (data.localSnapshot?.inMatch && data.remoteSnapshot?.inMatch)
