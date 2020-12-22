@@ -20,6 +20,14 @@ export class EventLogger {
       this.logLocalWillJoinMatch.bind(this)
     );
     Events.on(EventType.NewMatchData, this.logNewMatchData.bind(this));
+    Events.on(EventType.NewSnapshotData, this.logNewSnapshotData.bind(this));
+  }
+
+  private logNewSnapshotData(data: IEchoNewSnapshotEventData) {
+    log.info({
+      event: EventType.NewSnapshotData,
+      eventData: data,
+    });
   }
 
   private logRemoteJoinedMatch(data: IEchoNewSnapshotEventData) {
