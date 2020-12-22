@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "dev": "npm-run-all -p dev:react electron:serve",
-    "dev:electron": "cross-env NODE_ENV=development tsc && npm run start:electron",
+    "dev:electron": "tsc && cross-env NODE_ENV=development npm run start:electron",
     "dev:react": "cross-env NODE_ENV=development webpack serve --config webpack/react.webpack.js --mode development",
     "electron:serve": "wait-on http-get://localhost:4000/ && npm run dev:electron",
     "start:electron": "electron .",

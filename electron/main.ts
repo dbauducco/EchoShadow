@@ -79,7 +79,7 @@ function createWindow() {
 
   // Set the main window to stay ontop
   mainWindow.setAlwaysOnTop(true, 'screen-saver');
-
+  console.log({ env: process.env.NODE_ENV });
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:4000');
   } else {
