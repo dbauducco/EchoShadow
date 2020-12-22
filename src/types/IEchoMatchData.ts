@@ -7,4 +7,6 @@ export interface IEchoMatchData {
   sessionID: string;
   remoteName: string;
   localName: string;
+  remoteGameIndex: number;
+  discPosition: number[];
 }

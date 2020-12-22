@@ -5,7 +5,7 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { log, Config, EventLogger } from '../src/utilities';
+import { log, Config, EventLogger, focusWindow } from '../src/utilities';
 
 // Repository Imports
 import EchoDataRepository from '../src/repositories/EchoDataRepository';

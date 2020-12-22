@@ -1,3 +1,4 @@
+import { TouchBarScrubber } from 'electron';
 import {
   EchoSessionType,
   IEchoDataRepository,
@@ -15,7 +16,8 @@ export default class MatchEventManager {
   constructor(private localDataRepository: IEchoDataRepository) {
     // Our current match is undefined
 
-    Events.on(EventType.NewSnapshotData, this.newSnapshotData.bind(this));
+    // Events.on(EventType.NewSnapshotData, this.newSnapshotData.bind(this));
+    Events.on(EventType.NewSnapshotData, this.testNewSnapshotData.bind(this));
   }
 
   private newSnapshotData(data: IEchoNewSnapshotEventData) {
@@ -32,6 +34,8 @@ export default class MatchEventManager {
         isRemoteInMatch: false,
         remoteName: '',
         localName: '',
+        remoteGameIndex: -1,
+        discPosition: [0, 0, 0],
       };
     }
 
@@ -60,7 +64,10 @@ export default class MatchEventManager {
       if (newRemoteStatus) {
         // Remote joined the match
         this.currentMatchData.remoteName =
-          data.remoteSnapshot?.clientName || '';
+          data.remoteSnapshot!.clientName || '';
+        // Finding remote player's game index
+
+        // Emitting the event
         Events.emit(EventType.RemoteJoinedMatch, this.currentMatchData);
       } else {
         // Remote left the match
@@ -102,6 +109,32 @@ export default class MatchEventManager {
       setTimeout(this.pingLocal.bind(this), 0.1 * 1000);
   }
 
+  // ********** TESTING ***********/
+  private testNewSnapshotData(data: IEchoNewSnapshotEventData) {
+    if (!this.currentMatchData && data.localSnapshot) {
+      this.currentMatchData = {
+        sessionType: EchoSessionType.Arena_Match,
+        sessionID: '',
+        remoteName: 'SnowyBlue',
+        remoteGameIndex: this.getIndexOfPlayer(data.localSnapshot, 'SnowyBlue'),
+        isRemoteInMatch: true,
+        isLocalInMatch: true,
+        localName: '',
+        discPosition: [0, 0, 0],
+      };
+      Events.emit(EventType.TestLocalJoinedMatch, this.currentMatchData);
+      this.testPingLocal();
+    }
+  }
+
+  private async testPingLocal() {
+    const data = await this.localDataRepository.getFullSnapshot();
+    this.currentMatchData!.discPosition = data.disc.position;
+    Events.emit(EventType.TestNewMatchData, this.currentMatchData);
+    setTimeout(this.testPingLocal.bind(this), 0.1 * 1000);
+  }
+
+  // **** HELPER METHODS **** //
   private checkInMatch(
     sourceData: IEchoDataSnapshot | undefined,
     sourceName: string,
@@ -128,5 +161,18 @@ export default class MatchEventManager {
       alternateData.orangeTeamMembers.indexOf(sourceName) > -1 ||
       alternateData.spectatorMembers.indexOf(sourceName) > -1
     );
+  }
+
+  private getIndexOfPlayer(snapshot: IEchoDataSnapshot, name: string) {
+    const blueIndex = snapshot.blueTeamMembers.indexOf(name);
+    const orangeIndex = snapshot.orangeTeamMembers.indexOf(name);
+
+    if (blueIndex != -1) {
+      return blueIndex + 6;
+    } else if (orangeIndex != -1) {
+      return orangeIndex + 1;
+    } else {
+      return -1;
+    }
   }
 }

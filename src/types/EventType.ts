@@ -14,4 +14,6 @@ export enum EventType {
   LocalIsUnsynced = 'localIsUnsynced',
   NewShadowState = 'newShadowState',
   NewMatchData = 'newMatchData',
+  TestNewMatchData = 'testNewMatchData',
+  TestLocalJoinedMatch = 'testLocalJoinedMatch',
 }

@@ -82,7 +82,7 @@ export default class EchoDataRepository implements IEchoDataRepository {
   public async getFullSnapshot(): Promise<any | undefined> {
     try {
       const echoApiResult = await axios.get(this.apiSessionUrl);
-      return echoApiResult;
+      return echoApiResult.data;
     } catch (error) {
       log.error({
         description: 'Error retrieving full snapshot',
