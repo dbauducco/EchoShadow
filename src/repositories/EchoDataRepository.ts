@@ -163,7 +163,9 @@ export default class EchoDataRepository implements IEchoDataRepository {
    * Helper method to get names for a team
    */
   private getNames(listOfPlayers: any): string[] {
-    if (listOfPlayers == undefined) return [];
+    if (!listOfPlayers) {
+      return [];
+    }
 
     return listOfPlayers.map((player: { name: string }) => player.name);
   }

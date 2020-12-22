@@ -54,12 +54,13 @@ export default class MatchEventManager {
     );
 
     // Detect a change in remote status
-    if (this.currentMatchData.isRemoteInMatch != newRemoteStatus) {
+    if (this.currentMatchData.isRemoteInMatch !== newRemoteStatus) {
       this.currentMatchData.isRemoteInMatch = newRemoteStatus;
 
       if (newRemoteStatus) {
         // Remote joined the match
-        this.currentMatchData.remoteName = data.remoteSnapshot!.clientName;
+        this.currentMatchData.remoteName =
+          data.remoteSnapshot?.clientName || '';
         Events.emit(EventType.RemoteJoinedMatch, this.currentMatchData);
       } else {
         // Remote left the match
@@ -68,12 +69,12 @@ export default class MatchEventManager {
     }
 
     // Detect a change in local status
-    if (this.currentMatchData.isLocalInMatch != newLocalStatus) {
+    if (this.currentMatchData.isLocalInMatch !== newLocalStatus) {
       this.currentMatchData.isLocalInMatch = newLocalStatus;
 
       if (newLocalStatus) {
         // Local joined the match
-        this.currentMatchData.localName = data.localSnapshot!.clientName;
+        this.currentMatchData.localName = data.localSnapshot?.clientName || '';
         Events.emit(EventType.LocalJoinedMatch, this.currentMatchData);
         this.pingLocal();
       } else {
@@ -108,7 +109,7 @@ export default class MatchEventManager {
   ) {
     // Our source has data, we can easily check if they are in the match or not
     if (sourceData) {
-      return sourceData.sessionId == this.currentMatchData!.sessionID;
+      return sourceData.sessionId === this.currentMatchData?.sessionID;
     }
 
     // ---------------------

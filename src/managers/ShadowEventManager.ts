@@ -82,7 +82,7 @@ export default class ShadowEventManager {
   public checkSync(data: IEchoNewSnapshotEventData) {
     // Check if local and remote are in matches
     if (data.localSnapshot?.inMatch && data.remoteSnapshot?.inMatch)
-      if (data.localSnapshot.sessionId == data.remoteSnapshot.sessionId) {
+      if (data.localSnapshot.sessionId === data.remoteSnapshot.sessionId) {
         // Our local instance is synced with the remote
         Events.emit(EventType.LocalIsSynced, data);
         Events.emit(EventType.NewShadowState, ShadowStateType.SyncedWithRemote);
