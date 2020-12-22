@@ -1,17 +1,31 @@
-import axios from 'axios';
-import { EchoSessionType, IEchoDataSnapshot } from '../types';
+import axios, { AxiosAdapter, AxiosInstance } from 'axios';
+import {
+  EchoSessionType,
+  IEchoDataRepository,
+  IEchoDataSnapshot,
+} from '../types';
 import { log } from '../utilities/log';
+import axiosRetry, { isNetworkOrIdempotentRequestError } from 'axios-retry';
 
 // Necessary for electron
 axios.defaults.adapter = require('axios/lib/adapters/http');
 
-export default class EchoDataRepository {
+export default class EchoDataRepository implements IEchoDataRepository {
   private apiSessionUrl: string;
-
+  private deviceAPI: AxiosInstance;
   private DEFAULT_PORT = '6721';
 
-  constructor(public endpointIpAddress: string) {
+  constructor(private endpointIpAddress: string) {
     this.apiSessionUrl = `http://${this.endpointIpAddress}:${this.DEFAULT_PORT}/session`;
+    this.deviceAPI = axios.create({ baseURL: this.apiSessionUrl });
+    axiosRetry(this.deviceAPI, {
+      retries: 3,
+      retryDelay: axiosRetry.exponentialDelay,
+      shouldResetTimeout: true,
+      retryCondition: e => {
+        return isNetworkOrIdempotentRequestError(e);
+      },
+    });
   }
 
   /**
@@ -21,21 +35,39 @@ export default class EchoDataRepository {
    */
   public async getSnapshot(): Promise<IEchoDataSnapshot | undefined> {
     try {
-      const echoApiResult = await axios.get(this.apiSessionUrl, {
-        timeout: 200,
+      const echoApiResult = await this.deviceAPI.get('', {
+        timeout: 3000,
       });
-      const snapshotData = {
+      const snapshotData: IEchoDataSnapshot = {
         sessionId: echoApiResult.data.sessionid,
         sessionType: this.sessionTypeByName(echoApiResult.data.match_type),
         clientName: echoApiResult.data.client_name,
-        clientIndexId: this.getIndexOfPlayer(echoApiResult),
+        blueTeamMembers: this.getNames(echoApiResult.data.teams[0].players),
+        orangeTeamMembers: this.getNames(echoApiResult.data.teams[1].players),
+        spectatorMembers: this.getNames(echoApiResult.data.teams[2].players),
+        inMatch: false, // Overriden in next line
       };
+      // Actually set in match:
+      snapshotData.inMatch = this.isInMatch(snapshotData.sessionType);
       return snapshotData;
     } catch (error) {
-      log.error({
-        description: 'Error retrieving snapshot',
-        error: error.message ? error.message : error,
-      });
+      if (error.code == 'ECONNABORTED') {
+        // Message timed out
+        // log.error({
+        //   networkError: 'timed out',
+        //   ip: this.endpointIpAddress,
+        // });
+      } else if (error.code == 'ECONNREFUSED') {
+        // log.error({
+        //   networkError: 'refused to connect',
+        //   ip: this.endpointIpAddress,
+        // });
+      } else {
+        // log.error({
+        //   description: 'Error retrieving snapshot',
+        //   error: error.message ? error.message : error,
+        // });
+      }
       return undefined;
     }
   }
@@ -113,5 +145,24 @@ export default class EchoDataRepository {
       return EchoSessionType.Lobby;
     }
     return EchoSessionType.Unknown;
+  }
+
+  /**
+   * Helper method to check if the snapshot is from a match
+   */
+  private isInMatch(sessionType: EchoSessionType) {
+    return (
+      sessionType === EchoSessionType.Arena_Match ||
+      sessionType === EchoSessionType.Private_Arena_Match
+    );
+  }
+
+  /**
+   * Helper method to get names for a team
+   */
+  private getNames(listOfPlayers: any): string[] {
+    if (listOfPlayers == undefined) return [];
+
+    return listOfPlayers.map((player: { name: string }) => player.name);
   }
 }

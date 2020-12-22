@@ -5,11 +5,20 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { log, Config } from '../src/utilities';
+import { log, Config, EventLogger } from '../src/utilities';
 import * as utils from '../src/utilities/utils';
-import EchoInstanceClient from '../src/clients/EchoInstanceClient';
+
+// Repository Imports
 import EchoDataRepository from '../src/repositories/EchoDataRepository';
-import EchoFollowManager from '../src/managers/EchoFollowManager';
+
+// Manager Imports
+import EchoVRManager from '../src/managers/EchoVRManager';
+import ShadowManager from '../src/managers/ShadowEventManager';
+import MatchEventManager from '../src/managers/MatchEventManager';
+import OBSManager from '../src/managers/OBSManager';
+import SpectatorManager from '../src/managers/SpectatorManager';
+import EchoDataEventManager from '../src/managers/EchoDataEventManager';
+import UIUpdaterMananger from '../src/managers/UIUpdaterManager';
 
 /** *********************************************************************
  *(********************BOILERPLATE ELECTRON*****************************
@@ -18,42 +27,50 @@ import EchoFollowManager from '../src/managers/EchoFollowManager';
 const setup = async () => {
   const config = new Config();
   await config.init();
-  if (!config.options) {
+  const configData = config.options;
+  if (!configData) {
     log.error({ message: 'Error initializing config' });
     throw new Error('Error initializing config');
   }
-  log.info({ loadedConfig: config.options });
-  const echoInstanceClient = new EchoInstanceClient(config.options.echoPath);
+  log.info({ loadedConfig: configData });
+  const echoVRManager = new EchoVRManager(configData.echoPath);
   const remoteEchoDataRepository = new EchoDataRepository(
-    config.options.remoteApiIpAddress
+    configData.remoteApiIpAddress
   );
   const localEchoDataRepository = new EchoDataRepository(
-    config.options.localApiIpAddress
+    configData.localApiIpAddress
   );
   return {
-    config,
     log,
-    echoInstanceClient,
+    echoVRManager,
     remoteEchoDataRepository,
     localEchoDataRepository,
+    configData,
   };
 };
 
 const start = async () => {
   try {
     const {
-      config,
-      echoInstanceClient,
+      echoVRManager,
       remoteEchoDataRepository,
       localEchoDataRepository,
+      configData,
     } = await setup();
-    const followManager = new EchoFollowManager(
-      remoteEchoDataRepository,
+    const eventSubscribers = [
+      new EventLogger(),
+      new ShadowManager(),
+      new OBSManager(),
+      new UIUpdaterMananger(configData),
+      new SpectatorManager(echoVRManager),
+      new MatchEventManager(localEchoDataRepository),
+    ];
+    const echoDataEventManager = new EchoDataEventManager(
       localEchoDataRepository,
-      echoInstanceClient
+      remoteEchoDataRepository
     );
-    await followManager.startFollowing();
-    return config;
+    await echoDataEventManager.start();
+    return configData;
   } catch (error) {
     log.error({
       message: 'unhandled exception',
@@ -111,8 +128,8 @@ app
     await go();
 
     // start Echo Shadow
-    const config = await start();
-    if (config?.options?.debugUI) {
+    const configOptions = await start();
+    if (configOptions?.debugUI) {
       mainWindow?.webContents.openDevTools();
     }
   });
