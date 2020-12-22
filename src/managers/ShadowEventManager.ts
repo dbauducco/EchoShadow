@@ -12,15 +12,6 @@ export default class ShadowEventManager {
   WAIT_TIME_SECONDS = 5;
 
   constructor() {
-    // Creating current data to be empty
-    this.currentData = {
-      newRemoteSnapshot: undefined,
-      newLocalSnapshot: undefined,
-      oldRemoteSnapshot: undefined,
-      oldLocalSnapshot: undefined,
-    };
-    this.currentState = ShadowStateType.StartingUp;
-
     Events.on(EventType.NewSnapshotData, this.checkSync.bind(this));
   }
 
