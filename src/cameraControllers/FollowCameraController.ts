@@ -1,12 +1,15 @@
-import { IEchoMatchData } from '../types';
-import { IEchoCameraController } from '../types/IEchoCameraController';
-import * as robotjs from 'robotjs';
+import { IEchoMatchData, IEchoCameraController } from '../types';
+import { keyboard, Key } from '../utilities/utils';
 
 export default class FollowCameraController implements IEchoCameraController {
   // Default
-  getDefault(matchData: IEchoMatchData, keyboard: typeof robotjs) {
-    keyboard.keyTap('' + matchData.remoteGameIndex, 'shift');
+  getDefault(matchData: IEchoMatchData) {
+    const remoteGameIndexKey = (Key[
+      `Num${matchData.remoteGameIndex}` as any
+    ] as unknown) as Key;
+    keyboard.click(remoteGameIndexKey, Key.LeftShift);
   }
+
   // Updating
-  update(matchData: IEchoMatchData, keyboard: typeof robotjs) {}
+  update(matchData: IEchoMatchData) {}
 }

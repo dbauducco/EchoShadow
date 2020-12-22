@@ -1,4 +1,3 @@
-import { TouchBarScrubber } from 'electron';
 import {
   EchoSessionType,
   IEchoDataRepository,
@@ -129,7 +128,9 @@ export default class MatchEventManager {
 
   private async testPingLocal() {
     const data = await this.localDataRepository.getFullSnapshot();
-    this.currentMatchData!.discPosition = data.disc.position;
+    if (this.currentMatchData) {
+      this.currentMatchData.discPosition = data.disc.position;
+    }
     Events.emit(EventType.TestNewMatchData, this.currentMatchData);
     setTimeout(this.testPingLocal.bind(this), 0.1 * 1000);
   }
@@ -167,12 +168,12 @@ export default class MatchEventManager {
     const blueIndex = snapshot.blueTeamMembers.indexOf(name);
     const orangeIndex = snapshot.orangeTeamMembers.indexOf(name);
 
-    if (blueIndex != -1) {
+    if (blueIndex !== -1) {
       return blueIndex + 6;
-    } else if (orangeIndex != -1) {
-      return orangeIndex + 1;
-    } else {
-      return -1;
     }
+    if (orangeIndex !== -1) {
+      return orangeIndex + 1;
+    }
+    return -1;
   }
 }

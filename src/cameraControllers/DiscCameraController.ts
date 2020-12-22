@@ -1,30 +1,26 @@
-import { IEchoMatchData } from '../types';
-import { IEchoCameraController } from '../types/IEchoCameraController';
-import * as robotjs from 'robotjs';
-import { TouchBarScrubber } from 'electron';
+import { IEchoMatchData, IEchoCameraController } from '../types';
+import { keyboard } from '../utilities/utils';
 
 export default class DiscCameraController implements IEchoCameraController {
   lastKey = '';
+
   // Default
-  getDefault(matchData: IEchoMatchData, keyboard: typeof robotjs) {
+  getDefault(matchData: IEchoMatchData) {
     return undefined;
   }
+
   // Updating
-  update(matchData: IEchoMatchData, keyboard: typeof robotjs) {
+  update(matchData: IEchoMatchData) {
     const discPositionWidth = matchData.discPosition[2];
     if (discPositionWidth > 2) {
       // Orange side
-      this.type('4', keyboard);
+      keyboard.type('4');
     } else if (discPositionWidth < -2) {
       // Blue side
-      this.type('7', keyboard);
+      keyboard.type('7');
     } else {
       // Middle
-      this.type('5', keyboard);
+      keyboard.type('5');
     }
-  }
-
-  private type(key: string, keyboard: typeof robotjs) {
-    keyboard.keyTap(key);
   }
 }

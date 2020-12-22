@@ -1,13 +1,11 @@
 import EchoInstanceClient from './EchoVRManager';
 import Events from '../utilities/Events';
-import { focusWindow, keyboard } from '../utilities/utils';
 import { IEchoCameraController } from '../types/IEchoCameraController';
 import DoNothingCameraController from '../cameraControllers/DoNothingCameraController';
 import { EventType, IEchoMatchData } from '../types';
 import SidelineCameraController from '../cameraControllers/SidelineCameraController';
 import POVCameraController from '../cameraControllers/POVCameraController';
 import FollowCameraController from '../cameraControllers/FollowCameraController';
-import { keyTap } from 'robotjs';
 import DiscCameraController from '../cameraControllers/DiscCameraController';
 
 export default class SpectatorManager {
@@ -28,8 +26,8 @@ export default class SpectatorManager {
   }
 
   public async setDefaultSpectatorOption(matchData: IEchoMatchData) {
-    //await keyboard.keyTap('u');
-    this.cameraController.getDefault(matchData, keyboard);
+    // await keyboard.keyTap('u');
+    this.cameraController.getDefault(matchData);
   }
 
   public async updateCamera(matchData: IEchoMatchData) {
@@ -37,18 +35,6 @@ export default class SpectatorManager {
       return;
     }
 
-    this.cameraController.update(matchData, keyboard);
-  }
-
-  private async typeKeys(keysToType: { key: string; modifier?: string }[]) {
-    //await focusWindow('Echo VR');
-    for (const entry of keysToType) {
-      console.log('Typing key!!! ' + entry.key);
-      if (entry.modifier) {
-        await keyboard.keyTap(entry.key, entry.modifier);
-      } else {
-        await keyboard.keyTap(entry.key);
-      }
-    }
+    this.cameraController.update(matchData);
   }
 }

@@ -1,10 +1,10 @@
-import { IEchoMatchData } from '../types';
-import { IEchoCameraController } from '../types/IEchoCameraController';
-import * as robotjs from 'robotjs';
+import { IEchoMatchData, IEchoCameraController } from '../types';
+import { keyboard } from '../utilities';
 
 export default class SidelineCameraController implements IEchoCameraController {
-  update(matchData: IEchoMatchData, keyboard: typeof robotjs) {}
-  getDefault(matchData: IEchoMatchData, keyboard: typeof robotjs) {
-    robotjs.keyTap('s');
+  update(matchData: IEchoMatchData) {}
+
+  getDefault(matchData: IEchoMatchData) {
+    keyboard.type('s');
   }
 }

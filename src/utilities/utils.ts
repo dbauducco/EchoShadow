@@ -1,7 +1,8 @@
 import { exec as execNative } from 'child_process';
 import { promisify } from 'util';
 import * as ffi from 'ffi-napi';
-import * as robotjs from 'robotjs';
+import KeyboardAction from './keyboard/keyboard-action.class';
+import { Key } from './keyboard/key.enum';
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
@@ -68,6 +69,6 @@ const focusWindow = async (windowName: string) => {
   await sleep(3000);
 };
 
-const keyboard = robotjs;
+const keyboard = new KeyboardAction();
 
-export { exec, getProcessId, killProcess, focusWindow, keyboard, sleep };
+export { exec, getProcessId, killProcess, focusWindow, keyboard, sleep, Key };
