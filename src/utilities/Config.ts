@@ -2,6 +2,7 @@ import * as os from 'os';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { ipcMain } from 'electron';
+import { config } from 'winston';
 import { IConfigInfo, LogLevel } from '../types';
 import { log, initLogger } from './log';
 import { exec } from './utils';
@@ -27,7 +28,8 @@ export class Config {
     private overrideEchoPath?: string,
     private overrideRemoteApiIpAddress?: string,
     private overrideLocalApiIpAddress?: string,
-    private overrideLogLevel?: LogLevel
+    private overrideLogLevel?: LogLevel,
+    private overrideDebugUI?: boolean
   ) {
     ipcMain.on('open-config', this.openConfigFile);
   }
@@ -55,6 +57,7 @@ export class Config {
         localApiIpAddress:
           this.overrideLocalApiIpAddress || this.DEFAULT_PC_ECHO_IP_ADDRESS,
         logLevel: this.overrideLogLevel || this.DEFAULT_LOG_LEVEL,
+        debugUI: this.overrideDebugUI || false,
       };
       // Write the output file
       await fse.outputFile(
@@ -92,6 +95,7 @@ export class Config {
         logLevel:
           this.overrideLogLevel ||
           (configData.logLevel.toLowerCase() as LogLevel),
+        debugUI: this.overrideDebugUI || !!configData.debugUI,
       };
       return overridenConfigData;
     } catch (error) {

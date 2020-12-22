@@ -31,6 +31,7 @@ const setup = async () => {
     config.options.localApiIpAddress
   );
   return {
+    config,
     log,
     echoInstanceClient,
     remoteEchoDataRepository,
@@ -41,6 +42,7 @@ const setup = async () => {
 const start = async () => {
   try {
     const {
+      config,
       echoInstanceClient,
       remoteEchoDataRepository,
       localEchoDataRepository,
@@ -51,11 +53,13 @@ const start = async () => {
       echoInstanceClient
     );
     await followManager.startFollowing();
+    return config;
   } catch (error) {
     log.error({
       message: 'unhandled exception',
       error: error.messsage || error,
     });
+    throw error;
   }
 };
 
@@ -63,10 +67,8 @@ let mainWindow: Electron.BrowserWindow | null;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    // width: 450,
-    // height: 240,
-    width: 1920,
-    height: 1080,
+    width: 450,
+    height: 240,
     frame: false,
     resizable: false,
     backgroundColor: '#191622',
@@ -75,7 +77,6 @@ function createWindow() {
       enableRemoteModule: true,
     },
   });
-  mainWindow.webContents.openDevTools();
 
   // Set the main window to stay ontop
   mainWindow.setAlwaysOnTop(true, 'screen-saver');
@@ -85,7 +86,7 @@ function createWindow() {
   } else {
     mainWindow.loadURL(
       url.format({
-        pathname: path.join(__dirname, 'renderer/index.html'),
+        pathname: path.join(__dirname, '../renderer/index.html'),
         protocol: 'file:',
         slashes: true,
       })
@@ -110,6 +111,9 @@ app
     await go();
 
     // start Echo Shadow
-    await start();
+    const config = await start();
+    if (config?.options?.debugUI) {
+      mainWindow?.webContents.openDevTools();
+    }
   });
 app.allowRendererProcessReuse = true;

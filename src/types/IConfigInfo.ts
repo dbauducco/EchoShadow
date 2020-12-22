@@ -5,4 +5,5 @@ export interface IConfigInfo {
   remoteApiIpAddress: string;
   localApiIpAddress: string;
   logLevel: LogLevel;
+  debugUI: boolean;
 }
