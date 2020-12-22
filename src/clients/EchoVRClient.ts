@@ -1,7 +1,6 @@
-import { log } from '../utilities/log';
-import { exec, killProcess } from '../utilities/utils';
+import { getProcessId, log, exec, killProcess } from '../utilities/';
 
-export default class EchoExeClient {
+export default class EchoVRClient {
   private SPECTATOR_FLAG = ' --spectatorstream';
 
   private LOBBY_FLAG = ' --lobbyid ';
@@ -61,6 +60,22 @@ export default class EchoExeClient {
         message: 'error while closing echo',
         error: error.message ? error.message : error,
       });
+    }
+  };
+
+  /**
+   * Method to get the PID of the current instance of EchoVR.exe
+   */
+  public findPID = async () => {
+    try {
+      const echoPid = await getProcessId('echovr.exe');
+      return echoPid;
+    } catch (error) {
+      log.error({
+        message: 'error while finding echo process id',
+        error: error.message || error,
+      });
+      throw error;
     }
   };
 }

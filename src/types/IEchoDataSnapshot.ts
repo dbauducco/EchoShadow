@@ -4,5 +4,8 @@ export interface IEchoDataSnapshot {
   sessionId: string;
   sessionType: EchoSessionType;
   clientName: string;
-  clientIndexId: number;
+  inMatch: boolean;
+  blueTeamMembers: string[];
+  orangeTeamMembers: string[];
+  spectatorMembers: string[];
 }
