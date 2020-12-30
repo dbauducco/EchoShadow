@@ -9,7 +9,7 @@ The easy way to spectate Quest mathces from a PC on the same network. Works for 
   * One for the spectator client on PC (alt account)
 
 ## Setting Up
-# Preparing the local PC
+### Preparing the local PC
 1. Log into Oculus on the PC with the alt account
 2. Install EchoVR from the Oculus store.
 3. Under Libary > EchoVR > Options you can find the install location. Save this for future reference.
@@ -18,11 +18,11 @@ The easy way to spectate Quest mathces from a PC on the same network. Works for 
 6. Edit the "APIEnabled" option to true.
 7. Save the file and exit.
 
-# Preparing the Quest
+### Preparing the Quest
 1. Obtain and write down the IP address for the Quest. It can either be found on SideQuest or by clicking on the current Wi-Fi network in the Quest settings.
 2. Inside the EchoVR settings on the Oculus Quest, enable the API setting.
 
-# Installing and Configuring EchoShadow
+### Installing and Configuring EchoShadow
 1. Run EchoShadow
 2. Click on the Settigns Icon (If prompted, choose to open with Text Edit or Notepad).
 3. Adjust the EchoVRPath to the path to your installed Echo.
