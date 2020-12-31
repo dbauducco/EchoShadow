@@ -7,8 +7,18 @@ export default class POVCameraController implements IEchoCameraController {
     const remoteGameIndexKey = (Key[
       `Num${matchData.remoteGameIndex}` as any
     ] as unknown) as Key;
-    keyboard.click(remoteGameIndexKey, Key.LeftShift);
-    keyboard.click(Key.P);
+    this.goToPlayer(remoteGameIndexKey);
+  }
+
+  async goToPlayer(key: Key) {
+    await keyboard.pressKey(Key.LeftShift, key);
+    setTimeout(async function () {
+      await keyboard.releaseKey(Key.LeftShift, key);
+      await keyboard.pressKey(Key.P);
+      setTimeout(async function () {
+        await keyboard.releaseKey(Key.P);
+      }, 1000);
+    }, 1000);
   }
 
   // Updating camera setup

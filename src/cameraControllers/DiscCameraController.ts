@@ -1,26 +1,38 @@
+import { computeHeadingLevel } from '@testing-library/react';
 import { IEchoMatchData, IEchoCameraController } from '../types';
-import { keyboard } from '../utilities/utils';
+import { focusWindow, Key, keyboard } from '../utilities/utils';
 
 export default class DiscCameraController implements IEchoCameraController {
-  lastKey = '';
+  lastKey: Key | undefined = undefined;
 
   // Default
-  getDefault(matchData: IEchoMatchData) {
+  async getDefault(matchData: IEchoMatchData) {
     return undefined;
   }
 
   // Updating
-  update(matchData: IEchoMatchData) {
+  async update(matchData: IEchoMatchData) {
     const discPositionWidth = matchData.discPosition[2];
+    console.log(discPositionWidth);
     if (discPositionWidth > 2) {
       // Orange side
-      keyboard.type('4');
+      await this.goToCameraKey(Key.Num4);
     } else if (discPositionWidth < -2) {
       // Blue side
-      keyboard.type('7');
+      await this.goToCameraKey(Key.Num7);
     } else {
       // Middle
-      keyboard.type('5');
+      await this.goToCameraKey(Key.Num5);
+    }
+  }
+
+  public async goToCameraKey(key: Key) {
+    if (this.lastKey != key) {
+      this.lastKey = key;
+      await keyboard.pressKey(Key.LeftControl, key);
+      setTimeout(function () {
+        keyboard.releaseKey(Key.LeftControl, key);
+      }, 1000);
     }
   }
 }

@@ -114,8 +114,8 @@ export default class MatchEventManager {
       this.currentMatchData = {
         sessionType: EchoSessionType.Arena_Match,
         sessionID: '',
-        remoteName: 'SnowyBlue',
-        remoteGameIndex: this.getIndexOfPlayer(data.localSnapshot, 'SnowyBlue'),
+        remoteName: 'Mozzy-',
+        remoteGameIndex: this.getIndexOfPlayer(data.localSnapshot, 'Mozzy-'),
         isRemoteInMatch: true,
         isLocalInMatch: true,
         localName: '',

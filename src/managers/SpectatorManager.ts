@@ -7,6 +7,7 @@ import SidelineCameraController from '../cameraControllers/SidelineCameraControl
 import POVCameraController from '../cameraControllers/POVCameraController';
 import FollowCameraController from '../cameraControllers/FollowCameraController';
 import DiscCameraController from '../cameraControllers/DiscCameraController';
+import { focusWindow, Key, keyboard } from '../utilities/utils';
 
 export default class SpectatorManager {
   cameraController: IEchoCameraController;
@@ -22,11 +23,12 @@ export default class SpectatorManager {
       this.setDefaultSpectatorOption.bind(this)
     );
     Events.on(EventType.TestNewMatchData, this.updateCamera.bind(this));
-    this.cameraController = new DiscCameraController();
+    this.cameraController = new POVCameraController();
   }
 
   public async setDefaultSpectatorOption(matchData: IEchoMatchData) {
-    // await keyboard.keyTap('u');
+    await focusWindow('Echo VR');
+    await keyboard.click(Key.U);
     this.cameraController.getDefault(matchData);
   }
 
