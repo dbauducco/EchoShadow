@@ -6,15 +6,9 @@ import { config } from 'winston';
 import { IConfigInfo, LogLevel } from '../types';
 import { log, initLogger } from './log';
 import { exec } from './utils';
+import EchoVRLocator from './EchoVRLocator';
 
 export class Config {
-  private DEFAULT_ECHO_PATH = path.join(
-    'C:\\Program Files\\Oculus\\Software\\Software\\ready-at-dawn-echo-arena\\',
-    ''
-  );
-
-  private ECHO_PATH_SUFFIX = 'bin\\win7\\echovr.exe';
-
   private DEFAULT_PC_ECHO_IP_ADDRESS = '127.0.0.1';
 
   private CONFIG_PATH = path.join(
@@ -53,7 +47,7 @@ export class Config {
     try {
       // Create the default data
       const configData: IConfigInfo = {
-        echoPath: this.overrideEchoPath || this.DEFAULT_ECHO_PATH,
+        echoPath: this.overrideEchoPath || '',
         remoteApiIpAddress:
           this.overrideRemoteApiIpAddress || this.DEFAULT_PC_ECHO_IP_ADDRESS,
         localApiIpAddress:
@@ -61,14 +55,15 @@ export class Config {
         logLevel: this.overrideLogLevel || this.DEFAULT_LOG_LEVEL,
         debugUI: this.overrideDebugUI || false,
       };
+      // Automatically determine the Echo path
+      const detectedEchoPath = await EchoVRLocator.locate();
+      if (detectedEchoPath) {
+        configData.echoPath = detectedEchoPath;
+      }
       // Write the output file
       await fse.outputFile(
         this.CONFIG_PATH,
         JSON.stringify(configData, null, 4)
-      );
-      configData.echoPath = path.join(
-        configData.echoPath,
-        this.ECHO_PATH_SUFFIX
       );
       // Set the current options to the default data
       return configData;
@@ -93,9 +88,7 @@ export class Config {
       const configData: IConfigInfo = JSON.parse(dataBuffer.toString());
       // Apply the overrides
       const overridenConfigData = {
-        echoPath:
-          this.overrideEchoPath ||
-          path.join(configData.echoPath, this.ECHO_PATH_SUFFIX),
+        echoPath: this.overrideEchoPath || configData.echoPath,
         remoteApiIpAddress:
           this.overrideRemoteApiIpAddress || configData.remoteApiIpAddress,
         localApiIpAddress:

@@ -6,8 +6,6 @@ import { EventType } from '../types';
 import { ShadowStateType } from '../types/ShadowStateType';
 import { getProcessId, log, exec, killProcess, spawn } from '../utilities/';
 import Events from '../utilities/Events';
-import { findAllByTestId } from '@testing-library/react';
-import { config } from 'winston';
 
 export default class EchoVRClient {
   private SPECTATOR_FLAG = '--spectatorstream';
@@ -104,6 +102,11 @@ export default class EchoVRClient {
 
   /** Helper method that verifies the EchoVR exe path provided */
   verifyPath = async () => {
+    if (this.echoPath == '') {
+      Events.emit(EventType.NewShadowState, ShadowStateType.EchoIsNotInstalled);
+      return;
+    }
+
     try {
       const newProcess = this.open(undefined, true);
 
@@ -118,17 +121,6 @@ export default class EchoVRClient {
       console.log(error);
       console.log('Error!');
     }
-    /*try {
-      const testOpenCommand = this.buildCommand(undefined, true);
-      await exec(testOpenCommand);
-      const testEchoPID = await this.findPID();
-      if (testEchoPID) {
-        console.log('It worked!!');
-        await killProcess(testEchoPID, true);
-      }
-    } catch (error) {
-      console.log('Error!');
-    }*/
   };
 
   /*** Helper methods to automatically turn on the EnableAPI flag in the EchoAPI */

@@ -5,4 +5,5 @@ export enum ShadowStateType {
   SyncedWithRemote = 'Synced',
   StartingUp = 'Starting up EchoShadow...',
   InvalidEchoPath = 'Error in Echo Path',
+  EchoIsNotInstalled = 'EchoVR Installation Not Detected',
 }
