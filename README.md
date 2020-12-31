@@ -41,7 +41,7 @@ The easy way to spectate Quest mathces from a PC on the same network. Works for 
 Open up EchoShadow and you are good to go!
 
 ## Reporting issues and Support
-We have our own Discord! You can contact @Sphinxed or @MostCalm in there for any questions or issues :D
+We have our own Discord! You can contact @Sphinxed or @MostCalm in there for any questions or issues
 https://discord.gg/QPFerM23A8
 
 Also, open Github Issues if you know how! We'd appreciate it :D
