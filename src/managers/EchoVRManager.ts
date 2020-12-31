@@ -93,10 +93,8 @@ export default class EchoVRManager {
       Events.emit(EventType.NewShadowState, ShadowStateType.JoiningRemote);
       Events.emit(EventType.LocalWillJoinMatch);
       this.isLoadingIntoMatch = true;
-      await this.echoVRClient.open(matchData.sessionID);
-      //log.debug({ message: 'after exeClient.open' });
-      await this.syncPID();
-      //log.debug({ message: 'after EchoInstanceClient.findEchoProcessId' });
+      const newEchoProcess = this.echoVRClient.open(matchData.sessionID);
+      this.currentInstanceProcessId = '' + newEchoProcess.pid;
     } catch (error) {
       log.error({
         message: 'error while opening echo',
@@ -152,6 +150,4 @@ export default class EchoVRManager {
       session.sessionType === EchoSessionType.Private_Arena_Match
     );
   };
-
-  private verifyUserLeft = () => {};
 }

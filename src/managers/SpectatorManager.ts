@@ -4,11 +4,6 @@ import { focusWindow, keyboard } from '../utilities/utils';
 import { IEchoCameraController } from '../types/IEchoCameraController';
 import DoNothingCameraController from '../cameraControllers/DoNothingCameraController';
 import { EventType, IEchoMatchData } from '../types';
-import SidelineCameraController from '../cameraControllers/SidelineCameraController';
-import POVCameraController from '../cameraControllers/POVCameraController';
-import FollowCameraController from '../cameraControllers/FollowCameraController';
-import { keyTap } from 'robotjs';
-import DiscCameraController from '../cameraControllers/DiscCameraController';
 
 export default class SpectatorManager {
   cameraController: IEchoCameraController;
@@ -24,7 +19,7 @@ export default class SpectatorManager {
       this.setDefaultSpectatorOption.bind(this)
     );
     Events.on(EventType.TestNewMatchData, this.updateCamera.bind(this));
-    this.cameraController = new DiscCameraController();
+    this.cameraController = new DoNothingCameraController();
   }
 
   public async setDefaultSpectatorOption(matchData: IEchoMatchData) {

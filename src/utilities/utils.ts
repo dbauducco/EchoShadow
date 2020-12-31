@@ -1,4 +1,4 @@
-import { exec as execNative } from 'child_process';
+import { exec as execNative, spawn } from 'child_process';
 import { promisify } from 'util';
 import * as ffi from 'ffi-napi';
 import * as robotjs from 'robotjs';
@@ -22,9 +22,13 @@ const getProcessId = async (
   return echoPid;
 };
 
-const killProcess = async (processId: string) => {
+const killProcess = async (processId: number | string, force?: boolean) => {
   // /t will also kill any process started by the EchoVR process. Known as tree killing.
-  await exec(`taskkill /pid ${processId} /t`);
+  if (force) {
+    await exec(`taskkill /pid ${processId} /t /F`);
+  } else {
+    await exec(`taskkill /pid ${processId} /t`);
+  }
 };
 
 const focusWindow = async (windowName: string) => {
@@ -70,4 +74,4 @@ const focusWindow = async (windowName: string) => {
 
 const keyboard = robotjs;
 
-export { exec, getProcessId, killProcess, focusWindow, keyboard, sleep };
+export { exec, spawn, getProcessId, killProcess, focusWindow, keyboard, sleep };

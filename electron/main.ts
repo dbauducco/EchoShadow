@@ -17,7 +17,7 @@ import MatchEventManager from '../src/managers/MatchEventManager';
 import OBSManager from '../src/managers/OBSManager';
 import SpectatorManager from '../src/managers/SpectatorManager';
 import EchoDataEventManager from '../src/managers/EchoDataEventManager';
-import UIUpdaterMananger from '../src/managers/UIUpdaterManager';
+import ShadowStateManager from '../src/managers/ShadowStateManager';
 
 /** *********************************************************************
  *(********************BOILERPLATE ELECTRON*****************************
@@ -60,7 +60,7 @@ const start = async () => {
       new EventLogger(),
       new ShadowManager(),
       new OBSManager(),
-      new UIUpdaterMananger(configData),
+      new ShadowStateManager(configData),
       new SpectatorManager(echoVRManager),
       new MatchEventManager(localEchoDataRepository),
     ];
@@ -87,10 +87,12 @@ function createWindow() {
     height: 240,
     frame: false,
     resizable: false,
-    backgroundColor: '#191622',
+    // backgroundColor: '#f9968e', // PINK MODE
+    backgroundColor: '#191622', // Normal Mode
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
+      backgroundThrottling: false,
     },
   });
 

@@ -10,13 +10,18 @@ export const GlobalStyle = createGlobalStyle`
   body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
-    color: #E1E1E6;
+    color: #bdb9c9;
     margin: 0; 
     width: 100vw; 
     height: 100vh;
     -webkit-app-region: drag;
   }
 `;
+
+/* Text color:
+Regular: color: #bdb9c9;
+Pink Mode: color: #282436;
+ */
 
 export const theme = {
   lightGrey: 'hsl(150, 20%, 40%)',

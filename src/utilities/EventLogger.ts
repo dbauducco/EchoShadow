@@ -4,23 +4,24 @@ import Events from './Events';
 
 export class EventLogger {
   constructor() {
-    // Events.on(
-    //   EventType.RemoteJoinedMatch,
-    //   this.logRemoteJoinedMatch.bind(this)
-    // );
-    // Events.on(EventType.RemoteLeftMatch, this.logRemoteLeftMatch.bind(this));
-    // Events.on(EventType.LocalJoinedMatch, this.logLocalJoinedMatch.bind(this));
-    // Events.on(EventType.LocalLeftMatch, this.logLocalLeftMatch.bind(this));
-    // Events.on(
-    //   EventType.LocalWillLeaveMatch,
-    //   this.logLocalWillLeaveMatch.bind(this)
-    // );
-    // Events.on(
-    //   EventType.LocalWillJoinMatch,
-    //   this.logLocalWillJoinMatch.bind(this)
-    // );
+    Events.on(
+      EventType.RemoteJoinedMatch,
+      this.logRemoteJoinedMatch.bind(this)
+    );
+    Events.on(EventType.RemoteLeftMatch, this.logRemoteLeftMatch.bind(this));
+    Events.on(EventType.LocalJoinedMatch, this.logLocalJoinedMatch.bind(this));
+    Events.on(EventType.LocalLeftMatch, this.logLocalLeftMatch.bind(this));
+    Events.on(
+      EventType.LocalWillLeaveMatch,
+      this.logLocalWillLeaveMatch.bind(this)
+    );
+    Events.on(
+      EventType.LocalWillJoinMatch,
+      this.logLocalWillJoinMatch.bind(this)
+    );
     // Events.on(EventType.NewMatchData, this.logNewMatchData.bind(this));
-    // Events.on(EventType.NewSnapshotData, this.logNewSnapshotData.bind(this));
+    Events.on(EventType.NewSnapshotData, this.logNewSnapshotData.bind(this));
+    Events.on(EventType.NewShadowState, this.logNewShadowState.bind(this));
   }
 
   private logNewSnapshotData(data: IEchoNewSnapshotEventData) {
@@ -75,6 +76,13 @@ export class EventLogger {
   private logNewMatchData(data: IEchoMatchData) {
     log.info({
       event: EventType.NewMatchData,
+      eventData: data,
+    });
+  }
+
+  private logNewShadowState(data: IEchoMatchData) {
+    log.info({
+      event: EventType.NewShadowState,
       eventData: data,
     });
   }

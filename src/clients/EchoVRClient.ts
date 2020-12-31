@@ -1,13 +1,22 @@
-import { getProcessId, log, exec, killProcess } from '../utilities/';
+import { session } from 'electron';
+import * as os from 'os';
+import * as fse from 'fs-extra';
+import * as path from 'path';
+import { EventType } from '../types';
+import { ShadowStateType } from '../types/ShadowStateType';
+import { getProcessId, log, exec, killProcess, spawn } from '../utilities/';
+import Events from '../utilities/Events';
+import { findAllByTestId } from '@testing-library/react';
+import { config } from 'winston';
 
 export default class EchoVRClient {
-  private SPECTATOR_FLAG = ' --spectatorstream';
-
-  private LOBBY_FLAG = ' --lobbyid ';
+  private SPECTATOR_FLAG = '--spectatorstream';
+  private LOBBY_FLAG = '--lobbyid';
+  private HEADLESS_FLAG = '--headless';
 
   constructor(private echoPath: string) {
-    // We don't need to do anything here. echoPath variable
-    // is automatically created
+    this.verifyPath();
+    this.enableEchoVRAPI();
   }
 
   /**
@@ -17,13 +26,23 @@ export default class EchoVRClient {
    * @param sessionID (Optional) The sessionID to which join. If not defined,
    * the game will open to a random public match.
    */
-  open = async (sessionID?: string) => {
+  open = (sessionID?: string, headless?: boolean) => {
     try {
-      const openCommand = this.buildCommand(sessionID);
-      // don't call await on exec or it will get hung up, just let it open at it's leisure
-      exec(openCommand);
-      log.debug({ message: 'after EchoExeClient.open.exec' });
+      // Setting up params
+      const params: string[] = [this.SPECTATOR_FLAG];
+      if (sessionID) {
+        params.push(this.LOBBY_FLAG);
+        params.push(sessionID);
+      }
+      if (headless) {
+        params.push(this.HEADLESS_FLAG);
+      }
+
+      // Spawning the process
+      const spawnOptions = { detached: true };
+      return spawn(this.echoPath, params, spawnOptions);
     } catch (error) {
+      console.log('Errrorrr!');
       log.error({
         message: 'error opening exe',
         error: error.message || error,
@@ -38,11 +57,15 @@ export default class EchoVRClient {
    * @param sessionID (Optional) The sessionId (lobbyId) to which add. If not
    * defined, no lobbyId flag gets added to the end of the command string.
    */
-  private buildCommand = (sessionID?: string) => {
+  private buildCommand = (sessionID?: string, headless?: boolean) => {
     const openCommandWithSpecatator = `"${this.echoPath}"${this.SPECTATOR_FLAG}`; // Add ---spectatorstream to the end
     if (sessionID) {
       const openCommandWithSpectatorAndLobby = `${openCommandWithSpecatator}${this.LOBBY_FLAG}${sessionID}`; // If we have lobby, add --lobbyid {lobbyId}
       return openCommandWithSpectatorAndLobby;
+    }
+    if (headless) {
+      const openCommandWithSpectatorAndHeadless = `${openCommandWithSpecatator}${this.HEADLESS_FLAG}`;
+      return openCommandWithSpectatorAndHeadless;
     }
     return openCommandWithSpecatator;
   };
@@ -52,7 +75,7 @@ export default class EchoVRClient {
    * Warning: Will close any and all intances of EchoVR running on the computer, not
    * only the instance that we opened.
    */
-  close = async (processId: string) => {
+  close = async (processId: string | number) => {
     try {
       await killProcess(processId);
     } catch (error) {
@@ -66,7 +89,7 @@ export default class EchoVRClient {
   /**
    * Method to get the PID of the current instance of EchoVR.exe
    */
-  public findPID = async () => {
+  findPID = async () => {
     try {
       const echoPid = await getProcessId('echovr.exe');
       return echoPid;
@@ -77,5 +100,110 @@ export default class EchoVRClient {
       });
       throw error;
     }
+  };
+
+  /** Helper method that verifies the EchoVR exe path provided */
+  verifyPath = async () => {
+    try {
+      const newProcess = this.open(undefined, true);
+
+      // Error event means the game was unable to launch. The path is most likelu not correct.
+      newProcess.on('error', async () => {
+        Events.emit(EventType.NewShadowState, ShadowStateType.InvalidEchoPath);
+      });
+
+      // We are gonna kill the process now
+      newProcess.kill();
+    } catch (error) {
+      console.log(error);
+      console.log('Error!');
+    }
+    /*try {
+      const testOpenCommand = this.buildCommand(undefined, true);
+      await exec(testOpenCommand);
+      const testEchoPID = await this.findPID();
+      if (testEchoPID) {
+        console.log('It worked!!');
+        await killProcess(testEchoPID, true);
+      }
+    } catch (error) {
+      console.log('Error!');
+    }*/
+  };
+
+  /*** Helper methods to automatically turn on the EnableAPI flag in the EchoAPI */
+  enableEchoVRAPI = async () => {
+    // Read the file
+    const configData = await this.readConfigFile();
+    if (!configData.game.EnableAPIAccess) {
+      configData.game.EnableAPIAccess = true;
+      this.writeConfigFile(configData);
+    }
+  };
+
+  readConfigFile = async () => {
+    // Create the path
+    const configPath = path.join(
+      os.homedir(),
+      'AppData/Local/rad/loneecho/settings_mp_v2.json'
+    );
+    // Try to read the file
+    try {
+      const fileBuffer = fse.readFileSync(configPath);
+      if (!fileBuffer) {
+        // File doesn't exist, we need to create it
+        return await this.createAndReadConfigFile();
+      }
+      return JSON.parse(fileBuffer.toString());
+    } catch (error) {
+      if (error.code == 'ENOENT') {
+        return await this.createAndReadConfigFile();
+      } else {
+        log.error({
+          description: 'Failed to read EchoVR config.',
+          error: error.message,
+        });
+      }
+    }
+  };
+
+  createAndReadConfigFile = () =>
+    new Promise(res => {
+      // Create the path
+      const configPath = path.join(
+        os.homedir(),
+        'AppData/Local/rad/loneecho/settings_mp_v2.json'
+      );
+      // File doesn't exist. We need to temporarily start EchoVR for it to auto-create this file.
+      const echoProcess = this.open(undefined, true);
+      setTimeout(() => {
+        try {
+          echoProcess.kill();
+          const newFileBuffer = fse.readFileSync(configPath);
+          if (!newFileBuffer) {
+            log.error({
+              description: 'Failed to read EchoVR config after creating it.',
+            });
+            res(undefined);
+          }
+          res(JSON.parse(newFileBuffer.toString()));
+        } catch (error) {
+          log.error({
+            description: 'Failed to read EchoVR config after creating it.',
+            error: error.message,
+          });
+          res(undefined);
+        }
+      }, 2000);
+    });
+
+  writeConfigFile = async (data: any) => {
+    // Create the path
+    const configPath = path.join(
+      os.homedir(),
+      'AppData/Local/rad/loneecho/settings_mp_v2.json'
+    );
+    // Write the file
+    await fse.outputFile(configPath, JSON.stringify(data, null, 4));
   };
 }

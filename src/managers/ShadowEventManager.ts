@@ -90,6 +90,14 @@ export default class ShadowEventManager {
         // Our local instance is somehow unsycned with the remote
         Events.emit(EventType.LocalIsUnsynced, data);
       }
+
+    if (data.remoteSnapshot && !data.remoteSnapshot.inMatch) {
+      // We are currently waiting for the remote to join a match
+      Events.emit(
+        EventType.NewShadowState,
+        ShadowStateType.WaitingForRemoteMatch
+      );
+    }
   }
 
   /*

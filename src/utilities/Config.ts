@@ -9,9 +9,11 @@ import { exec } from './utils';
 
 export class Config {
   private DEFAULT_ECHO_PATH = path.join(
-    'C:/Program Files/Oculus/Software/Software/ready-at-dawn-echo-arena/bin/win7/echovr.exe',
+    'C:\\Program Files\\Oculus\\Software\\Software\\ready-at-dawn-echo-arena\\',
     ''
   );
+
+  private ECHO_PATH_SUFFIX = 'bin\\win7\\echovr.exe';
 
   private DEFAULT_PC_ECHO_IP_ADDRESS = '127.0.0.1';
 
@@ -31,7 +33,7 @@ export class Config {
     private overrideLogLevel?: LogLevel,
     private overrideDebugUI?: boolean
   ) {
-    ipcMain.on('open-config', this.openConfigFile);
+    ipcMain.on('open-config', this.openConfigFile.bind(this));
   }
 
   /**
@@ -64,6 +66,10 @@ export class Config {
         this.CONFIG_PATH,
         JSON.stringify(configData, null, 4)
       );
+      configData.echoPath = path.join(
+        configData.echoPath,
+        this.ECHO_PATH_SUFFIX
+      );
       // Set the current options to the default data
       return configData;
     } catch (error) {
@@ -87,7 +93,9 @@ export class Config {
       const configData: IConfigInfo = JSON.parse(dataBuffer.toString());
       // Apply the overrides
       const overridenConfigData = {
-        echoPath: this.overrideEchoPath || configData.echoPath,
+        echoPath:
+          this.overrideEchoPath ||
+          path.join(configData.echoPath, this.ECHO_PATH_SUFFIX),
         remoteApiIpAddress:
           this.overrideRemoteApiIpAddress || configData.remoteApiIpAddress,
         localApiIpAddress:
@@ -108,6 +116,6 @@ export class Config {
   }
 
   public openConfigFile() {
-    exec('start %APPDATA%/../local/EchoShadow/config.json');
+    exec('start ' + this.CONFIG_PATH);
   }
 }

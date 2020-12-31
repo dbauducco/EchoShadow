@@ -20,14 +20,6 @@ export default class EchoDataRepository implements IEchoDataRepository {
   constructor(private endpointIpAddress: string) {
     this.apiSessionUrl = `http://${this.endpointIpAddress}:${this.DEFAULT_PORT}/session`;
     this.deviceAPI = axios.create({ baseURL: this.apiSessionUrl });
-    axiosRetry(this.deviceAPI, {
-      retries: 3,
-      retryDelay: axiosRetry.exponentialDelay,
-      shouldResetTimeout: true,
-      retryCondition: e => {
-        return isNetworkOrIdempotentRequestError(e);
-      },
-    });
   }
 
   /**
@@ -90,6 +82,23 @@ export default class EchoDataRepository implements IEchoDataRepository {
       });
       return undefined;
     }
+  }
+
+  /** Helper method to control retries */
+  public enableRetries() {
+    this.deviceAPI = axios.create({ baseURL: this.apiSessionUrl });
+    axiosRetry(this.deviceAPI, {
+      retries: 3,
+      retryDelay: axiosRetry.exponentialDelay,
+      shouldResetTimeout: true,
+      retryCondition: e => {
+        return isNetworkOrIdempotentRequestError(e);
+      },
+    });
+  }
+
+  public disableRetries() {
+    this.deviceAPI = axios.create({ baseURL: this.apiSessionUrl });
   }
 
   /**

@@ -16,8 +16,8 @@ export default class MatchEventManager {
   constructor(private localDataRepository: IEchoDataRepository) {
     // Our current match is undefined
 
-    // Events.on(EventType.NewSnapshotData, this.newSnapshotData.bind(this));
-    Events.on(EventType.NewSnapshotData, this.testNewSnapshotData.bind(this));
+    Events.on(EventType.NewSnapshotData, this.newSnapshotData.bind(this));
+    // Events.on(EventType.NewSnapshotData, this.testNewSnapshotData.bind(this));
   }
 
   private newSnapshotData(data: IEchoNewSnapshotEventData) {
@@ -103,10 +103,11 @@ export default class MatchEventManager {
   }
 
   private async pingLocal() {
-    const data = await this.localDataRepository.getFullSnapshot();
+    /*const data = await this.localDataRepository.getFullSnapshot();
+    Events.emit(EventType.NewMatchData, this.currentMatchData);
 
     if (this.currentMatchData?.isLocalInMatch)
-      setTimeout(this.pingLocal.bind(this), 0.1 * 1000);
+      setTimeout(this.pingLocal.bind(this), 0.1 * 1000);*/
   }
 
   // ********** TESTING ***********/

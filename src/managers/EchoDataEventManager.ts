@@ -5,9 +5,11 @@ import {
   IEchoNewSnapshotEventData,
 } from '../types';
 import { EventType } from '../types/EventType';
+import { ShadowStateType } from '../types/ShadowStateType';
+import { stat } from 'fs-extra';
 
 export default class EchoDataEventManager {
-  WAIT_TIME_SECONDS = 3;
+  WAIT_TIME_SECONDS = 0.5;
   updateShouldRun = false;
 
   constructor(
@@ -16,6 +18,7 @@ export default class EchoDataEventManager {
   ) {
     // Auto-Start
     //this.start();
+    Events.on(EventType.NewShadowState, this.newShadowState.bind(this));
   }
 
   public start() {
@@ -51,6 +54,27 @@ export default class EchoDataEventManager {
 
     if (this.updateShouldRun)
       setTimeout(this.update.bind(this), this.WAIT_TIME_SECONDS * 1000);
+  }
+
+  /**
+   * Helper methods to dynamically change the rate of polling depending on current state.
+   */
+  private newShadowState(state: ShadowStateType) {
+    switch (state) {
+      case ShadowStateType.WaitingForRemoteData:
+      case ShadowStateType.WaitingForRemoteMatch: {
+        this.WAIT_TIME_SECONDS = 0.5;
+        this.localDataRepository.disableRetries();
+        this.remoteDataRepository.disableRetries();
+        break;
+      }
+      default: {
+        this.WAIT_TIME_SECONDS = 5;
+        this.localDataRepository.enableRetries();
+        this.remoteDataRepository.enableRetries();
+        break;
+      }
+    }
   }
 
   /*
