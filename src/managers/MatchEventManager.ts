@@ -66,6 +66,10 @@ export default class MatchEventManager {
         this.currentMatchData.remoteName =
           data.remoteSnapshot!.clientName || '';
         // Finding remote player's game index
+        this.currentMatchData.remoteGameIndex = this.getIndexOfPlayer(
+          data.remoteSnapshot!,
+          data.remoteSnapshot!.clientName
+        );
 
         // Emitting the event
         Events.emit(EventType.RemoteJoinedMatch, this.currentMatchData);

@@ -67,7 +67,7 @@ export default class EchoVRManager {
       this.undefinedAPICounter++;
       // If after 10 API calls, the result is still undefined but Echo is running,
       // let's close Echo. Either Echo got stuck loading, or something else.
-      if (this.undefinedAPICounter > 4) {
+      if (this.undefinedAPICounter > 20) {
         this.close();
         this.undefinedAPICounter = 0;
       }

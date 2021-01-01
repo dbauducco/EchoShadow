@@ -75,7 +75,7 @@ export default class EchoVRClient {
    */
   close = async (processId: string | number) => {
     try {
-      await killProcess(processId);
+      await killProcess(processId, true);
     } catch (error) {
       log.error({
         message: 'error while closing echo',
@@ -103,7 +103,13 @@ export default class EchoVRClient {
   /** Helper method that verifies the EchoVR exe path provided */
   verifyPath = async () => {
     if (this.echoPath == '') {
-      Events.emit(EventType.NewShadowState, ShadowStateType.EchoIsNotInstalled);
+      // Dirty fix to wait for the event listeners to register first
+      setTimeout(() => {
+        Events.emit(
+          EventType.NewShadowState,
+          ShadowStateType.EchoIsNotInstalled
+        );
+      }, 1000);
       return;
     }
 

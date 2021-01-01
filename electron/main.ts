@@ -61,7 +61,7 @@ const start = async () => {
       new ShadowManager(),
       new OBSManager(),
       new ShadowStateManager(configData),
-      new SpectatorManager(echoVRManager),
+      new SpectatorManager(configData),
       new MatchEventManager(localEchoDataRepository),
     ];
     const echoDataEventManager = new EchoDataEventManager(

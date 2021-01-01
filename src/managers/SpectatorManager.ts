@@ -3,27 +3,38 @@ import Events from '../utilities/Events';
 import { focusWindow, keyboard } from '../utilities/utils';
 import { IEchoCameraController } from '../types/IEchoCameraController';
 import DoNothingCameraController from '../cameraControllers/DoNothingCameraController';
-import { EventType, IEchoMatchData } from '../types';
+import { EventType, IConfigInfo, IEchoMatchData } from '../types';
+import FollowCameraController from '../cameraControllers/FollowCameraController';
+import POVCameraController from '../cameraControllers/POVCameraController';
 
 export default class SpectatorManager {
   cameraController: IEchoCameraController;
 
-  constructor(public echoInstance: EchoInstanceClient) {
-    // Events.on(
-    //   EventType.LocalJoinedMatch,
-    //   this.setDefaultSpectatorOption.bind(this)
-    // );
-    // Events.on(EventType.NewMatchData, this.updateCamera.bind(this));
+  constructor(private configData: IConfigInfo) {
     Events.on(
-      EventType.TestLocalJoinedMatch,
+      EventType.LocalJoinedMatch,
       this.setDefaultSpectatorOption.bind(this)
     );
-    Events.on(EventType.TestNewMatchData, this.updateCamera.bind(this));
-    this.cameraController = new DoNothingCameraController();
+    Events.on(EventType.NewMatchData, this.updateCamera.bind(this));
+    switch (configData.spectateCameraOption) {
+      case 'follow':
+        this.cameraController = new FollowCameraController();
+        break;
+      case 'pov':
+        this.cameraController = new POVCameraController();
+        break;
+      case 'none':
+      default:
+        this.cameraController = new DoNothingCameraController();
+        break;
+    }
   }
 
   public async setDefaultSpectatorOption(matchData: IEchoMatchData) {
-    //await keyboard.keyTap('u');
+    await focusWindow('Echo VR');
+    if (this.configData.hideUIOnJoin) {
+      await keyboard.keyTap('u');
+    }
     this.cameraController.getDefault(matchData, keyboard);
   }
 

@@ -9,15 +9,15 @@ import { exec } from './utils';
 import EchoVRLocator from './EchoVRLocator';
 
 export class Config {
-  private DEFAULT_PC_ECHO_IP_ADDRESS = '127.0.0.1';
-
+  // Creating the path to the config file
   private CONFIG_PATH = path.join(
     os.homedir(),
     'AppData/Local/EchoShadow/config.json'
   );
-
+  // Defaults:
   private DEFAULT_LOG_LEVEL: LogLevel = LogLevel.INFO;
-
+  private DEFAULT_PC_ECHO_IP_ADDRESS = '127.0.0.1';
+  // Storing options
   public options?: IConfigInfo;
 
   constructor(
@@ -54,6 +54,8 @@ export class Config {
           this.overrideLocalApiIpAddress || this.DEFAULT_PC_ECHO_IP_ADDRESS,
         logLevel: this.overrideLogLevel || this.DEFAULT_LOG_LEVEL,
         debugUI: this.overrideDebugUI || false,
+        hideUIOnJoin: false,
+        spectateCameraOption: 'none',
       };
       // Automatically determine the Echo path
       const detectedEchoPath = await EchoVRLocator.locate();
@@ -87,7 +89,7 @@ export class Config {
       // Read the file
       const configData: IConfigInfo = JSON.parse(dataBuffer.toString());
       // Apply the overrides
-      const overridenConfigData = {
+      const overridenConfigData: IConfigInfo = {
         echoPath: this.overrideEchoPath || configData.echoPath,
         remoteApiIpAddress:
           this.overrideRemoteApiIpAddress || configData.remoteApiIpAddress,
@@ -97,6 +99,8 @@ export class Config {
           this.overrideLogLevel ||
           (configData.logLevel.toLowerCase() as LogLevel),
         debugUI: this.overrideDebugUI || !!configData.debugUI,
+        hideUIOnJoin: configData.hideUIOnJoin,
+        spectateCameraOption: configData.spectateCameraOption,
       };
       return overridenConfigData;
     } catch (error) {

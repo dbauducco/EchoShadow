@@ -62,7 +62,10 @@ export default class ShadowStateManager {
     this.shadowState.statusMessage = data;
     this.shadowState.currentState = data;
 
-    if (data == ShadowStateType.InvalidEchoPath) {
+    if (
+      data == ShadowStateType.InvalidEchoPath ||
+      data == ShadowStateType.EchoIsNotInstalled
+    ) {
       this.shadowState.localStatus = DeviceStatusEnum.Error;
       this.shadowState.locked = true;
     }

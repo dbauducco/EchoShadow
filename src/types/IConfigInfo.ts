@@ -6,4 +6,6 @@ export interface IConfigInfo {
   localApiIpAddress: string;
   logLevel: LogLevel;
   debugUI: boolean;
+  hideUIOnJoin: boolean;
+  spectateCameraOption: string;
 }

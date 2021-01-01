@@ -25,9 +25,9 @@ const getProcessId = async (
 const killProcess = async (processId: number | string, force?: boolean) => {
   // /t will also kill any process started by the EchoVR process. Known as tree killing.
   if (force) {
-    await exec(`taskkill /pid ${processId} /t /F`);
+    await exec(`taskkill /pid ${processId} /T /F`);
   } else {
-    await exec(`taskkill /pid ${processId} /t`);
+    await exec(`taskkill /pid ${processId} /T`);
   }
 };
 
