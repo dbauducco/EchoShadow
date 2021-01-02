@@ -16,10 +16,6 @@ The easy way to spectate Quest mathces from a PC on the same network. Works for 
 
 1. Log into Oculus on the PC with the alt account
 2. Install EchoVR from the Oculus store.
-3. Under Libary > EchoVR > Details you can find the install location. Clicking on the install location will copy it. Save this for future reference.
-  - Most paths will look like either of the following:
-    - `C:\Program Files\Oculus\Software\Software\ready-at-dawn-echo-arena\`
-    - `D:\Software\ready-at-dawn-echo-arena\`
 
 ### Preparing the Quest
 
@@ -30,11 +26,9 @@ The easy way to spectate Quest mathces from a PC on the same network. Works for 
 
 1. Run EchoShadow
 2. Click on the Settings Icon (If prompted, choose to open with Text Edit or Notepad).
-3. Adjust the echoPath to the path to your installed Echo. You have to add a second '\\' to every '\\', such that they are all '\\\\', as the example below:
-  - `C:\\Program Files\\Oculus\\Software\\Software\\ready-at-dawn-echo-arena\\`
-4. Adjust the remoteApiIpAddress to the IP Address of your Quest.s
-5. Save and close the file.
-6. Close EchoShadow.
+3. Adjust the remoteApiIpAddress to the IP Address of your Quest.s
+4. Save and close the file.
+5. Close EchoShadow.
 
 ## Running
 
