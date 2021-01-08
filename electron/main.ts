@@ -34,10 +34,12 @@ const setup = async () => {
   log.info({ loadedConfig: configData });
   const echoVRManager = new EchoVRManager(configData.echoPath);
   const remoteEchoDataRepository = new EchoDataRepository(
-    configData.remoteApiIpAddress
+    configData.network.questIP,
+    configData.network.questPort
   );
   const localEchoDataRepository = new EchoDataRepository(
-    configData.localApiIpAddress
+    configData.network.localIP,
+    configData.network.localPort
   );
   return {
     log,
@@ -122,7 +124,7 @@ app
   .then(async () => {
     // start Echo Shadow
     const configOptions = await start();
-    if (configOptions?.debugUI) {
+    if (configOptions?.dev.debugUI) {
       mainWindow?.webContents.openDevTools();
     }
   });

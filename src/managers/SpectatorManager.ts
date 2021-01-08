@@ -16,7 +16,7 @@ export default class SpectatorManager {
       this.setDefaultSpectatorOption.bind(this)
     );
     Events.on(EventType.NewMatchData, this.updateCamera.bind(this));
-    switch (configData.spectateCameraOption) {
+    switch (configData.spectatorOptions.mode) {
       case 'follow':
         this.cameraController = new FollowCameraController();
         break;
@@ -32,7 +32,7 @@ export default class SpectatorManager {
 
   public async setDefaultSpectatorOption(matchData: IEchoMatchData) {
     await focusWindow('Echo VR');
-    if (this.configData.hideUIOnJoin) {
+    if (this.configData.spectatorOptions.hideUI) {
       await keyboard.keyTap('u');
     }
     this.cameraController.getDefault(matchData, keyboard);
@@ -44,17 +44,5 @@ export default class SpectatorManager {
     }
 
     this.cameraController.update(matchData, keyboard);
-  }
-
-  private async typeKeys(keysToType: { key: string; modifier?: string }[]) {
-    //await focusWindow('Echo VR');
-    for (const entry of keysToType) {
-      console.log('Typing key!!! ' + entry.key);
-      if (entry.modifier) {
-        await keyboard.keyTap(entry.key, entry.modifier);
-      } else {
-        await keyboard.keyTap(entry.key);
-      }
-    }
   }
 }

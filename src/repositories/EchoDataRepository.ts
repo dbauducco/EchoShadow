@@ -15,10 +15,8 @@ export default class EchoDataRepository implements IEchoDataRepository {
 
   private deviceAPI: AxiosInstance;
 
-  private DEFAULT_PORT = '6721';
-
-  constructor(private endpointIpAddress: string) {
-    this.apiSessionUrl = `http://${this.endpointIpAddress}:${this.DEFAULT_PORT}/session`;
+  constructor(private ipAddress: string, private port: string) {
+    this.apiSessionUrl = `http://${this.ipAddress}:${this.port}/session`;
     this.deviceAPI = axios.create({ baseURL: this.apiSessionUrl });
   }
 

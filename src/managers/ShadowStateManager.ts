@@ -19,8 +19,8 @@ export default class ShadowStateManager {
 
   constructor(intialConfig: IConfigInfo) {
     // Setting initial values from config
-    this.shadowState.localIp = intialConfig.localApiIpAddress;
-    this.shadowState.remoteIp = intialConfig.remoteApiIpAddress;
+    this.shadowState.localIp = intialConfig.network.localIP;
+    this.shadowState.remoteIp = intialConfig.network.questIP;
     this.shadowState.localStatus = DeviceStatusEnum.Nominal;
 
     // Registering for events

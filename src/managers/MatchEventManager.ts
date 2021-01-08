@@ -14,10 +14,7 @@ export default class MatchEventManager {
   currentMatchData: IEchoMatchData | undefined;
 
   constructor(private localDataRepository: IEchoDataRepository) {
-    // Our current match is undefined
-
     Events.on(EventType.NewSnapshotData, this.newSnapshotData.bind(this));
-    // Events.on(EventType.NewSnapshotData, this.testNewSnapshotData.bind(this));
   }
 
   private newSnapshotData(data: IEchoNewSnapshotEventData) {
