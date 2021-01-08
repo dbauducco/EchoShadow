@@ -68,7 +68,7 @@ const start = async () => {
       localEchoDataRepository,
       remoteEchoDataRepository
     );
-    await echoDataEventManager.start();
+    echoDataEventManager.start();
     return configData;
   } catch (error) {
     log.error({

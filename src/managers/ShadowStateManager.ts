@@ -8,7 +8,7 @@ import { ShadowStateType } from '../types/ShadowStateType';
 
 export default class ShadowStateManager {
   shadowState = {
-    statusMessage: 'Starting up EchoShadow...',
+    statusMessage: 'Starting up EchoShadow v1.2.1...',
     remoteStatus: DeviceStatusEnum.Inactive,
     localStatus: DeviceStatusEnum.Inactive,
     localIp: 'Loading',

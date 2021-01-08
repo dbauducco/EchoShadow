@@ -94,7 +94,7 @@ export default class EchoVRManager {
       Events.emit(EventType.LocalWillJoinMatch);
       this.isLoadingIntoMatch = true;
       const newEchoProcess = this.echoVRClient.open(matchData.sessionID);
-      this.currentInstanceProcessId = '' + newEchoProcess.pid;
+      await this.syncPID();
     } catch (error) {
       log.error({
         message: 'error while opening echo',

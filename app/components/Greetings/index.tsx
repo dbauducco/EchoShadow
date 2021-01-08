@@ -7,7 +7,7 @@ import { DeviceStatusEnum, DeviceTypeEnum } from '../../types';
 
 const Greetings: React.FC = () => {
   const [statusMessage, setStatusMessage] = React.useState(
-    'Starting up EchoShadow...'
+    'Starting up EchoShadow v1.2.1...'
   );
   const [localStatus, setLocalStatus] = React.useState<DeviceStatusEnum>(
     DeviceStatusEnum.Inactive

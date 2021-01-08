@@ -37,8 +37,9 @@ export default class EchoVRClient {
       }
 
       // Spawning the process
-      const spawnOptions = { detached: true };
-      return spawn(this.echoPath, params, spawnOptions);
+      //const spawnOptions = { detached: true };
+      //return spawn(this.echoPath, params, spawnOptions);
+      return exec('"' + this.echoPath + '" ' + params.join(' '));
     } catch (error) {
       console.log('Errrorrr!');
       log.error({
@@ -73,7 +74,7 @@ export default class EchoVRClient {
    * Warning: Will close any and all intances of EchoVR running on the computer, not
    * only the instance that we opened.
    */
-  close = async (processId: string | number) => {
+  close = async (processId?: string | number) => {
     try {
       await killProcess(processId, true);
     } catch (error) {
@@ -114,7 +115,11 @@ export default class EchoVRClient {
     }
 
     try {
-      const newProcess = this.open(undefined, true);
+      const newProcess = spawn(
+        this.echoPath,
+        [this.HEADLESS_FLAG, this.SPECTATOR_FLAG],
+        {}
+      );
 
       // Error event means the game was unable to launch. The path is most likelu not correct.
       newProcess.on('error', async () => {
@@ -176,7 +181,7 @@ export default class EchoVRClient {
       const echoProcess = this.open(undefined, true);
       setTimeout(() => {
         try {
-          echoProcess.kill();
+          this.close();
           const newFileBuffer = fse.readFileSync(configPath);
           if (!newFileBuffer) {
             log.error({

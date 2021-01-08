@@ -65,11 +65,6 @@ export default class MatchEventManager {
         // Remote joined the match
         this.currentMatchData.remoteName =
           data.remoteSnapshot!.clientName || '';
-        // Finding remote player's game index
-        this.currentMatchData.remoteGameIndex = this.getIndexOfPlayer(
-          data.remoteSnapshot!,
-          data.remoteSnapshot!.clientName
-        );
 
         // Emitting the event
         Events.emit(EventType.RemoteJoinedMatch, this.currentMatchData);
@@ -86,6 +81,11 @@ export default class MatchEventManager {
       if (newLocalStatus) {
         // Local joined the match
         this.currentMatchData.localName = data.localSnapshot?.clientName || '';
+        // Finding remote player's game index
+        this.currentMatchData.remoteGameIndex = this.getIndexOfPlayer(
+          data.localSnapshot!,
+          this.currentMatchData.remoteName
+        );
         Events.emit(EventType.LocalJoinedMatch, this.currentMatchData);
         this.pingLocal();
       } else {
@@ -115,7 +115,7 @@ export default class MatchEventManager {
   }
 
   // ********** TESTING ***********/
-  private testNewSnapshotData(data: IEchoNewSnapshotEventData) {
+  /*private testNewSnapshotData(data: IEchoNewSnapshotEventData) {
     if (!this.currentMatchData && data.localSnapshot) {
       this.currentMatchData = {
         sessionType: EchoSessionType.Arena_Match,
@@ -137,7 +137,7 @@ export default class MatchEventManager {
     this.currentMatchData!.discPosition = data.disc.position;
     Events.emit(EventType.TestNewMatchData, this.currentMatchData);
     setTimeout(this.testPingLocal.bind(this), 0.1 * 1000);
-  }
+  }*/
 
   // **** HELPER METHODS **** //
   private checkInMatch(
