@@ -7,7 +7,7 @@ import { DeviceStatusEnum, DeviceTypeEnum } from '../../types';
 
 const Greetings: React.FC = () => {
   const [statusMessage, setStatusMessage] = React.useState(
-    'Starting Up EchoShadow...'
+    'Starting up EchoShadow v1.2.1...'
   );
   const [localStatus, setLocalStatus] = React.useState<DeviceStatusEnum>(
     DeviceStatusEnum.Inactive
@@ -19,16 +19,26 @@ const Greetings: React.FC = () => {
   const [remoteIp, setRemoteIp] = React.useState('Loading');
 
   React.useEffect(() => {
-    ipcRenderer.on(
-      'shadowStatusUpdate',
-      (event: Electron.IpcRendererEvent, args: any) => {
-        setStatusMessage(args.statusMessage);
-        setLocalStatus(args.localStatus);
-        setRemoteStatus(args.remoteStatus);
-        setLocalIp(args.localIp);
-        setRemoteIp(args.remoteIp);
-      }
-    );
+    // ipcRenderer.on(
+    //   'shadowStatusUpdate',
+    //   (event: Electron.IpcRendererEvent, args: any) => {
+    //     console.log(args);
+    //     setStatusMessage(args.statusMessage);
+    //     setLocalStatus(args.localStatus);
+    //     setRemoteStatus(args.remoteStatus);
+    //     setLocalIp(args.localIp);
+    //     setRemoteIp(args.remoteIp);
+    //   }
+    // );
+    setInterval(() => {
+      ipcRenderer.invoke('shadowStatusUpdate').then(result => {
+        setStatusMessage(result.statusMessage);
+        setLocalStatus(result.localStatus);
+        setRemoteStatus(result.remoteStatus);
+        setLocalIp(result.localIp);
+        setRemoteIp(result.remoteIp);
+      });
+    }, 2000);
     return function cleanup() {
       // we might or might not need this, I just saw it in a stack overflow
       ipcRenderer.removeAllListeners('shadowStatusUpdate');

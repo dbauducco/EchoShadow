@@ -4,6 +4,7 @@ import {
   EchoSessionType,
   IEchoDataRepository,
   IEchoDataSnapshot,
+  IEchoMatchPlayerData,
 } from '../types';
 import { log } from '../utilities/log';
 
@@ -15,19 +16,9 @@ export default class EchoDataRepository implements IEchoDataRepository {
 
   private deviceAPI: AxiosInstance;
 
-  private DEFAULT_PORT = '6721';
-
-  constructor(private endpointIpAddress: string) {
-    this.apiSessionUrl = `http://${this.endpointIpAddress}:${this.DEFAULT_PORT}/session`;
+  constructor(private ipAddress: string, private port: string) {
+    this.apiSessionUrl = `http://${this.ipAddress}:${this.port}/session`;
     this.deviceAPI = axios.create({ baseURL: this.apiSessionUrl });
-    axiosRetry(this.deviceAPI, {
-      retries: 3,
-      retryDelay: axiosRetry.exponentialDelay,
-      shouldResetTimeout: true,
-      retryCondition: e => {
-        return isNetworkOrIdempotentRequestError(e);
-      },
-    });
   }
 
   /**
@@ -40,17 +31,7 @@ export default class EchoDataRepository implements IEchoDataRepository {
       const echoApiResult = await this.deviceAPI.get('', {
         timeout: 3000,
       });
-      const snapshotData: IEchoDataSnapshot = {
-        sessionId: echoApiResult.data.sessionid,
-        sessionType: this.sessionTypeByName(echoApiResult.data.match_type),
-        clientName: echoApiResult.data.client_name,
-        blueTeamMembers: this.getNames(echoApiResult.data.teams[0].players),
-        orangeTeamMembers: this.getNames(echoApiResult.data.teams[1].players),
-        spectatorMembers: this.getNames(echoApiResult.data.teams[2].players),
-        inMatch: false, // Overriden in next line
-      };
-      // Actually set in match:
-      snapshotData.inMatch = this.isInMatch(snapshotData.sessionType);
+      const snapshotData = this.parseData(echoApiResult);
       return snapshotData;
     } catch (error) {
       if (error.code === 'ECONNABORTED') {
@@ -79,10 +60,11 @@ export default class EchoDataRepository implements IEchoDataRepository {
    * localhost an echo instance must be running on the laptop with APISettings:
    * enabled in order to get the session id of the current session.
    */
-  public async getFullSnapshot(): Promise<any | undefined> {
+  public async getInstantSnapshot(): Promise<IEchoDataSnapshot | undefined> {
     try {
       const echoApiResult = await axios.get(this.apiSessionUrl);
-      return echoApiResult.data;
+      const snapshotData = this.parseData(echoApiResult);
+      return snapshotData;
     } catch (error) {
       log.error({
         description: 'Error retrieving full snapshot',
@@ -92,11 +74,51 @@ export default class EchoDataRepository implements IEchoDataRepository {
     }
   }
 
+  /** Helper method to control retries on main snapshot */
+  public enableRetries() {
+    this.deviceAPI = axios.create({ baseURL: this.apiSessionUrl });
+    axiosRetry(this.deviceAPI, {
+      retries: 3,
+      retryDelay: axiosRetry.exponentialDelay,
+      shouldResetTimeout: true,
+      retryCondition: e => {
+        return isNetworkOrIdempotentRequestError(e);
+      },
+    });
+  }
+
+  public disableRetries() {
+    this.deviceAPI = axios.create({ baseURL: this.apiSessionUrl });
+  }
+
+  private parseData(echoApiResult: any) {
+    const snapshotData: IEchoDataSnapshot = {
+      sessionId: echoApiResult.data.sessionid,
+      sessionType: this.sessionTypeByName(echoApiResult.data.match_type),
+      client: {
+        name: echoApiResult.data.client_name,
+        position: echoApiResult.data.player.vr_position,
+        forward: echoApiResult.data.player.vr_forward,
+        left: echoApiResult.data.player.vr_left,
+        up: echoApiResult.data.player.vr_up,
+      },
+      blueTeamMembers: this.mapPlayerData(echoApiResult.data.teams[0].players),
+      orangeTeamMembers: this.mapPlayerData(
+        echoApiResult.data.teams[1].players
+      ),
+      spectatorMembers: this.mapPlayerData(echoApiResult.data.teams[2].players),
+      inMatch: false, // Overriden in next line
+    };
+    // Actually set in match:
+    snapshotData.inMatch = this.isInMatch(snapshotData.sessionType);
+    return snapshotData;
+  }
+
   /**
    * Helper method to get the index of a player by name. The index should match the
    * key to spectate them.
    */
-  private getIndexOfPlayer(echoApiResult: any, playerName?: string): number {
+  private getPlayerIndex(echoApiResult: any, playerName?: string): number {
     // Store the player name we are searching for
     const playerToSearchFor = playerName || echoApiResult.client_name;
 
@@ -162,11 +184,19 @@ export default class EchoDataRepository implements IEchoDataRepository {
   /**
    * Helper method to get names for a team
    */
-  private getNames(listOfPlayers: any): string[] {
+  private mapPlayerData(listOfPlayers: any): IEchoMatchPlayerData[] {
     if (!listOfPlayers) {
       return [];
     }
 
-    return listOfPlayers.map((player: { name: string }) => player.name);
+    return listOfPlayers.map((player: { name: string; head: any }) => {
+      return {
+        name: player.name,
+        position: player.head.position,
+        left: player.head.left,
+        up: player.head.up,
+        forward: player.head.forward,
+      };
+    });
   }
 }

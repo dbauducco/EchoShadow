@@ -21,6 +21,9 @@ export class EventLogger {
     // );
     // Events.on(EventType.NewMatchData, this.logNewMatchData.bind(this));
     // Events.on(EventType.NewSnapshotData, this.logNewSnapshotData.bind(this));
+    // Events.on(EventType.NewShadowState, this.logNewShadowState.bind(this));
+    // Events.on(EventType.LocalIsSynced, this.logLocalIsSynced.bind(this));
+    // Events.on(EventType.LocalIsUnsynced, this.logLocalIsUnsynced.bind(this));
   }
 
   private logNewSnapshotData(data: IEchoNewSnapshotEventData) {
@@ -75,6 +78,27 @@ export class EventLogger {
   private logNewMatchData(data: IEchoMatchData) {
     log.info({
       event: EventType.NewMatchData,
+      eventData: data,
+    });
+  }
+
+  private logLocalIsSynced(data: IEchoMatchData) {
+    log.info({
+      event: EventType.LocalIsSynced,
+      eventData: data,
+    });
+  }
+
+  private logLocalIsUnsynced(data: IEchoMatchData) {
+    log.info({
+      event: EventType.LocalIsUnsynced,
+      eventData: data,
+    });
+  }
+
+  private logNewShadowState(data: IEchoMatchData) {
+    log.info({
+      event: EventType.NewShadowState,
       eventData: data,
     });
   }

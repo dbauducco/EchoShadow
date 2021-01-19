@@ -1,6 +1,6 @@
 {
   "name": "echo-shadow",
-  "version": "1.2.0-rc.2",
+  "version": "1.2.1-rc.2",
   "description": "An Application That Follows You Into Echo Arena Matches",
   "main": "./dist/electron/main.js",
   "scripts": {
@@ -13,6 +13,7 @@
     "build": "npm-run-all build:electron build:react",
     "build:run": "npm-run-all build start:electron",
     "build:electron": "tsc",
+    "mockQuest": "mockserver -p 6722 -m quest_mock",
     "build:react": "webpack --config webpack/react.webpack.js",
     "package": "npm-run-all build package:dist",
     "package:dist": "electron-builder --dir",
@@ -82,9 +83,11 @@
     "ffi-napi": "^3.1.0",
     "file-loader": "^6.2.0",
     "fs-extra": "^9.0.1",
+    "mockserver": "^3.1.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-spinners-kit": "^1.9.1",
+    "react-tooltip": "^4.2.11",
     "styled-components": "^5.1.1",
     "winston": "^3.3.3"
   },

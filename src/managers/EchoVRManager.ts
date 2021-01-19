@@ -36,8 +36,8 @@ export default class EchoVRManager {
   async remoteJoinedMatch(data: IEchoMatchData) {
     if (
       this.currentInstanceProcessId &&
-      data.isLocalInMatch == false &&
-      data.isRemoteInMatch == true
+      data.local.inMatch == false &&
+      data.remote.inMatch == true
     ) {
       // We are gonna close the game first
       this.close();
@@ -67,7 +67,7 @@ export default class EchoVRManager {
       this.undefinedAPICounter++;
       // If after 10 API calls, the result is still undefined but Echo is running,
       // let's close Echo. Either Echo got stuck loading, or something else.
-      if (this.undefinedAPICounter > 4) {
+      if (this.undefinedAPICounter > 20) {
         this.close();
         this.undefinedAPICounter = 0;
       }
@@ -93,10 +93,8 @@ export default class EchoVRManager {
       Events.emit(EventType.NewShadowState, ShadowStateType.JoiningRemote);
       Events.emit(EventType.LocalWillJoinMatch);
       this.isLoadingIntoMatch = true;
-      await this.echoVRClient.open(matchData.sessionID);
-      //log.debug({ message: 'after exeClient.open' });
+      const newEchoProcess = this.echoVRClient.open(matchData.sessionID);
       await this.syncPID();
-      //log.debug({ message: 'after EchoInstanceClient.findEchoProcessId' });
     } catch (error) {
       log.error({
         message: 'error while opening echo',
@@ -152,6 +150,4 @@ export default class EchoVRManager {
       session.sessionType === EchoSessionType.Private_Arena_Match
     );
   };
-
-  private verifyUserLeft = () => {};
 }

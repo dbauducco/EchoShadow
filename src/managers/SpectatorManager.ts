@@ -2,38 +2,45 @@ import EchoInstanceClient from './EchoVRManager';
 import Events from '../utilities/Events';
 import { IEchoCameraController } from '../types/IEchoCameraController';
 import DoNothingCameraController from '../cameraControllers/DoNothingCameraController';
-import { EventType, IEchoMatchData } from '../types';
-import SidelineCameraController from '../cameraControllers/SidelineCameraController';
-import POVCameraController from '../cameraControllers/POVCameraController';
+import { EventType, IConfigInfo, IEchoMatchData } from '../types';
 import FollowCameraController from '../cameraControllers/FollowCameraController';
 import DiscCameraController from '../cameraControllers/DiscCameraController';
 import { focusWindow, Key, keyboard } from '../utilities/utils';
+import POVCameraController from '../cameraControllers/POVCameraController';
 
 export default class SpectatorManager {
   cameraController: IEchoCameraController;
 
-  constructor(public echoInstance: EchoInstanceClient) {
-    // Events.on(
-    //   EventType.LocalJoinedMatch,
-    //   this.setDefaultSpectatorOption.bind(this)
-    // );
-    // Events.on(EventType.NewMatchData, this.updateCamera.bind(this));
+  constructor(private configData: IConfigInfo) {
     Events.on(
-      EventType.TestLocalJoinedMatch,
+      EventType.LocalJoinedMatch,
       this.setDefaultSpectatorOption.bind(this)
     );
-    Events.on(EventType.TestNewMatchData, this.updateCamera.bind(this));
-    this.cameraController = new POVCameraController();
+    Events.on(EventType.NewMatchData, this.updateCamera.bind(this));
+    switch (configData.spectatorOptions.mode) {
+      case 'follow':
+        this.cameraController = new FollowCameraController();
+        break;
+      case 'pov':
+        this.cameraController = new POVCameraController();
+        break;
+      case 'none':
+      default:
+        this.cameraController = new DoNothingCameraController();
+        break;
+    }
   }
 
   public async setDefaultSpectatorOption(matchData: IEchoMatchData) {
     await focusWindow('Echo VR');
-    await keyboard.click(Key.U);
+    if (this.configData.spectatorOptions.hideUI) {
+      await keyboard.click(Key.U);
+    }
     this.cameraController.getDefault(matchData);
   }
 
   public async updateCamera(matchData: IEchoMatchData) {
-    if (!matchData || !matchData.isRemoteInMatch) {
+    if (!matchData || !matchData.local.inMatch) {
       return;
     }
 

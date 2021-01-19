@@ -13,10 +13,7 @@ export default class MatchEventManager {
   currentMatchData: IEchoMatchData | undefined;
 
   constructor(private localDataRepository: IEchoDataRepository) {
-    // Our current match is undefined
-
-    // Events.on(EventType.NewSnapshotData, this.newSnapshotData.bind(this));
-    Events.on(EventType.NewSnapshotData, this.testNewSnapshotData.bind(this));
+    Events.on(EventType.NewSnapshotData, this.newSnapshotData.bind(this));
   }
 
   private newSnapshotData(data: IEchoNewSnapshotEventData) {
@@ -29,12 +26,23 @@ export default class MatchEventManager {
       this.currentMatchData = {
         sessionID: data.remoteSnapshot.sessionId,
         sessionType: EchoSessionType.Arena_Match,
-        isLocalInMatch: false,
-        isRemoteInMatch: false,
-        remoteName: '',
-        localName: '',
-        remoteGameIndex: -1,
         discPosition: [0, 0, 0],
+        remote: {
+          inMatch: false,
+          index: -1,
+          name: '',
+          team: '',
+        },
+        local: {
+          inMatch: false,
+          team: '',
+          name: '',
+          position: [0, 0, 0],
+          up: [0, 0, 0],
+          forward: [0, 0, 0],
+          left: [0, 0, 0],
+        },
+        game: { disc: [0, 0, 0], bluePlayers: [], orangePlayers: [] },
       };
     }
 
@@ -47,24 +55,23 @@ export default class MatchEventManager {
     // Update status of remote and local being in match
     const newRemoteStatus = this.checkInMatch(
       data.remoteSnapshot,
-      this.currentMatchData.remoteName,
+      this.currentMatchData.remote.name,
       data.localSnapshot
     );
     const newLocalStatus = this.checkInMatch(
       data.localSnapshot,
-      this.currentMatchData.localName,
+      this.currentMatchData.local.name,
       data.remoteSnapshot
     );
 
     // Detect a change in remote status
-    if (this.currentMatchData.isRemoteInMatch !== newRemoteStatus) {
-      this.currentMatchData.isRemoteInMatch = newRemoteStatus;
+    if (this.currentMatchData.remote.inMatch !== newRemoteStatus) {
+      this.currentMatchData.remote.inMatch = newRemoteStatus;
 
       if (newRemoteStatus) {
         // Remote joined the match
-        this.currentMatchData.remoteName =
-          data.remoteSnapshot!.clientName || '';
-        // Finding remote player's game index
+        this.currentMatchData.remote.name =
+          data.remoteSnapshot!.client.name || '';
 
         // Emitting the event
         Events.emit(EventType.RemoteJoinedMatch, this.currentMatchData);
@@ -75,12 +82,20 @@ export default class MatchEventManager {
     }
 
     // Detect a change in local status
-    if (this.currentMatchData.isLocalInMatch !== newLocalStatus) {
-      this.currentMatchData.isLocalInMatch = newLocalStatus;
+    if (this.currentMatchData.local.inMatch !== newLocalStatus) {
+      this.currentMatchData.local.inMatch = newLocalStatus;
 
       if (newLocalStatus) {
         // Local joined the match
-        this.currentMatchData.localName = data.localSnapshot?.clientName || '';
+        this.currentMatchData.local.name =
+          data.localSnapshot?.client.name || '';
+        // Finding remote player's game index
+        const playerTeamData = this.findPlayerData(
+          data.localSnapshot!,
+          this.currentMatchData.remote.name
+        );
+        this.currentMatchData.remote.team = playerTeamData[0];
+        this.currentMatchData.remote.index = playerTeamData[1];
         Events.emit(EventType.LocalJoinedMatch, this.currentMatchData);
         this.pingLocal();
       } else {
@@ -91,8 +106,8 @@ export default class MatchEventManager {
 
     // Check if both remote and local are no longer in the match
     if (
-      !this.currentMatchData.isRemoteInMatch &&
-      !this.currentMatchData.isLocalInMatch
+      !this.currentMatchData.remote.inMatch &&
+      !this.currentMatchData.local.inMatch
     ) {
       // Reset the current match data
       this.currentMatchData = undefined;
@@ -102,37 +117,31 @@ export default class MatchEventManager {
   }
 
   private async pingLocal() {
-    const data = await this.localDataRepository.getFullSnapshot();
+    // Get new data
+    const data = await this.localDataRepository.getSnapshot();
 
-    if (this.currentMatchData?.isLocalInMatch)
+    // Update player team and index
+    const playerTeamData = this.findPlayerData(
+      data!,
+      this.currentMatchData!.remote.name
+    );
+    this.currentMatchData!.remote.team = playerTeamData[0];
+    this.currentMatchData!.remote.index = playerTeamData[1];
+    // Update local position
+    this.currentMatchData!.local.position = data!.client.position;
+    this.currentMatchData!.local.forward = data!.client.forward;
+    this.currentMatchData!.local.up = data!.client.up;
+    this.currentMatchData!.local.left = data!.client.left;
+    // Update player postions
+    this.currentMatchData!.game.bluePlayers = data!.blueTeamMembers;
+    this.currentMatchData!.game.orangePlayers = data!.orangeTeamMembers;
+
+    // Emit the match data
+    Events.emit(EventType.NewMatchData, this.currentMatchData);
+
+    // Loop the function
+    if (this.currentMatchData?.local.inMatch)
       setTimeout(this.pingLocal.bind(this), 0.1 * 1000);
-  }
-
-  // ********** TESTING ***********/
-  private testNewSnapshotData(data: IEchoNewSnapshotEventData) {
-    if (!this.currentMatchData && data.localSnapshot) {
-      this.currentMatchData = {
-        sessionType: EchoSessionType.Arena_Match,
-        sessionID: '',
-        remoteName: 'Mozzy-',
-        remoteGameIndex: this.getIndexOfPlayer(data.localSnapshot, 'Mozzy-'),
-        isRemoteInMatch: true,
-        isLocalInMatch: true,
-        localName: '',
-        discPosition: [0, 0, 0],
-      };
-      Events.emit(EventType.TestLocalJoinedMatch, this.currentMatchData);
-      this.testPingLocal();
-    }
-  }
-
-  private async testPingLocal() {
-    const data = await this.localDataRepository.getFullSnapshot();
-    if (this.currentMatchData) {
-      this.currentMatchData.discPosition = data.disc.position;
-    }
-    Events.emit(EventType.TestNewMatchData, this.currentMatchData);
-    setTimeout(this.testPingLocal.bind(this), 0.1 * 1000);
   }
 
   // **** HELPER METHODS **** //
@@ -157,22 +166,35 @@ export default class MatchEventManager {
     }
 
     // Let's check if they player is in one of the teams
-    return (
-      alternateData.blueTeamMembers.indexOf(sourceName) > -1 ||
-      alternateData.orangeTeamMembers.indexOf(sourceName) > -1 ||
-      alternateData.spectatorMembers.indexOf(sourceName) > -1
-    );
+    return this.findPlayerData(alternateData, sourceName)[1] != -1;
   }
 
-  private getIndexOfPlayer(snapshot: IEchoDataSnapshot, name: string) {
-    const blueIndex = snapshot.blueTeamMembers.indexOf(name);
-    const orangeIndex = snapshot.orangeTeamMembers.indexOf(name);
+  private findPlayerData(
+    snapshot: IEchoDataSnapshot,
+    name: string
+  ): [string, number, number[]] {
+    const blueIndex = snapshot.blueTeamMembers.findIndex(playerData => {
+      return playerData.name == name;
+    });
+    const orangeIndex = snapshot.orangeTeamMembers.findIndex(playerData => {
+      return playerData.name == name;
+    });
+    const spectatorIndex = snapshot.spectatorMembers.findIndex(playerData => {
+      return playerData.name == name;
+    });
 
-    if (blueIndex !== -1) {
-      return blueIndex + 6;
-    }
-    if (orangeIndex !== -1) {
-      return orangeIndex + 1;
+    if (blueIndex != -1) {
+      return ['blue', blueIndex, snapshot.blueTeamMembers[blueIndex].position];
+    } else if (orangeIndex != -1) {
+      return [
+        'orange',
+        orangeIndex,
+        snapshot.orangeTeamMembers[orangeIndex].position,
+      ];
+    } else if (spectatorIndex != -1) {
+      return ['spectator', 11, [0, 0, 0]];
+    } else {
+      return ['other', -1, [0, 0, 0]];
     }
     return -1;
   }

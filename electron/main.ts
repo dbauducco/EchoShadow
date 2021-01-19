@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-/** *********************************************************************
- ************************ECHO SHADOW CODE*******************************
+/***********************************************************************
+ ************************ ECHO SHADOW CODE *******************************
  ********************************************************************** */
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
@@ -17,10 +17,10 @@ import MatchEventManager from '../src/managers/MatchEventManager';
 import OBSManager from '../src/managers/OBSManager';
 import SpectatorManager from '../src/managers/SpectatorManager';
 import EchoDataEventManager from '../src/managers/EchoDataEventManager';
-import UIUpdaterMananger from '../src/managers/UIUpdaterManager';
+import ShadowStateManager from '../src/managers/ShadowStateManager';
 
-/** *********************************************************************
- *(********************BOILERPLATE ELECTRON*****************************
+/***********************************************************************
+ ********************* BOILERPLATE ELECTRON *****************************
  ********************************************************************** */
 
 const setup = async () => {
@@ -34,10 +34,12 @@ const setup = async () => {
   log.info({ loadedConfig: configData });
   const echoVRManager = new EchoVRManager(configData.echoPath);
   const remoteEchoDataRepository = new EchoDataRepository(
-    configData.remoteApiIpAddress
+    configData.network.questIP,
+    configData.network.questPort
   );
   const localEchoDataRepository = new EchoDataRepository(
-    configData.localApiIpAddress
+    configData.network.localIP,
+    configData.network.localPort
   );
   return {
     log,
@@ -60,15 +62,15 @@ const start = async () => {
       new EventLogger(),
       new ShadowManager(),
       new OBSManager(),
-      new UIUpdaterMananger(configData),
-      new SpectatorManager(echoVRManager),
+      new ShadowStateManager(configData),
+      new SpectatorManager(configData),
       new MatchEventManager(localEchoDataRepository),
     ];
     const echoDataEventManager = new EchoDataEventManager(
       localEchoDataRepository,
       remoteEchoDataRepository
     );
-    await echoDataEventManager.start();
+    echoDataEventManager.start();
     return configData;
   } catch (error) {
     log.error({
@@ -87,10 +89,12 @@ function createWindow() {
     height: 240,
     frame: false,
     resizable: false,
-    backgroundColor: '#191622',
+    // backgroundColor: '#f9968e', // PINK MODE
+    backgroundColor: '#191622', // Normal Mode
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
+      backgroundThrottling: false,
     },
   });
 
@@ -120,7 +124,7 @@ app
   .then(async () => {
     // start Echo Shadow
     const configOptions = await start();
-    if (configOptions?.debugUI) {
+    if (configOptions?.dev.debugUI) {
       mainWindow?.webContents.openDevTools();
     }
   });

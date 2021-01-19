@@ -1,4 +1,4 @@
-import { exec as execNative } from 'child_process';
+import { exec as execNative, spawn } from 'child_process';
 import { promisify } from 'util';
 import * as ffi from 'ffi-napi';
 import KeyboardAction from './keyboard/keyboard-action.class';
@@ -23,9 +23,19 @@ const getProcessId = async (
   return echoPid;
 };
 
-const killProcess = async (processId: string) => {
+const killProcess = async (
+  processId?: number | string,
+  force?: boolean,
+  processName?: string
+) => {
   // /t will also kill any process started by the EchoVR process. Known as tree killing.
-  await exec(`taskkill /pid ${processId} /t`);
+  const forceFlag = force ? ' /F' : '';
+
+  if (processId) {
+    await exec(`taskkill /pid ${processId} /T` + forceFlag);
+  } else {
+    await exec(`taskkill /IM ${processName} /T` + forceFlag);
+  }
 };
 
 const focusWindow = async (windowName: string) => {

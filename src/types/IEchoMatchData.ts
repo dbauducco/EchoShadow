@@ -1,12 +1,28 @@
 import { EchoSessionType } from './EchoSessionType';
+import { IEchoMatchPlayerData } from './IEchoMatchPlayerData';
 
 export interface IEchoMatchData {
   sessionType: EchoSessionType;
-  isRemoteInMatch: boolean;
-  isLocalInMatch: boolean;
   sessionID: string;
-  remoteName: string;
-  localName: string;
-  remoteGameIndex: number;
   discPosition: number[];
+  remote: {
+    inMatch: boolean;
+    index: number;
+    name: string;
+    team: string;
+  };
+  local: {
+    inMatch: boolean;
+    team: string;
+    name: string;
+    position: number[];
+    forward: number[];
+    up: number[];
+    left: number[];
+  };
+  game: {
+    disc: number[];
+    bluePlayers: IEchoMatchPlayerData[];
+    orangePlayers: IEchoMatchPlayerData[];
+  };
 }
