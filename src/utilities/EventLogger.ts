@@ -19,7 +19,7 @@ export class EventLogger {
     //   EventType.LocalWillJoinMatch,
     //   this.logLocalWillJoinMatch.bind(this)
     // );
-    //Events.on(EventType.NewMatchData, this.logNewMatchData.bind(this));
+    // Events.on(EventType.NewMatchData, this.logNewMatchData.bind(this));
     // Events.on(EventType.NewSnapshotData, this.logNewSnapshotData.bind(this));
     // Events.on(EventType.NewShadowState, this.logNewShadowState.bind(this));
     // Events.on(EventType.LocalIsSynced, this.logLocalIsSynced.bind(this));

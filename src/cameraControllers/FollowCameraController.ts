@@ -4,59 +4,66 @@ import * as robotjs from 'robotjs';
 import { MatchCameraAnalyzer } from '../utilities/MatchCameraAnalyzer';
 
 export default class FollowCameraController implements IEchoCameraController {
-  // Setting Variables
-  FOLLOW_X_DIFF_THRESHOLD = 2;
-  FOLLOW_Y_DIFF_THRESHOLD = 0.67;
-  FOLLOW_Z_DIFF_THRESHOLD = 6;
   cameraAnalyzer = new MatchCameraAnalyzer();
+  target = '';
+  possibleKeys: number[] = [];
+  currentKeyIndex = 0;
+
   // Default
   getDefault(matchData: IEchoMatchData, keyboard: typeof robotjs) {
-    keyboard.keyTap('' + matchData.remote.index, 'shift');
+    this.setPossibleKeys(matchData);
+    this.goToPlayer(this.possibleKeys[this.currentKeyIndex], keyboard);
   }
+
   // Updating
   update(matchData: IEchoMatchData, keyboard: typeof robotjs) {
+    // Get the current camera
     const predictedCamera = this.cameraAnalyzer.getCamera(matchData);
-    if (predictedCamera) {
-      console.log(predictedCamera);
+    if (!predictedCamera) {
+      return;
+    }
+
+    console.log('Camera is currently on: ' + predictedCamera);
+    // We need to go to the next camera
+    if (predictedCamera !== matchData.remote.name + '#FOLLOW') {
+      // Set the possible keys
+      this.setPossibleKeys(matchData);
+      // Increase the current key
+      this.currentKeyIndex++;
+      if (this.currentKeyIndex >= this.possibleKeys.length) {
+        // Loop the current key around to the start
+        this.currentKeyIndex = 0;
+      }
+      // Keytap the new play key
+      this.goToPlayer(this.possibleKeys[this.currentKeyIndex], keyboard);
     }
   }
 
-  getCameraPosition(matchData: IEchoMatchData) {
-    //const player = matchData.game.bluePlayers[0];
-    var predictedCameras: string[] = [];
-
-    for (const playerIndex in matchData.game.bluePlayers) {
-      const player = matchData.game.bluePlayers[playerIndex];
-
-      const pos_x_diff = Math.abs(
-        player.position[0] - matchData.local.position[0]
+  setPossibleKeys(matchData: IEchoMatchData) {
+    if (matchData.remote.team === 'blue') {
+      // The possible keys are the default blue keys, and only the
+      // keys depending on how many players there are
+      this.possibleKeys = [6, 7, 8, 9, 0].slice(
+        0,
+        matchData.game.bluePlayers.length
       );
-      const pos_y_diff = Math.abs(
-        player.position[1] - matchData.local.position[1]
+    } else if (matchData.remote.team === 'orange') {
+      // The possible keys are the default orange keys, and only the
+      // keys depending on how many players there are
+      this.possibleKeys = [1, 2, 3, 4, 5].slice(
+        0,
+        matchData.game.bluePlayers.length
       );
-      const pos_z_diff = Math.abs(
-        player.position[2] - matchData.local.position[2]
-      );
-
-      if (
-        pos_x_diff < this.FOLLOW_X_DIFF_THRESHOLD &&
-        pos_y_diff < this.FOLLOW_Y_DIFF_THRESHOLD &&
-        pos_z_diff < this.FOLLOW_Z_DIFF_THRESHOLD
-      ) {
-        if (matchData.local.forward[2] < 0) {
-          // Facing blue
-          if (player.position[2] < matchData.local.position[2]) {
-            predictedCameras.push(player.name + '#FOLLOW');
-          }
-        } else if (matchData.local.forward[2] > 0) {
-          // Facing orange
-          if (player.position[2] > matchData.local.position[2]) {
-            predictedCameras.push(player.name + '#FOLLOW');
-          }
-        }
-      }
     }
+    console.log('Set possible keys to: ' + this.possibleKeys);
+  }
 
-    return predictedCameras;
+  goToPlayer(playerNumber: number, keyboard: typeof robotjs) {
+    console.log('Clicked: SHIFT+' + playerNumber);
+    //keyboard.keyTap('' + playerNumber, 'shift');
+    keyboard.keyToggle('' + playerNumber, 'down', 'shift');
+    setTimeout(() => {
+      keyboard.keyToggle('' + playerNumber, 'up', 'shift');
+    }, 1000);
   }
 }

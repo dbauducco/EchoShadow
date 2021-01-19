@@ -17,7 +17,6 @@ export class MatchCameraAnalyzer {
     // Predict the camera
     this.predictCurrentCamera(matchData);
 
-    console.log(this.predictions);
     // Make sure predictions exist
     if (Object.values(this.predictions).length == 0) {
       return undefined;
