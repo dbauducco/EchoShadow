@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-/** *********************************************************************
- ************************ECHO SHADOW CODE*******************************
+/***********************************************************************
+ ************************ ECHO SHADOW CODE *******************************
  ********************************************************************** */
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
@@ -19,8 +19,8 @@ import SpectatorManager from '../src/managers/SpectatorManager';
 import EchoDataEventManager from '../src/managers/EchoDataEventManager';
 import ShadowStateManager from '../src/managers/ShadowStateManager';
 
-/** *********************************************************************
- *(********************BOILERPLATE ELECTRON*****************************
+/***********************************************************************
+ ********************* BOILERPLATE ELECTRON *****************************
  ********************************************************************** */
 
 const setup = async () => {

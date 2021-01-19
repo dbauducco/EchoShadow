@@ -6,4 +6,5 @@ export * from './LogLevel';
 export * from './IEchoDataRepository';
 export * from './events/IEchoShapshotOverviewsEventData';
 export * from './events/IEchoNewSnapshotEventData';
+export * from './IEchoMatchPlayerData';
 export * from './IEchoMatchData';

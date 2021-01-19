@@ -36,8 +36,8 @@ export default class EchoVRManager {
   async remoteJoinedMatch(data: IEchoMatchData) {
     if (
       this.currentInstanceProcessId &&
-      data.isLocalInMatch == false &&
-      data.isRemoteInMatch == true
+      data.local.inMatch == false &&
+      data.remote.inMatch == true
     ) {
       // We are gonna close the game first
       this.close();

@@ -39,7 +39,7 @@ export default class SpectatorManager {
   }
 
   public async updateCamera(matchData: IEchoMatchData) {
-    if (!matchData || !matchData.isRemoteInMatch) {
+    if (!matchData || !matchData.local.inMatch) {
       return;
     }
 

@@ -1,11 +1,12 @@
 import { EchoSessionType } from './EchoSessionType';
+import { IEchoMatchPlayerData } from './IEchoMatchPlayerData';
 
 export interface IEchoDataSnapshot {
   sessionId: string;
   sessionType: EchoSessionType;
-  clientName: string;
   inMatch: boolean;
-  blueTeamMembers: string[];
-  orangeTeamMembers: string[];
-  spectatorMembers: string[];
+  client: IEchoMatchPlayerData;
+  blueTeamMembers: IEchoMatchPlayerData[];
+  orangeTeamMembers: IEchoMatchPlayerData[];
+  spectatorMembers: IEchoMatchPlayerData[];
 }
