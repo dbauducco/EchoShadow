@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-/***********************************************************************
+/** *********************************************************************
  ************************ ECHO SHADOW CODE *******************************
  ********************************************************************** */
 import { app, BrowserWindow } from 'electron';
@@ -21,7 +21,7 @@ import ShadowStateManager from '../src/managers/ShadowStateManager';
 import { ShadowStateType } from '../src/types/ShadowStateType';
 import EchoDataRedirectManager from '../src/managers/EchoDataRedirectManager';
 
-/***********************************************************************
+/** *********************************************************************
  ********************* BOILERPLATE ELECTRON *****************************
  ********************************************************************** */
 
@@ -75,6 +75,7 @@ const start = async () => {
         new ShadowManager(),
         new OBSManager(),
         new MatchEventManager(localEchoDataRepository),
+        new SpectatorManager(configData),
       ];
     }
 

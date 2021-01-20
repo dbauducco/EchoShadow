@@ -7,6 +7,7 @@ import FollowCameraController from '../cameraControllers/FollowCameraController'
 import DiscCameraController from '../cameraControllers/DiscCameraController';
 import { focusWindow, Key, keyboard } from '../utilities/utils';
 import POVCameraController from '../cameraControllers/POVCameraController';
+import SidelineCameraController from '../cameraControllers/SidelineCameraController';
 
 export default class SpectatorManager {
   cameraController: IEchoCameraController;
@@ -24,6 +25,9 @@ export default class SpectatorManager {
       case 'pov':
         this.cameraController = new POVCameraController();
         break;
+      case 'sideline':
+        this.cameraController = new SidelineCameraController();
+        break;
       case 'none':
       default:
         this.cameraController = new DoNothingCameraController();
@@ -36,7 +40,7 @@ export default class SpectatorManager {
     if (this.configData.spectatorOptions.hideUI) {
       await keyboard.click(Key.U);
     }
-    this.cameraController.getDefault(matchData);
+    await this.cameraController.getDefault(matchData);
   }
 
   public async updateCamera(matchData: IEchoMatchData) {

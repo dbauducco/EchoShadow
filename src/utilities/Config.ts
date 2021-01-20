@@ -30,8 +30,8 @@ export class Config {
       mode: 'default',
     },
     redirectAPI: {
-      enabled: true,
-      serverPort: '',
+      enabled: false,
+      serverPort: '1010',
     },
     dev: {
       logLevel: LogLevel.INFO,
@@ -102,18 +102,17 @@ export class Config {
       const configData: IConfigInfo = JSON.parse(dataBuffer.toString());
 
       // Check config format version
-      if (configData.configVersion == 'v2') {
+      if (configData.configVersion === 'v2') {
         // The config format is up to date
         return configData;
-      } else {
-        // We need to upgrade the config format
-        const newFormatData = this.upgradeConfig(configData);
-        await fse.outputFile(
-          this.CONFIG_PATH,
-          JSON.stringify(newFormatData, null, 4)
-        );
-        return newFormatData;
       }
+      // We need to upgrade the config format
+      const newFormatData = this.upgradeConfig(configData);
+      await fse.outputFile(
+        this.CONFIG_PATH,
+        JSON.stringify(newFormatData, null, 4)
+      );
+      return newFormatData;
     } catch (error) {
       log.error({
         message: 'Error reading config.',
@@ -154,6 +153,6 @@ export class Config {
    * Method to open the config file with the default app for .json files.
    */
   public openConfigFile() {
-    exec('start ' + this.CONFIG_PATH);
+    exec(`start ${this.CONFIG_PATH}`);
   }
 }
