@@ -81,4 +81,16 @@ const focusWindow = async (windowName: string) => {
 
 const keyboard = new KeyboardAction();
 
-export { exec, getProcessId, killProcess, focusWindow, keyboard, sleep, Key };
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+export {
+  exec,
+  getProcessId,
+  killProcess,
+  focusWindow,
+  keyboard,
+  sleep,
+  Key,
+  spawn,
+  delay,
+};

@@ -13,6 +13,10 @@ export class MatchCameraAnalyzer {
   // Changing variables
   predictions: { [cameraName: string]: number } = {};
 
+  /**
+   * Returns the string of the camera on which it thinks we are currently on. If it is not confident yet, it will return undefined.
+   * @param matchData The match data which to analyze
+   */
   public getCamera(matchData: IEchoMatchData): string | undefined {
     // Predict the camera
     this.predictCurrentCamera(matchData);
@@ -49,6 +53,25 @@ export class MatchCameraAnalyzer {
     return undefined;
   }
 
+  /**
+   * Set's the MatchCameraAnalyzer into low confidence mode, which will return estimates quicker at the expense of accuracy.
+   */
+  public useLowConfidenceMode() {
+    this.MINIMUM_PREDICTION_THRESHOLD = 10;
+    this.RESET_PREDICTION_THRESHOLD = 30;
+    this.MINIMUM_ACCURACY_THRESHOLD = 0.6;
+  }
+
+  /**
+   * Set's the MatchCameraAnalyzer into high confidence mode, which will return more accurate estimates at the expense of accuracy.
+   */
+  public useHighCondifenceMode() {
+    this.MINIMUM_PREDICTION_THRESHOLD = 29;
+    this.RESET_PREDICTION_THRESHOLD = 30;
+    this.MINIMUM_ACCURACY_THRESHOLD = 0.9;
+  }
+
+  /********* PRIVATE HELPER FUNCTIONS *********/
   private predictCurrentCamera(matchData: IEchoMatchData) {
     for (const playerIndex in matchData.game.bluePlayers) {
       this.checkCameraOnPlayer(

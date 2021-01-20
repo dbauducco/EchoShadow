@@ -18,6 +18,8 @@ import OBSManager from '../src/managers/OBSManager';
 import SpectatorManager from '../src/managers/SpectatorManager';
 import EchoDataEventManager from '../src/managers/EchoDataEventManager';
 import ShadowStateManager from '../src/managers/ShadowStateManager';
+import { ShadowStateType } from '../src/types/ShadowStateType';
+import EchoDataRedirectManager from '../src/managers/EchoDataRedirectManager';
 
 /***********************************************************************
  ********************* BOILERPLATE ELECTRON *****************************
@@ -58,19 +60,30 @@ const start = async () => {
       localEchoDataRepository,
       configData,
     } = await setup();
-    const eventSubscribers = [
+
+    const standardEventSubscribers = [
       new EventLogger(),
-      new ShadowManager(),
-      new OBSManager(),
       new ShadowStateManager(configData),
-      new SpectatorManager(configData),
-      new MatchEventManager(localEchoDataRepository),
     ];
+
+    if (configData.redirectAPI.enabled) {
+      // Only startup the redirect service
+      new EchoDataRedirectManager(configData, remoteEchoDataRepository);
+    } else {
+      // Start up the rest of the services
+      const shadowEventSubscribers = [
+        new ShadowManager(),
+        new OBSManager(),
+        new MatchEventManager(localEchoDataRepository),
+      ];
+    }
+
     const echoDataEventManager = new EchoDataEventManager(
       localEchoDataRepository,
       remoteEchoDataRepository
     );
     echoDataEventManager.start();
+
     return configData;
   } catch (error) {
     log.error({

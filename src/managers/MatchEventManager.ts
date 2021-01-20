@@ -196,6 +196,5 @@ export default class MatchEventManager {
     } else {
       return ['other', -1, [0, 0, 0]];
     }
-    return -1;
   }
 }

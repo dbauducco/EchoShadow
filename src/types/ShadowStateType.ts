@@ -6,4 +6,5 @@ export enum ShadowStateType {
   StartingUp = 'Starting up EchoShadow...',
   InvalidEchoPath = 'Error in Echo Path',
   EchoIsNotInstalled = 'EchoVR Installation Not Detected',
+  RunningRedirect = 'Running API Redirect...',
 }

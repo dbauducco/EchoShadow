@@ -29,6 +29,10 @@ export class Config {
       hideUI: false,
       mode: 'default',
     },
+    redirectAPI: {
+      enabled: true,
+      serverPort: '',
+    },
     dev: {
       logLevel: LogLevel.INFO,
       debugUI: false,
