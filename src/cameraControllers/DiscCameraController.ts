@@ -1,6 +1,5 @@
-import { computeHeadingLevel } from '@testing-library/react';
 import { IEchoMatchData, IEchoCameraController } from '../types';
-import { focusWindow, Key, keyboard } from '../utilities/utils';
+import { focusWindow, Key, keyboard, log } from '../utilities';
 
 export default class DiscCameraController implements IEchoCameraController {
   lastKey: Key | undefined = undefined;
@@ -13,7 +12,7 @@ export default class DiscCameraController implements IEchoCameraController {
   // Updating
   async update(matchData: IEchoMatchData) {
     const discPositionWidth = matchData.discPosition[2];
-    console.log(discPositionWidth);
+    log.info(discPositionWidth);
     if (discPositionWidth > 2) {
       // Orange side
       await this.goToCameraKey(Key.Num4);

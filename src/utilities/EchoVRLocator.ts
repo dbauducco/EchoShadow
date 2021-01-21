@@ -1,19 +1,6 @@
-import { exec } from './utils';
 import * as path from 'path';
-
-const locate = async () => {
-  const rawDrives: string[] = await findAllDrives();
-  const drives: string[] = optimizeDriveSearch(rawDrives);
-  console.log(drives);
-  for (const index in drives) {
-    const searchResults = await locateInDrive(drives[index], 'echovr.exe');
-    if (searchResults && searchResults.length > 0) {
-      console.log('Found in ' + drives[index]);
-      return path.join(searchResults[0], '');
-    }
-  }
-  return undefined;
-};
+import { exec } from './utils';
+import { log } from './log';
 
 const findAllDrives = async () => {
   const result = await exec('wmic logicaldisk get name');
@@ -36,11 +23,25 @@ const optimizeDriveSearch = (drives: string[]) => {
 
 const locateInDrive = async (drive: string, file: string) => {
   try {
-    const result = await exec('where /R ' + drive + '\\ ' + file);
+    const result = await exec(`where /R ${drive}\\ ${file}`);
     return result.stdout.split('\r\n');
   } catch (error) {
     return undefined;
   }
+};
+
+const locate = async () => {
+  const rawDrives: string[] = await findAllDrives();
+  const drives: string[] = optimizeDriveSearch(rawDrives);
+  log.debug(drives);
+  for (const index in drives) {
+    const searchResults = await locateInDrive(drives[index], 'echovr.exe');
+    if (searchResults && searchResults.length > 0) {
+      log.debug(`Found in ${drives[index]}`);
+      return path.join(searchResults[0], '');
+    }
+  }
+  return undefined;
 };
 
 export default { locate };

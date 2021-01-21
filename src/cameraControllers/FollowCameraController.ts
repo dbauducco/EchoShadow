@@ -1,10 +1,12 @@
 import { IEchoMatchData, IEchoCameraController } from '../types';
-import { keyboard, Key, delay } from '../utilities/utils';
+import { keyboard, Key, delay, log } from '../utilities';
 import { MatchCameraAnalyzer } from '../utilities/MatchCameraAnalyzer';
 
 export default class FollowCameraController implements IEchoCameraController {
   cameraAnalyzer = new MatchCameraAnalyzer();
+
   possibleKeys: Key[] = [];
+
   currentKeyIndex = 0;
 
   // Default
@@ -21,10 +23,10 @@ export default class FollowCameraController implements IEchoCameraController {
       return;
     }
 
-    console.log('Camera is currently on: ' + predictedCamera);
+    log.info(`Camera is currently on: ${predictedCamera}`);
     // We need to go to the next camera
-    if (predictedCamera === matchData.remote.name + '#FOLLOW') {
-      console.log('We found the person!!');
+    if (predictedCamera === `${matchData.remote.name}#FOLLOW`) {
+      log.info('We found the person!!');
       this.cameraAnalyzer.useHighCondifenceMode();
     } else {
       // Set the possible keys
@@ -64,14 +66,14 @@ export default class FollowCameraController implements IEchoCameraController {
         Key.Num5,
       ].slice(0, matchData.game.orangePlayers.length);
     }
-    console.log('Set possible keys to: ' + this.possibleKeys);
+    log.info(`Set possible keys to: ${this.possibleKeys}`);
   }
 
   async goToPlayer(playerKey: Key) {
-    //await focusWindow('Echo VR');
+    // await focusWindow('Echo VR');
     await keyboard.pressKey(Key.LeftShift, playerKey);
     await delay(500);
     await keyboard.releaseKey(Key.LeftShift, playerKey);
-    console.log('Clicked NutJS: ' + playerKey);
+    log.info(`Clicked NutJS: ${playerKey}`);
   }
 }
