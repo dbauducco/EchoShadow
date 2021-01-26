@@ -1,14 +1,14 @@
+import { ipcMain } from 'electron';
 import { IConfigInfo } from '../types';
-import { BrowserWindow, ipcMain } from 'electron';
 import Events from '../utilities/Events';
 import { DeviceStatusEnum } from '../../app/types';
 import { EventType } from '../types/EventType';
-import { config } from 'winston';
 import { ShadowStateType } from '../types/ShadowStateType';
+import { version as appVersion } from '../../package.json';
 
 export default class ShadowStateManager {
   shadowState = {
-    statusMessage: 'Starting up EchoShadow v1.2.1...',
+    statusMessage: `Starting up EchoShadow v${appVersion}...`,
     remoteStatus: DeviceStatusEnum.Inactive,
     localStatus: DeviceStatusEnum.Inactive,
     localIp: 'Loading',
@@ -43,14 +43,6 @@ export default class ShadowStateManager {
 
   remoteIsDisconnected() {
     this.shadowState.remoteStatus = DeviceStatusEnum.Inactive;
-    if (
-      this.shadowState.currentState !== ShadowStateType.WaitingForRemoteData
-    ) {
-      Events.emit(
-        EventType.NewShadowState,
-        ShadowStateType.WaitingForRemoteData
-      );
-    }
   }
 
   newShadowState(data: ShadowStateType) {

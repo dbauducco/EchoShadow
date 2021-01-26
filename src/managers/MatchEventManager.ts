@@ -1,4 +1,3 @@
-import { TouchBarScrubber } from 'electron';
 import {
   EchoSessionType,
   IEchoDataRepository,

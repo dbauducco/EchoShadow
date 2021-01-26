@@ -6,7 +6,6 @@ import {
 } from '../types';
 import { EventType } from '../types/EventType';
 import { ShadowStateType } from '../types/ShadowStateType';
-import { stat } from 'fs-extra';
 
 export default class EchoDataEventManager {
   WAIT_TIME_SECONDS = 0.5;

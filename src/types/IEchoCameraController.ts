@@ -1,7 +1,6 @@
-import { IEchoMatchData } from './';
-import * as robotjs from 'robotjs';
+import { IEchoMatchData } from './IEchoMatchData';
 
 export interface IEchoCameraController {
-  update(matchData: IEchoMatchData, keyboard: typeof robotjs): void;
-  getDefault(matchData: IEchoMatchData, keyboard: typeof robotjs): void;
+  update(matchData: IEchoMatchData): void;
+  getDefault(matchData: IEchoMatchData): void;
 }

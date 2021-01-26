@@ -1,95 +1,85 @@
-import { IEchoMatchData } from '../types';
-import { IEchoCameraController } from '../types/IEchoCameraController';
-import * as robotjs from 'robotjs';
-import { focusWindow } from '../utilities';
-import { copySync } from 'fs-extra';
+import { IEchoMatchData, IEchoCameraController } from '../types';
+import { keyboard, Key, delay, log } from '../utilities';
+import { MatchCameraAnalyzer } from '../utilities/MatchCameraAnalyzer';
 
 export default class POVCameraController implements IEchoCameraController {
-  currentSpectatingIndex = -1;
-  ignoreCounter = 40;
+  cameraAnalyzer = new MatchCameraAnalyzer();
 
-  // Difference Thresholds
-  POV_DIFF_THRESHOLD = 0.11;
+  possibleKeys: Key[] = [];
 
-  // Default camera setup
-  getDefault(matchData: IEchoMatchData, keyboard: typeof robotjs) {
-    if (matchData.remote.team == 'orange') {
-      this.currentSpectatingIndex = matchData.remote.index + 1;
-    } else if (matchData.remote.team == 'blue') {
-      this.currentSpectatingIndex = matchData.remote.index + 6;
-    }
+  currentKeyIndex = 0;
 
-    // Just in case, map 10 => 0
-    if (this.currentSpectatingIndex == 10) {
-      this.currentSpectatingIndex = 0;
-    }
-    this.pressKeysFor(this.currentSpectatingIndex, keyboard);
+  // Default
+  async getDefault(matchData: IEchoMatchData) {
+    this.setPossibleKeys(matchData);
+    await this.goToPlayer(this.possibleKeys[this.currentKeyIndex]);
   }
 
-  // Updating camera setup
-  async update(matchData: IEchoMatchData, keyboard: typeof robotjs) {
-    const predictedCamera = this.getCameraPosition(matchData);
-    if (predictedCamera) {
-      console.log(predictedCamera);
+  // Updating
+  async update(matchData: IEchoMatchData) {
+    // Get the current camera
+    const predictedCamera = this.cameraAnalyzer.getCamera(matchData);
+    if (!predictedCamera) {
+      return;
     }
-  }
 
-  async goToNext(matchData: IEchoMatchData, keyboard: typeof robotjs) {
-    this.currentSpectatingIndex++;
-    // Map 10 => 0
-    if (this.currentSpectatingIndex == 10) {
-      this.currentSpectatingIndex = 0;
-    }
-    // Reset to the start of the players
-    if (this.currentSpectatingIndex == 1 || this.currentSpectatingIndex == 6) {
-      switch (matchData.remote.team) {
-        case 'blue':
-          this.currentSpectatingIndex = 6;
-          break;
-        case 'orange':
-          this.currentSpectatingIndex = 1;
-          break;
-        default:
-          this.currentSpectatingIndex = 1;
-          break;
+    log.info(`Camera is currently on: ${predictedCamera}`);
+    // We need to go to the next camera
+    if (predictedCamera === `${matchData.remote.name}#FOLLOW`) {
+      log.info('We found the person!!');
+      // Let's click to go into POV
+      await keyboard.pressKey(Key.P);
+      await delay(500);
+      await keyboard.releaseKey(Key.P);
+    } else if (predictedCamera == `${matchData.remote.name}#POV`) {
+      log.info('We found the person and are inside POV!!');
+      this.cameraAnalyzer.useHighCondifenceMode();
+    } else {
+      // Set the possible keys
+      this.setPossibleKeys(matchData);
+      // Change the camera analyzer mode
+      this.cameraAnalyzer.useLowConfidenceMode();
+      // Increase the current key
+      this.currentKeyIndex++;
+      if (this.currentKeyIndex >= this.possibleKeys.length) {
+        // Loop the current key around to the start
+        this.currentKeyIndex = 0;
       }
+      // Keytap the new play key
+      await this.goToPlayer(this.possibleKeys[this.currentKeyIndex]);
     }
-    // Go to the new player
-    console.log('Going to player: ' + this.currentSpectatingIndex);
-    this.pressKeysFor(this.currentSpectatingIndex, keyboard);
   }
 
-  async pressKeysFor(playerIndex: number, keyboard: typeof robotjs) {
-    await focusWindow('Echo VR');
-    keyboard.keyToggle('' + this.currentSpectatingIndex, 'down', 'shift');
-    setTimeout(() => {
-      keyboard.keyToggle('' + this.currentSpectatingIndex, 'up', 'shift');
-      keyboard.keyToggle('p', 'down');
-      setTimeout(() => {
-        keyboard.keyToggle('p', 'up');
-      }, 1000);
-    }, 1000);
+  setPossibleKeys(matchData: IEchoMatchData) {
+    if (matchData.remote.team === 'blue') {
+      // The possible keys are the default blue keys, and only the
+      // keys depending on how many players there are
+      this.possibleKeys = [
+        Key.Num6,
+        Key.Num7,
+        Key.Num8,
+        Key.Num9,
+        Key.Num0,
+      ].slice(0, matchData.game.bluePlayers.length);
+    } else if (matchData.remote.team === 'orange') {
+      // The possible keys are the default orange keys, and only the
+      // keys depending on how many players there are
+      this.possibleKeys = [
+        Key.Num1,
+        Key.Num2,
+        Key.Num3,
+        Key.Num4,
+        Key.Num5,
+      ].slice(0, matchData.game.orangePlayers.length);
+    }
+    log.info(`Set possible keys to: ${this.possibleKeys}`);
   }
 
-  getCameraPosition(matchData: IEchoMatchData) {
-    const player = matchData.game.bluePlayers[0];
-    var predictedCamera: string | undefined = undefined;
-
-    //for (const playerIndex in matchData.game.bluePlayers) {
-    //const player = matchData.game.bluePlayers[playerIndex];
-
-    const x_diff = Math.abs(player.position[0] - matchData.local.position[0]);
-    const y_diff = Math.abs(player.position[1] - matchData.local.position[1]);
-    const z_diff = Math.abs(player.position[2] - matchData.local.position[2]);
-
-    if (
-      x_diff < this.POV_DIFF_THRESHOLD &&
-      y_diff < this.POV_DIFF_THRESHOLD &&
-      z_diff < this.POV_DIFF_THRESHOLD
-    ) {
-      predictedCamera = player.name + '#POV';
-      return predictedCamera;
-    }
-    return predictedCamera;
+  async goToPlayer(playerKey: Key) {
+    // await focusWindow('Echo VR');
+    await keyboard.pressKey(Key.LeftShift, playerKey);
+    await delay(500);
+    await keyboard.releaseKey(Key.LeftShift, playerKey);
+    log.info(`Clicked NutJS: ${playerKey}`);
   }
 }

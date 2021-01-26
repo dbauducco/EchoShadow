@@ -74,6 +74,24 @@ export default class EchoDataRepository implements IEchoDataRepository {
     }
   }
 
+  /**
+   * Method that returns a snapshot of the data from the Echo API in the raw format. Note, if using
+   * localhost an echo instance must be running on the laptop with APISettings:
+   * enabled in order to get the session id of the current session.
+   */
+  public async getInstantRawSnapshot(): Promise<any | undefined> {
+    try {
+      const echoApiResult = await axios.get(this.apiSessionUrl);
+      return echoApiResult.data;
+    } catch (error) {
+      log.error({
+        description: 'Error retrieving full snapshot',
+        error: error.message ? error.message : error,
+      });
+      return undefined;
+    }
+  }
+
   /** Helper method to control retries on main snapshot */
   public enableRetries() {
     this.deviceAPI = axios.create({ baseURL: this.apiSessionUrl });

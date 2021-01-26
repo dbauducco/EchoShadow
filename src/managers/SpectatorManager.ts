@@ -1,11 +1,13 @@
 import EchoInstanceClient from './EchoVRManager';
 import Events from '../utilities/Events';
-import { focusWindow, keyboard } from '../utilities/utils';
 import { IEchoCameraController } from '../types/IEchoCameraController';
 import DoNothingCameraController from '../cameraControllers/DoNothingCameraController';
 import { EventType, IConfigInfo, IEchoMatchData } from '../types';
 import FollowCameraController from '../cameraControllers/FollowCameraController';
+import DiscCameraController from '../cameraControllers/DiscCameraController';
+import { focusWindow, Key, keyboard } from '../utilities/utils';
 import POVCameraController from '../cameraControllers/POVCameraController';
+import SidelineCameraController from '../cameraControllers/SidelineCameraController';
 
 export default class SpectatorManager {
   cameraController: IEchoCameraController;
@@ -23,6 +25,9 @@ export default class SpectatorManager {
       case 'pov':
         this.cameraController = new POVCameraController();
         break;
+      case 'sideline':
+        this.cameraController = new SidelineCameraController();
+        break;
       case 'none':
       default:
         this.cameraController = new DoNothingCameraController();
@@ -33,9 +38,9 @@ export default class SpectatorManager {
   public async setDefaultSpectatorOption(matchData: IEchoMatchData) {
     await focusWindow('Echo VR');
     if (this.configData.spectatorOptions.hideUI) {
-      await keyboard.keyTap('u');
+      await keyboard.click(Key.U);
     }
-    this.cameraController.getDefault(matchData, keyboard);
+    await this.cameraController.getDefault(matchData);
   }
 
   public async updateCamera(matchData: IEchoMatchData) {
@@ -43,6 +48,6 @@ export default class SpectatorManager {
       return;
     }
 
-    this.cameraController.update(matchData, keyboard);
+    this.cameraController.update(matchData);
   }
 }

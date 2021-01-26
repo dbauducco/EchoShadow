@@ -1,33 +1,38 @@
-import { IEchoMatchData } from '../types';
-import { IEchoCameraController } from '../types/IEchoCameraController';
-import * as robotjs from 'robotjs';
+import { IEchoMatchData, IEchoCameraController } from '../types';
+import { keyboard, Key, delay, log } from '../utilities';
 import { MatchCameraAnalyzer } from '../utilities/MatchCameraAnalyzer';
 
 export default class FollowCameraController implements IEchoCameraController {
   cameraAnalyzer = new MatchCameraAnalyzer();
-  target = '';
-  possibleKeys: number[] = [];
+
+  possibleKeys: Key[] = [];
+
   currentKeyIndex = 0;
 
   // Default
-  getDefault(matchData: IEchoMatchData, keyboard: typeof robotjs) {
+  async getDefault(matchData: IEchoMatchData) {
     this.setPossibleKeys(matchData);
-    this.goToPlayer(this.possibleKeys[this.currentKeyIndex], keyboard);
+    await this.goToPlayer(this.possibleKeys[this.currentKeyIndex]);
   }
 
   // Updating
-  update(matchData: IEchoMatchData, keyboard: typeof robotjs) {
+  async update(matchData: IEchoMatchData) {
     // Get the current camera
     const predictedCamera = this.cameraAnalyzer.getCamera(matchData);
     if (!predictedCamera) {
       return;
     }
 
-    console.log('Camera is currently on: ' + predictedCamera);
+    log.info(`Camera is currently on: ${predictedCamera}`);
     // We need to go to the next camera
-    if (predictedCamera !== matchData.remote.name + '#FOLLOW') {
+    if (predictedCamera === `${matchData.remote.name}#FOLLOW`) {
+      log.info('We found the person!!');
+      this.cameraAnalyzer.useHighCondifenceMode();
+    } else {
       // Set the possible keys
       this.setPossibleKeys(matchData);
+      // Change the camera analyzer mode
+      this.cameraAnalyzer.useLowConfidenceMode();
       // Increase the current key
       this.currentKeyIndex++;
       if (this.currentKeyIndex >= this.possibleKeys.length) {
@@ -35,7 +40,7 @@ export default class FollowCameraController implements IEchoCameraController {
         this.currentKeyIndex = 0;
       }
       // Keytap the new play key
-      this.goToPlayer(this.possibleKeys[this.currentKeyIndex], keyboard);
+      await this.goToPlayer(this.possibleKeys[this.currentKeyIndex]);
     }
   }
 
@@ -43,27 +48,32 @@ export default class FollowCameraController implements IEchoCameraController {
     if (matchData.remote.team === 'blue') {
       // The possible keys are the default blue keys, and only the
       // keys depending on how many players there are
-      this.possibleKeys = [6, 7, 8, 9, 0].slice(
-        0,
-        matchData.game.bluePlayers.length
-      );
+      this.possibleKeys = [
+        Key.Num6,
+        Key.Num7,
+        Key.Num8,
+        Key.Num9,
+        Key.Num0,
+      ].slice(0, matchData.game.bluePlayers.length);
     } else if (matchData.remote.team === 'orange') {
       // The possible keys are the default orange keys, and only the
       // keys depending on how many players there are
-      this.possibleKeys = [1, 2, 3, 4, 5].slice(
-        0,
-        matchData.game.bluePlayers.length
-      );
+      this.possibleKeys = [
+        Key.Num1,
+        Key.Num2,
+        Key.Num3,
+        Key.Num4,
+        Key.Num5,
+      ].slice(0, matchData.game.orangePlayers.length);
     }
-    console.log('Set possible keys to: ' + this.possibleKeys);
+    log.info(`Set possible keys to: ${this.possibleKeys}`);
   }
 
-  goToPlayer(playerNumber: number, keyboard: typeof robotjs) {
-    console.log('Clicked: SHIFT+' + playerNumber);
-    //keyboard.keyTap('' + playerNumber, 'shift');
-    keyboard.keyToggle('' + playerNumber, 'down', 'shift');
-    setTimeout(() => {
-      keyboard.keyToggle('' + playerNumber, 'up', 'shift');
-    }, 1000);
+  async goToPlayer(playerKey: Key) {
+    // await focusWindow('Echo VR');
+    await keyboard.pressKey(Key.LeftShift, playerKey);
+    await delay(500);
+    await keyboard.releaseKey(Key.LeftShift, playerKey);
+    log.info(`Clicked NutJS: ${playerKey}`);
   }
 }

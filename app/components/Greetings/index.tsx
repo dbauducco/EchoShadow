@@ -4,10 +4,11 @@ import { ImpulseSpinner, SwapSpinner } from 'react-spinners-kit';
 import { Container, Text, HorizontalContainer } from './styles';
 import DeviceStatus from '../DeviceStatus';
 import { DeviceStatusEnum, DeviceTypeEnum } from '../../types';
+import { version as appVersion } from '../../../package.json';
 
 const Greetings: React.FC = () => {
   const [statusMessage, setStatusMessage] = React.useState(
-    'Starting up EchoShadow v1.2.1...'
+    `Starting up EchoShadow v${appVersion}...`
   );
   const [localStatus, setLocalStatus] = React.useState<DeviceStatusEnum>(
     DeviceStatusEnum.Inactive

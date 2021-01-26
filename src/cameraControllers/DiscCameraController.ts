@@ -1,30 +1,37 @@
-import { IEchoMatchData } from '../types';
-import { IEchoCameraController } from '../types/IEchoCameraController';
-import * as robotjs from 'robotjs';
-import { TouchBarScrubber } from 'electron';
+import { IEchoMatchData, IEchoCameraController } from '../types';
+import { focusWindow, Key, keyboard, log } from '../utilities';
 
 export default class DiscCameraController implements IEchoCameraController {
-  lastKey = '';
+  lastKey: Key | undefined = undefined;
+
   // Default
-  getDefault(matchData: IEchoMatchData, keyboard: typeof robotjs) {
+  async getDefault(matchData: IEchoMatchData) {
     return undefined;
   }
+
   // Updating
-  update(matchData: IEchoMatchData, keyboard: typeof robotjs) {
+  async update(matchData: IEchoMatchData) {
     const discPositionWidth = matchData.discPosition[2];
+    log.info(discPositionWidth);
     if (discPositionWidth > 2) {
       // Orange side
-      this.type('4', keyboard);
+      await this.goToCameraKey(Key.Num4);
     } else if (discPositionWidth < -2) {
       // Blue side
-      this.type('7', keyboard);
+      await this.goToCameraKey(Key.Num7);
     } else {
       // Middle
-      this.type('5', keyboard);
+      await this.goToCameraKey(Key.Num5);
     }
   }
 
-  private type(key: string, keyboard: typeof robotjs) {
-    keyboard.keyTap(key);
+  public async goToCameraKey(key: Key) {
+    if (this.lastKey != key) {
+      this.lastKey = key;
+      await keyboard.pressKey(Key.LeftControl, key);
+      setTimeout(function () {
+        keyboard.releaseKey(Key.LeftControl, key);
+      }, 1000);
+    }
   }
 }

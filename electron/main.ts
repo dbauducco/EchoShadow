@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-/***********************************************************************
+/** *********************************************************************
  ************************ ECHO SHADOW CODE *******************************
  ********************************************************************** */
 import { app, BrowserWindow } from 'electron';
@@ -12,14 +12,16 @@ import EchoDataRepository from '../src/repositories/EchoDataRepository';
 
 // Manager Imports
 import EchoVRManager from '../src/managers/EchoVRManager';
-import ShadowManager from '../src/managers/ShadowEventManager';
+import ShadowEventManager from '../src/managers/ShadowEventManager';
 import MatchEventManager from '../src/managers/MatchEventManager';
 import OBSManager from '../src/managers/OBSManager';
 import SpectatorManager from '../src/managers/SpectatorManager';
 import EchoDataEventManager from '../src/managers/EchoDataEventManager';
 import ShadowStateManager from '../src/managers/ShadowStateManager';
+import { ShadowStateType } from '../src/types/ShadowStateType';
+import EchoDataRedirectManager from '../src/managers/EchoDataRedirectManager';
 
-/***********************************************************************
+/** *********************************************************************
  ********************* BOILERPLATE ELECTRON *****************************
  ********************************************************************** */
 
@@ -58,19 +60,31 @@ const start = async () => {
       localEchoDataRepository,
       configData,
     } = await setup();
-    const eventSubscribers = [
+
+    const standardEventSubscribers = [
       new EventLogger(),
-      new ShadowManager(),
-      new OBSManager(),
       new ShadowStateManager(configData),
-      new SpectatorManager(configData),
-      new MatchEventManager(localEchoDataRepository),
     ];
+
+    if (configData.redirectAPI.enabled) {
+      // Only startup the redirect service
+      new EchoDataRedirectManager(configData, remoteEchoDataRepository);
+    } else {
+      // Start up the rest of the services
+      const shadowEventSubscribers = [
+        new ShadowEventManager(),
+        new OBSManager(),
+        new MatchEventManager(localEchoDataRepository),
+        new SpectatorManager(configData),
+      ];
+    }
+
     const echoDataEventManager = new EchoDataEventManager(
       localEchoDataRepository,
       remoteEchoDataRepository
     );
     echoDataEventManager.start();
+
     return configData;
   } catch (error) {
     log.error({
@@ -100,7 +114,6 @@ function createWindow() {
 
   // Set the main window to stay ontop
   mainWindow.setAlwaysOnTop(true, 'screen-saver');
-  console.log({ env: process.env.NODE_ENV });
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:4000');
   } else {

@@ -4,12 +4,14 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import { EventType } from '../types';
 import { ShadowStateType } from '../types/ShadowStateType';
-import { getProcessId, log, exec, killProcess, spawn } from '../utilities/';
+import { getProcessId, log, exec, killProcess, spawn } from '../utilities';
 import Events from '../utilities/Events';
 
 export default class EchoVRClient {
   private SPECTATOR_FLAG = '--spectatorstream';
+
   private LOBBY_FLAG = '--lobbyid';
+
   private HEADLESS_FLAG = '--headless';
 
   constructor(private echoPath: string) {
@@ -37,11 +39,10 @@ export default class EchoVRClient {
       }
 
       // Spawning the process
-      //const spawnOptions = { detached: true };
-      //return spawn(this.echoPath, params, spawnOptions);
-      return exec('"' + this.echoPath + '" ' + params.join(' '));
+      // const spawnOptions = { detached: true };
+      // return spawn(this.echoPath, params, spawnOptions);
+      return exec(`"${this.echoPath}" ${params.join(' ')}`);
     } catch (error) {
-      console.log('Errrorrr!');
       log.error({
         message: 'error opening exe',
         error: error.message || error,
@@ -129,12 +130,11 @@ export default class EchoVRClient {
       // We are gonna kill the process now
       newProcess.kill();
     } catch (error) {
-      console.log(error);
-      console.log('Error!');
+      log.error({ message: 'error verifying path', error });
     }
   };
 
-  /*** Helper methods to automatically turn on the EnableAPI flag in the EchoAPI */
+  /** * Helper methods to automatically turn on the EnableAPI flag in the EchoAPI */
   enableEchoVRAPI = async () => {
     // Read the file
     const configData = await this.readConfigFile();
@@ -161,12 +161,11 @@ export default class EchoVRClient {
     } catch (error) {
       if (error.code == 'ENOENT') {
         return await this.createAndReadConfigFile();
-      } else {
-        log.error({
-          description: 'Failed to read EchoVR config.',
-          error: error.message,
-        });
       }
+      log.error({
+        description: 'Failed to read EchoVR config.',
+        error: error.message,
+      });
     }
   };
 

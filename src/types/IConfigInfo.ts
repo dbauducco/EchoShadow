@@ -17,4 +17,8 @@ export interface IConfigInfo {
     logLevel: LogLevel;
     debugUI: boolean;
   };
+  redirectAPI: {
+    enabled: boolean;
+    serverPort: string;
+  };
 }
