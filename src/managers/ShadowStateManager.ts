@@ -43,14 +43,6 @@ export default class ShadowStateManager {
 
   remoteIsDisconnected() {
     this.shadowState.remoteStatus = DeviceStatusEnum.Inactive;
-    if (
-      this.shadowState.currentState !== ShadowStateType.WaitingForRemoteData
-    ) {
-      Events.emit(
-        EventType.NewShadowState,
-        ShadowStateType.WaitingForRemoteData
-      );
-    }
   }
 
   newShadowState(data: ShadowStateType) {

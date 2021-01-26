@@ -12,7 +12,7 @@ import EchoDataRepository from '../src/repositories/EchoDataRepository';
 
 // Manager Imports
 import EchoVRManager from '../src/managers/EchoVRManager';
-import ShadowManager from '../src/managers/ShadowEventManager';
+import ShadowEventManager from '../src/managers/ShadowEventManager';
 import MatchEventManager from '../src/managers/MatchEventManager';
 import OBSManager from '../src/managers/OBSManager';
 import SpectatorManager from '../src/managers/SpectatorManager';
@@ -72,7 +72,7 @@ const start = async () => {
     } else {
       // Start up the rest of the services
       const shadowEventSubscribers = [
-        new ShadowManager(),
+        new ShadowEventManager(),
         new OBSManager(),
         new MatchEventManager(localEchoDataRepository),
         new SpectatorManager(configData),
