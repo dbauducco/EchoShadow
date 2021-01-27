@@ -5,7 +5,7 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { log, Config, EventLogger, focusWindow } from '../src/utilities';
+import { log, Config, EventLogger, focusWindow, exec } from '../src/utilities';
 
 // Repository Imports
 import EchoDataRepository from '../src/repositories/EchoDataRepository';
@@ -53,6 +53,16 @@ const setup = async () => {
   };
 };
 
+const winSKTestCode = async () => {
+  const PATH = '';
+  // I've got no idea what the path would be, so I just hardcoded it.
+  // Make sure to have notepad open when testing this out
+  exec(
+    'C:\\Users\\antir\\Documents\\EchoShadow\\externals\\winSK.exe -w Notepad Test'
+  );
+  // This should type out 'Test' to the notepad.
+};
+
 const start = async () => {
   try {
     const {
@@ -86,6 +96,9 @@ const start = async () => {
       remoteEchoDataRepository
     );
     echoDataEventManager.start();
+
+    /** WINDOWS SEND KEY TEST CODE */
+    winSKTestCode();
 
     return configData;
   } catch (error) {
