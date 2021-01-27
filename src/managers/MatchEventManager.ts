@@ -112,8 +112,6 @@ export default class MatchEventManager {
       // Reset the current match data
       this.currentMatchData = undefined;
     }
-
-    Events.emit(EventType.NewMatchData, this.currentMatchData);
   }
 
   private async pingLocal() {
@@ -128,10 +126,10 @@ export default class MatchEventManager {
     this.currentMatchData!.remote.team = playerTeamData[0];
     this.currentMatchData!.remote.index = playerTeamData[1];
     // Update local position
-    this.currentMatchData!.local.position = data!.client.position;
-    this.currentMatchData!.local.forward = data!.client.forward;
-    this.currentMatchData!.local.up = data!.client.up;
-    this.currentMatchData!.local.left = data!.client.left;
+    this.currentMatchData!.local.position = data!.client.head!.position;
+    this.currentMatchData!.local.forward = data!.client.head!.forward;
+    this.currentMatchData!.local.up = data!.client.head!.up;
+    this.currentMatchData!.local.left = data!.client.head!.left;
     // Update player postions
     this.currentMatchData!.game.bluePlayers = data!.blueTeamMembers;
     this.currentMatchData!.game.orangePlayers = data!.orangeTeamMembers;
@@ -184,12 +182,16 @@ export default class MatchEventManager {
     });
 
     if (blueIndex != -1) {
-      return ['blue', blueIndex, snapshot.blueTeamMembers[blueIndex].position];
+      return [
+        'blue',
+        blueIndex,
+        snapshot.blueTeamMembers[blueIndex].head!.position,
+      ];
     } else if (orangeIndex != -1) {
       return [
         'orange',
         orangeIndex,
-        snapshot.orangeTeamMembers[orangeIndex].position,
+        snapshot.orangeTeamMembers[orangeIndex].head!.position,
       ];
     } else if (spectatorIndex != -1) {
       return ['spectator', 11, [0, 0, 0]];

@@ -20,6 +20,7 @@ import EchoDataEventManager from '../src/managers/EchoDataEventManager';
 import ShadowStateManager from '../src/managers/ShadowStateManager';
 import { ShadowStateType } from '../src/types/ShadowStateType';
 import EchoDataRedirectManager from '../src/managers/EchoDataRedirectManager';
+import GestureRecognizerManager from '../src/managers/GestureRecognizerManager';
 
 /** *********************************************************************
  ********************* BOILERPLATE ELECTRON *****************************
@@ -76,6 +77,7 @@ const start = async () => {
         new OBSManager(),
         new MatchEventManager(localEchoDataRepository),
         new SpectatorManager(configData),
+        new GestureRecognizerManager(),
       ];
     }
 

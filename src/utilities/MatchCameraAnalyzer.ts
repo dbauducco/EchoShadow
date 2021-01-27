@@ -92,13 +92,13 @@ export class MatchCameraAnalyzer {
     playerData: IEchoMatchPlayerData
   ) {
     const pos_x_diff = Math.abs(
-      playerData.position[0] - matchData.local.position[0]
+      playerData.head!.position[0] - matchData.local.position[0]
     );
     const pos_y_diff = Math.abs(
-      playerData.position[1] - matchData.local.position[1]
+      playerData.head!.position[1] - matchData.local.position[1]
     );
     const pos_z_diff = Math.abs(
-      playerData.position[2] - matchData.local.position[2]
+      playerData.head!.position[2] - matchData.local.position[2]
     );
 
     // Check POV
@@ -117,12 +117,12 @@ export class MatchCameraAnalyzer {
     ) {
       if (matchData.local.forward[2] < 0) {
         // Facing blue
-        if (playerData.position[2] < matchData.local.position[2]) {
+        if (playerData.head!.position[2] < matchData.local.position[2]) {
           this.addPrediction(playerData.name + '#FOLLOW');
         }
       } else if (matchData.local.forward[2] > 0) {
         // Facing orange
-        if (playerData.position[2] > matchData.local.position[2]) {
+        if (playerData.head!.position[2] > matchData.local.position[2]) {
           this.addPrediction(playerData.name + '#FOLLOW');
         }
       }

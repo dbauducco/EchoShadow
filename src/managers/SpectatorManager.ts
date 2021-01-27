@@ -18,6 +18,10 @@ export default class SpectatorManager {
       this.setDefaultSpectatorOption.bind(this)
     );
     Events.on(EventType.NewMatchData, this.updateCamera.bind(this));
+    Events.on(
+      EventType.NewSpectatorTarget,
+      this.setNewSpectatorTarget.bind(this)
+    );
     switch (configData.spectatorOptions.mode) {
       case 'follow':
         this.cameraController = new FollowCameraController();
@@ -35,7 +39,7 @@ export default class SpectatorManager {
     }
   }
 
-  public async setDefaultSpectatorOption(matchData: IEchoMatchData) {
+  private async setDefaultSpectatorOption(matchData: IEchoMatchData) {
     await focusWindow('Echo VR');
     if (this.configData.spectatorOptions.hideUI) {
       await keyboard.click(Key.U);
@@ -43,11 +47,23 @@ export default class SpectatorManager {
     await this.cameraController.getDefault(matchData);
   }
 
-  public async updateCamera(matchData: IEchoMatchData) {
+  private async updateCamera(matchData: IEchoMatchData) {
     if (!matchData || !matchData.local.inMatch) {
       return;
     }
 
     this.cameraController.update(matchData);
+  }
+
+  private async setNewSpectatorTarget(targetName: string) {
+    const targetParsed = targetName.split('#');
+    const targetPlayer = targetParsed[0];
+    const targetType = targetParsed[1];
+    console.log('Requested new spectator target: ' + targetName);
+    if (targetType === 'FOLLOW') {
+      this.cameraController = new FollowCameraController(targetPlayer);
+    } else if (targetType === 'POV') {
+      this.cameraController = new POVCameraController(targetPlayer);
+    }
   }
 }

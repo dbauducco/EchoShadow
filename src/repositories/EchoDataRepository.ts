@@ -115,10 +115,12 @@ export default class EchoDataRepository implements IEchoDataRepository {
       sessionType: this.sessionTypeByName(echoApiResult.data.match_type),
       client: {
         name: echoApiResult.data.client_name,
-        position: echoApiResult.data.player.vr_position,
-        forward: echoApiResult.data.player.vr_forward,
-        left: echoApiResult.data.player.vr_left,
-        up: echoApiResult.data.player.vr_up,
+        head: {
+          position: echoApiResult.data.player.vr_position,
+          forward: echoApiResult.data.player.vr_forward,
+          left: echoApiResult.data.player.vr_left,
+          up: echoApiResult.data.player.vr_up,
+        },
       },
       blueTeamMembers: this.mapPlayerData(echoApiResult.data.teams[0].players),
       orangeTeamMembers: this.mapPlayerData(
@@ -207,13 +209,33 @@ export default class EchoDataRepository implements IEchoDataRepository {
       return [];
     }
 
-    return listOfPlayers.map((player: { name: string; head: any }) => {
+    return listOfPlayers.map((player: any) => {
       return {
         name: player.name,
-        position: player.head.position,
-        left: player.head.left,
-        up: player.head.up,
-        forward: player.head.forward,
+        head: {
+          position: player.head.position,
+          left: player.head.left,
+          up: player.head.up,
+          forward: player.head.forward,
+        },
+        body: {
+          position: player.head.position,
+          left: player.head.left,
+          up: player.head.up,
+          forward: player.head.forward,
+        },
+        right_hand: {
+          position: player.rhand.pos,
+          left: player.rhand.left,
+          up: player.rhand.up,
+          forward: player.rhand.forward,
+        },
+        left_hand: {
+          position: player.lhand.pos,
+          left: player.lhand.left,
+          up: player.lhand.up,
+          forward: player.lhand.forward,
+        },
       };
     });
   }
