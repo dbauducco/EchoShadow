@@ -54,12 +54,13 @@ const setup = async () => {
 };
 
 const winSKTestCode = async () => {
-  const PATH = '';
-  // I've got no idea what the path would be, so I just hardcoded it.
   // Make sure to have notepad open when testing this out
-  exec(
-    'C:\\Users\\antir\\Documents\\EchoShadow\\externals\\winSK.exe -w Notepad Test'
-  );
+  try {
+    const result = await exec(`.\\resources\\winSK.exe -w Notepad Test`);
+    log.info({ execResult: result });
+  } catch (err) {
+    log.error({ message: 'error exec winSk', error: err.message || err });
+  }
   // This should type out 'Test' to the notepad.
 };
 
@@ -98,7 +99,7 @@ const start = async () => {
     echoDataEventManager.start();
 
     /** WINDOWS SEND KEY TEST CODE */
-    winSKTestCode();
+    await winSKTestCode();
 
     return configData;
   } catch (error) {
