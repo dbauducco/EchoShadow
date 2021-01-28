@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron';
 import { IConfigInfo } from '../types';
-import Events from '../utilities/Events';
+import { Events } from '../utilities';
 import { DeviceStatusEnum } from '../../app/types';
 import { EventType } from '../types/EventType';
 import { ShadowStateType } from '../types/ShadowStateType';
@@ -55,8 +55,8 @@ export default class ShadowStateManager {
     this.shadowState.currentState = data;
 
     if (
-      data == ShadowStateType.InvalidEchoPath ||
-      data == ShadowStateType.EchoIsNotInstalled
+      data === ShadowStateType.InvalidEchoPath ||
+      data === ShadowStateType.EchoIsNotInstalled
     ) {
       this.shadowState.localStatus = DeviceStatusEnum.Error;
       this.shadowState.locked = true;

@@ -1,11 +1,17 @@
-import { session } from 'electron';
 import * as os from 'os';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { EventType } from '../types';
 import { ShadowStateType } from '../types/ShadowStateType';
-import { getProcessId, log, exec, killProcess, spawn } from '../utilities';
-import Events from '../utilities/Events';
+import {
+  getProcessId,
+  log,
+  exec,
+  killProcess,
+  spawn,
+  Events,
+} from '../utilities';
+import { EchoVRClientCameraHelper } from './helpers/EchoVRClient.Camera.Helper';
 
 export default class EchoVRClient {
   private SPECTATOR_FLAG = '--spectatorstream';
@@ -14,9 +20,12 @@ export default class EchoVRClient {
 
   private HEADLESS_FLAG = '--headless';
 
+  private cameraHelper: EchoVRClientCameraHelper;
+
   constructor(private echoPath: string) {
     this.verifyPath();
     this.enableEchoVRAPI();
+    this.cameraHelper = new EchoVRClientCameraHelper();
   }
 
   /**
@@ -104,7 +113,7 @@ export default class EchoVRClient {
 
   /** Helper method that verifies the EchoVR exe path provided */
   verifyPath = async () => {
-    if (this.echoPath == '') {
+    if (!this.echoPath) {
       // Dirty fix to wait for the event listeners to register first
       setTimeout(() => {
         Events.emit(
@@ -159,13 +168,14 @@ export default class EchoVRClient {
       }
       return JSON.parse(fileBuffer.toString());
     } catch (error) {
-      if (error.code == 'ENOENT') {
-        return await this.createAndReadConfigFile();
+      if (error.code === 'ENOENT') {
+        return this.createAndReadConfigFile();
       }
       log.error({
         description: 'Failed to read EchoVR config.',
         error: error.message,
       });
+      return undefined;
     }
   };
 
@@ -208,4 +218,28 @@ export default class EchoVRClient {
     // Write the file
     await fse.outputFile(configPath, JSON.stringify(data, null, 4));
   };
+
+  public requestFollowByIndex(playerIndex: number) {
+    return this.cameraHelper.requestFollowByIndex(playerIndex);
+  }
+
+  public requestFollow() {
+    return this.cameraHelper.requestFollow();
+  }
+
+  public requestPOV() {
+    return this.cameraHelper.requestPOV();
+  }
+
+  public requestCameraByIndex(cameraIndex: number) {
+    return this.cameraHelper.requestCameraByIndex(cameraIndex);
+  }
+
+  public requestSideline() {
+    return this.cameraHelper.requestSideline();
+  }
+
+  public requestUIToggle() {
+    return this.cameraHelper.requestUIToggle();
+  }
 }

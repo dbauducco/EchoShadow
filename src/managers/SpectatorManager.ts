@@ -1,64 +1,80 @@
-import EchoInstanceClient from './EchoVRManager';
-import Events from '../utilities/Events';
-import { IEchoCameraController } from '../types/IEchoCameraController';
-import DoNothingCameraController from '../cameraControllers/DoNothingCameraController';
-import { EventType, IConfigInfo, IEchoMatchData } from '../types';
-import FollowCameraController from '../cameraControllers/FollowCameraController';
-import DiscCameraController from '../cameraControllers/DiscCameraController';
-import { focusWindow, Key, keyboard } from '../utilities/utils';
-import POVCameraController from '../cameraControllers/POVCameraController';
-import SidelineCameraController from '../cameraControllers/SidelineCameraController';
-import sendKey from '../utilities/KeySender';
-import { log } from '../utilities';
+import DoNothingSpectatorController from '../spectatorControllers/DoNothingSpectatorController';
+import FollowSpectatorController from '../spectatorControllers/FollowSpectatorController';
+import POVSpectatorController from '../spectatorControllers/POVSpectatorController';
+import SidelineSpectatorController from '../spectatorControllers/SidelineSpectatorController';
+import EchoVRClient from '../clients/EchoVRClient';
+import {
+  EventType,
+  IConfigInfo,
+  IEchoMatchData,
+  IEchoSpectatorController,
+} from '../types';
+import { log, Events } from '../utilities';
 
 export default class SpectatorManager {
-  cameraController: IEchoCameraController;
+  spectatorController?: IEchoSpectatorController;
 
-  constructor(private configData: IConfigInfo) {
+  constructor(
+    private configData: IConfigInfo,
+    private echoVrClient: EchoVRClient
+  ) {
     Events.on(
       EventType.LocalJoinedMatch,
       this.setDefaultSpectatorOption.bind(this)
     );
-    Events.on(EventType.NewMatchData, this.updateCamera.bind(this));
+    Events.on(EventType.NewMatchData, this.updateController.bind(this));
     Events.on(
       EventType.NewSpectatorTarget,
       this.setNewSpectatorTarget.bind(this)
     );
-    switch (configData.spectatorOptions.mode) {
-      case 'follow':
-        this.cameraController = new FollowCameraController();
-        break;
-      case 'pov':
-        this.cameraController = new POVCameraController();
-        break;
-      case 'sideline':
-        this.cameraController = new SidelineCameraController();
-        break;
-      case 'none':
-      default:
-        this.cameraController = new DoNothingCameraController();
-        break;
-    }
   }
 
   private async setDefaultSpectatorOption(matchData: IEchoMatchData) {
-    await focusWindow('Echo VR');
     if (this.configData.spectatorOptions.hideUI) {
-      this.clickUI();
+      this.echoVrClient.requestUIToggle();
     }
-    await this.cameraController.getDefault(matchData, this);
+
+    switch (this.configData.spectatorOptions.mode) {
+      case 'follow':
+        this.spectatorController = new FollowSpectatorController(
+          this.echoVrClient,
+          matchData.remote.name
+        );
+        break;
+      case 'pov':
+        this.spectatorController = new POVSpectatorController(
+          this.echoVrClient,
+          matchData.remote.name
+        );
+        break;
+      case 'sideline':
+        this.spectatorController = new SidelineSpectatorController(
+          this.echoVrClient
+        );
+        break;
+      case 'none':
+      default:
+        this.spectatorController = new DoNothingSpectatorController();
+        break;
+    }
   }
 
   /**
    * Method that recieves the updates on game data and passes it on
    * to the cameraControllers
    */
-  private async updateCamera(matchData: IEchoMatchData) {
+  private async updateController(matchData: IEchoMatchData) {
+    // Check that matchData exists and is not null
     if (!matchData || !matchData.local.inMatch) {
       return;
     }
 
-    this.cameraController.update(matchData, this);
+    // Check that a spectator controller exists
+    if (!this.spectatorController) {
+      return;
+    }
+
+    this.spectatorController.update(matchData);
   }
 
   /**
@@ -70,52 +86,17 @@ export default class SpectatorManager {
     const targetParsed = targetName.split('#');
     const targetPlayer = targetParsed[0];
     const targetType = targetParsed[1];
-    console.log('Requested new spectator target: ' + targetName);
+    log.info(`Requested new spectator target: ${targetName}`);
     if (targetType === 'FOLLOW') {
-      this.cameraController = new FollowCameraController(targetPlayer);
+      this.spectatorController = new FollowSpectatorController(
+        this.echoVrClient,
+        targetPlayer
+      );
     } else if (targetType === 'POV') {
-      this.cameraController = new POVCameraController(targetPlayer);
+      this.spectatorController = new POVSpectatorController(
+        this.echoVrClient,
+        targetPlayer
+      );
     }
-  }
-
-  /**
-   * Helper methods to control spectator camera through keysends.
-   */
-  public clickFollowPlayer(playerIndex: number) {
-    const partialKeyString = '+' + playerIndex;
-    const keyString =
-      partialKeyString + ' ' + partialKeyString + ' ' + partialKeyString;
-    sendKey(keyString, 'Echo VR', 0, 0, 6);
-    log.info('[SPECTATOR_MANAGER] Went to player: ' + playerIndex);
-  }
-
-  public clickFollow() {
-    const keyString = 'ffff';
-    sendKey(keyString, 'Echo VR', 0, 1, 6);
-    log.info('[SPECTATOR_MANAGER] Clicked follow');
-  }
-
-  public clickPOV() {
-    const keyString = 'pppp';
-    sendKey(keyString, 'Echo VR', 0, 1, 6);
-    log.info('[SPECTATOR_MANAGER] Clicked pov');
-  }
-
-  public clickCamera(cameraIndex: number) {
-    const partialKeyString = '^^' + cameraIndex;
-    const keyString =
-      partialKeyString + ' ' + partialKeyString + ' ' + partialKeyString;
-    sendKey(partialKeyString, 'Echo VR', 0, 0, 6);
-    log.info('[SPECTATOR_MANAGER] Went to camera: ' + cameraIndex);
-  }
-
-  public clickSideline() {
-    //const keyString = 'sssss';
-    //sendKey(keyString, 'Echo VR', 100, 6, 1);
-  }
-
-  public clickUI() {
-    const keyString = 'uuuuu';
-    sendKey(keyString, 'Echo VR', 20, 6, 6);
   }
 }

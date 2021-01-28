@@ -8,12 +8,12 @@ import { exec } from './utils';
  * @param characterDelay The amount of time (in ms) between characters
  * @param holdTime The amount of time (in ms) that the character should be held down
  */
-const sendKey = async (
+export const sendKey = async (
   keyString: string,
-  windowTitle: string,
-  initialDelay: number = 100,
-  characterDelay: number = 6,
-  holdTime: number = 6
+  windowTitle = 'Echo VR',
+  initialDelay = 100,
+  characterDelay = 6,
+  holdTime = 6
 ) => {
   // Define the relative path location
   const winSKPath = '.\\resources\\winSK.exe';
@@ -23,15 +23,13 @@ const sendKey = async (
   commandBuilder.push(winSKPath);
   // Uncomment the following line to enable logging:
   // commandBuilder.push('-d');
-  commandBuilder.push('-w "' + windowTitle + '"');
-  commandBuilder.push('-i ' + initialDelay);
-  commandBuilder.push('-s ' + characterDelay);
-  commandBuilder.push('-sd ' + holdTime);
+  commandBuilder.push(`-w "${windowTitle}"`);
+  commandBuilder.push(`-i ${initialDelay}`);
+  commandBuilder.push(`-s ${characterDelay}`);
+  commandBuilder.push(`-sd ${holdTime}`);
   commandBuilder.push(keyString);
   // Create a final string from the components seperated with ' '
   const commandString = commandBuilder.join(' ');
   // Execute the command
   return exec(commandString);
 };
-
-export default sendKey;

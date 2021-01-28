@@ -6,7 +6,7 @@ import {
   IEchoMatchData,
   EventType,
 } from '../types';
-import Events from '../utilities/Events';
+import { Events } from '../utilities';
 
 export default class MatchEventManager {
   // Storing the current match state
@@ -187,16 +187,17 @@ export default class MatchEventManager {
         blueIndex,
         snapshot.blueTeamMembers[blueIndex].head!.position,
       ];
-    } else if (orangeIndex != -1) {
+    }
+    if (orangeIndex != -1) {
       return [
         'orange',
         orangeIndex,
         snapshot.orangeTeamMembers[orangeIndex].head!.position,
       ];
-    } else if (spectatorIndex != -1) {
-      return ['spectator', 11, [0, 0, 0]];
-    } else {
-      return ['other', -1, [0, 0, 0]];
     }
+    if (spectatorIndex != -1) {
+      return ['spectator', 11, [0, 0, 0]];
+    }
+    return ['other', -1, [0, 0, 0]];
   }
 }

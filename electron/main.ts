@@ -5,7 +5,7 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { log, Config, EventLogger, focusWindow, exec } from '../src/utilities';
+import { log, Config, EventLogger } from '../src/utilities';
 
 // Repository Imports
 import EchoDataRepository from '../src/repositories/EchoDataRepository';
@@ -18,10 +18,9 @@ import OBSManager from '../src/managers/OBSManager';
 import SpectatorManager from '../src/managers/SpectatorManager';
 import EchoDataEventManager from '../src/managers/EchoDataEventManager';
 import ShadowStateManager from '../src/managers/ShadowStateManager';
-import { ShadowStateType } from '../src/types/ShadowStateType';
 import EchoDataRedirectManager from '../src/managers/EchoDataRedirectManager';
 import GestureRecognizerManager from '../src/managers/GestureRecognizerManager';
-import sendKey from '../src/utilities/KeySender';
+import EchoVRClient from '../src/clients/EchoVRClient';
 
 /** *********************************************************************
  ********************* BOILERPLATE ELECTRON *****************************
@@ -36,7 +35,7 @@ const setup = async () => {
     throw new Error('Error initializing config');
   }
   log.info({ loadedConfig: configData });
-  const echoVRManager = new EchoVRManager(configData.echoPath);
+  const echoVrClient = new EchoVRClient(configData.echoPath);
   const remoteEchoDataRepository = new EchoDataRepository(
     configData.network.questIP,
     configData.network.questPort
@@ -45,11 +44,13 @@ const setup = async () => {
     configData.network.localIP,
     configData.network.localPort
   );
+  // subscribes to events
+  new EchoVRManager(echoVrClient);
   return {
     log,
-    echoVRManager,
     remoteEchoDataRepository,
     localEchoDataRepository,
+    echoVrClient,
     configData,
   };
 };
@@ -57,9 +58,9 @@ const setup = async () => {
 const start = async () => {
   try {
     const {
-      echoVRManager,
       remoteEchoDataRepository,
       localEchoDataRepository,
+      echoVrClient,
       configData,
     } = await setup();
 
@@ -77,7 +78,7 @@ const start = async () => {
         new ShadowEventManager(),
         new OBSManager(),
         new MatchEventManager(localEchoDataRepository),
-        new SpectatorManager(configData),
+        new SpectatorManager(configData, echoVrClient),
         new GestureRecognizerManager(),
       ];
     }

@@ -2,7 +2,7 @@ import * as os from 'os';
 import * as path from 'path';
 import { transports, format, createLogger } from 'winston';
 
-import { LogLevel } from '../types';
+import { LogLevel } from '../types/LogLevel';
 
 const LOG_PATH = path.join(os.homedir(), 'AppData/Local/EchoShadow');
 

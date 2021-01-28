@@ -1,6 +1,6 @@
 import { IEchoMatchData, IEchoNewSnapshotEventData, EventType } from '../types';
 import { log } from './log';
-import Events from './Events';
+import { Events } from './Events';
 
 export class EventLogger {
   constructor() {

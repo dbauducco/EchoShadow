@@ -2,7 +2,6 @@ import * as os from 'os';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { ipcMain } from 'electron';
-import { config } from 'winston';
 import { IConfigInfo, LogLevel } from '../types';
 import { log, initLogger } from './log';
 import { exec } from './utils';

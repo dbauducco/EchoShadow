@@ -1,8 +1,6 @@
-import { CircleSpinner } from 'react-spinners-kit';
-import { cli } from 'winston/lib/winston/config';
+/* eslint-disable no-restricted-syntax */
 import { EventType, IEchoMatchData } from '../types';
-import { log } from '../utilities';
-import Events from '../utilities/Events';
+import { Events } from '../utilities';
 
 export default class GestureRecognizerManager {
   constructor() {
@@ -30,8 +28,8 @@ export default class GestureRecognizerManager {
         this.isFistBumping(playerHand)
       ) {
         // Fist bumping with this person!p
-        console.log('The client is fist bumping ' + hand.owner);
-        Events.emit(EventType.NewSpectatorTarget, hand.owner + '#POV');
+        console.log(`The client is fist bumping ${hand.owner}`);
+        Events.emit(EventType.NewSpectatorTarget, `${hand.owner}#POV`);
       }
       // Check for high five
       if (
@@ -40,8 +38,8 @@ export default class GestureRecognizerManager {
         this.isHighFiving(playerHand)
       ) {
         // High fiving with this person!
-        console.log('The client is high fiving ' + hand.owner);
-        Events.emit(EventType.NewSpectatorTarget, hand.owner + '#FOLLOW');
+        console.log(`The client is high fiving ${hand.owner}`);
+        Events.emit(EventType.NewSpectatorTarget, `${hand.owner}#FOLLOW`);
       }
     }
   }
@@ -58,14 +56,16 @@ export default class GestureRecognizerManager {
       const playerData = data.game.bluePlayers[blueIndex];
       if (hand == 'right') {
         return playerData.right_hand;
-      } else if (hand == 'left') {
+      }
+      if (hand == 'left') {
         return playerData.left_hand;
       }
     } else if (orangeIndex != -1) {
       const playerData = data.game.orangePlayers[orangeIndex];
       if (hand == 'right') {
         return playerData.right_hand;
-      } else if (hand == 'left') {
+      }
+      if (hand == 'left') {
         return playerData.left_hand;
       }
     }

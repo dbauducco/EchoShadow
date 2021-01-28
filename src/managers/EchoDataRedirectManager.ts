@@ -1,15 +1,11 @@
-import {
-  EventType,
-  IConfigInfo,
-  IEchoDataRepository,
-  IEchoMatchData,
-} from '../types';
 import http from 'http';
-import Events from '../utilities/Events';
+import { EventType, IConfigInfo, IEchoDataRepository } from '../types';
+import { Events } from '../utilities';
 import { ShadowStateType } from '../types/ShadowStateType';
 
 export default class EchoDataRedirectManager {
-  endpointPort: number = 1010;
+  endpointPort = 1010;
+
   dataRepository: IEchoDataRepository | undefined;
 
   constructor(
@@ -17,7 +13,7 @@ export default class EchoDataRedirectManager {
     private remoteDataRepository: IEchoDataRepository
   ) {
     this.dataRepository = remoteDataRepository;
-    this.endpointPort = parseInt(configData.redirectAPI.serverPort);
+    this.endpointPort = Number(configData.redirectAPI.serverPort);
     this.startRedirect();
     Events.emit(EventType.NewShadowState, ShadowStateType.RunningRedirect);
   }

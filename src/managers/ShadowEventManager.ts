@@ -1,10 +1,5 @@
-import {
-  EchoSessionType,
-  IEchoDataSnapshot,
-  IEchoSnapshotOverviewsEventData,
-  IEchoNewSnapshotEventData,
-} from '../types';
-import Events from '../utilities/Events';
+import { IEchoNewSnapshotEventData } from '../types';
+import { Events } from '../utilities';
 import { EventType } from '../types/EventType';
 import { ShadowStateType } from '../types/ShadowStateType';
 
