@@ -94,8 +94,9 @@ export default class MatchEventManager {
           data.localSnapshot!,
           this.currentMatchData.remote.name
         );
-        this.currentMatchData.remote.team = playerTeamData[0];
-        this.currentMatchData.remote.index = playerTeamData[1];
+        const [remoteTeam, remotePlayerIndex] = playerTeamData;
+        this.currentMatchData.remote.team = remoteTeam;
+        this.currentMatchData.remote.index = remotePlayerIndex;
         Events.emit(EventType.LocalJoinedMatch, this.currentMatchData);
         this.pingLocal();
       } else {
@@ -118,28 +119,74 @@ export default class MatchEventManager {
     // Get new data
     const data = await this.localDataRepository.getSnapshot();
 
+    if (!data || !this.currentMatchData) {
+      return undefined;
+    }
+
     // Update player team and index
     const playerTeamData = this.findPlayerData(
       data!,
-      this.currentMatchData!.remote.name
+      this.currentMatchData.remote.name
     );
-    this.currentMatchData!.remote.team = playerTeamData[0];
-    this.currentMatchData!.remote.index = playerTeamData[1];
-    // Update local position
-    this.currentMatchData!.local.position = data!.client.head!.position;
-    this.currentMatchData!.local.forward = data!.client.head!.forward;
-    this.currentMatchData!.local.up = data!.client.head!.up;
-    this.currentMatchData!.local.left = data!.client.head!.left;
-    // Update player postions
-    this.currentMatchData!.game.bluePlayers = data!.blueTeamMembers;
-    this.currentMatchData!.game.orangePlayers = data!.orangeTeamMembers;
 
+    const [remoteTeam, remotePlayerIndex] = playerTeamData;
+
+    const newMatchData = {
+      ...this.currentMatchData,
+      remote: {
+        ...this.currentMatchData.remote,
+        team: remoteTeam,
+        index: remotePlayerIndex,
+      },
+      local: {
+        ...this.currentMatchData.local,
+        position: data.client.head?.position || [],
+        forward: data.client.head?.forward || [],
+        up: data.client.head?.up || [],
+        left: data.client.head?.left || [],
+      },
+      game: {
+        ...this.currentMatchData.game,
+        bluePlayers: data.blueTeamMembers,
+        orangePlayers: data.orangeTeamMembers,
+      },
+    };
+
+    // check if the remote changed teams
+    if (
+      this.currentMatchData &&
+      remoteTeam !== this.currentMatchData.remote.team
+    ) {
+      Events.emit(EventType.RemoteChangedTeam, newMatchData);
+    }
     // Emit the match data
     Events.emit(EventType.NewMatchData, this.currentMatchData);
+
+    this.currentMatchData = newMatchData;
 
     // Loop the function
     if (this.currentMatchData?.local.inMatch)
       setTimeout(this.pingLocal.bind(this), 0.1 * 1000);
+
+    return undefined;
+
+    // this.currentMatchData!.remote.team = playerTeamData[0];
+    // this.currentMatchData!.remote.index = playerTeamData[1];
+    // // Update local position
+    // this.currentMatchData!.local.position = data!.client.head!.position;
+    // this.currentMatchData!.local.forward = data!.client.head!.forward;
+    // this.currentMatchData!.local.up = data!.client.head!.up;
+    // this.currentMatchData!.local.left = data!.client.head!.left;
+    // // Update player postions
+    // this.currentMatchData!.game.bluePlayers = data!.blueTeamMembers;
+    // this.currentMatchData!.game.orangePlayers = data!.orangeTeamMembers;
+
+    // // Emit the match data
+    // Events.emit(EventType.NewMatchData, this.currentMatchData);
+
+    // // Loop the function
+    // if (this.currentMatchData?.local.inMatch)
+    //   setTimeout(this.pingLocal.bind(this), 0.1 * 1000);
   }
 
   // **** HELPER METHODS **** //
@@ -164,7 +211,7 @@ export default class MatchEventManager {
     }
 
     // Let's check if they player is in one of the teams
-    return this.findPlayerData(alternateData, sourceName)[1] != -1;
+    return this.findPlayerData(alternateData, sourceName)[1] !== -1;
   }
 
   private findPlayerData(
@@ -172,30 +219,30 @@ export default class MatchEventManager {
     name: string
   ): [string, number, number[]] {
     const blueIndex = snapshot.blueTeamMembers.findIndex(playerData => {
-      return playerData.name == name;
+      return playerData.name === name;
     });
     const orangeIndex = snapshot.orangeTeamMembers.findIndex(playerData => {
-      return playerData.name == name;
+      return playerData.name === name;
     });
     const spectatorIndex = snapshot.spectatorMembers.findIndex(playerData => {
-      return playerData.name == name;
+      return playerData.name === name;
     });
 
-    if (blueIndex != -1) {
+    if (blueIndex !== -1) {
       return [
         'blue',
         blueIndex,
         snapshot.blueTeamMembers[blueIndex].head!.position,
       ];
     }
-    if (orangeIndex != -1) {
+    if (orangeIndex !== -1) {
       return [
         'orange',
         orangeIndex,
         snapshot.orangeTeamMembers[orangeIndex].head!.position,
       ];
     }
-    if (spectatorIndex != -1) {
+    if (spectatorIndex !== -1) {
       return ['spectator', 11, [0, 0, 0]];
     }
     return ['other', -1, [0, 0, 0]];

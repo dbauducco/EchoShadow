@@ -27,6 +27,7 @@ export class Config {
     spectatorOptions: {
       hideUI: false,
       mode: 'default',
+      listenOptions: 'same',
     },
     redirectAPI: {
       enabled: false,
@@ -98,20 +99,32 @@ export class Config {
         return undefined;
       }
       // Read the file
-      const configData: IConfigInfo = JSON.parse(dataBuffer.toString());
+      const dirtyConfigData: IConfigInfo = JSON.parse(dataBuffer.toString());
 
       // Check config format version
-      if (configData.configVersion === 'v2') {
+      if (dirtyConfigData.configVersion === 'v2') {
         // The config format is up to date
-        return configData;
+        return dirtyConfigData;
       }
       // We need to upgrade the config format
-      const newFormatData = this.upgradeConfig(configData);
+      const newDirtyFormatData = this.upgradeConfig(dirtyConfigData);
+      const newCleanFormatData = {
+        ...newDirtyFormatData,
+        spectatorOptions: {
+          ...newDirtyFormatData.spectatorOptions,
+          mode: newDirtyFormatData.spectatorOptions.mode.toLowerCase() as 'follow',
+          listenOptions: newDirtyFormatData.spectatorOptions.listenOptions.toLowerCase() as 'same',
+        },
+        dev: {
+          ...newDirtyFormatData.dev,
+          logLevel: newDirtyFormatData.dev.logLevel.toLowerCase() as LogLevel.INFO,
+        },
+      };
       await fse.outputFile(
         this.CONFIG_PATH,
-        JSON.stringify(newFormatData, null, 4)
+        JSON.stringify(newCleanFormatData, null, 4)
       );
-      return newFormatData;
+      return newCleanFormatData;
     } catch (error) {
       log.error({
         message: 'Error reading config.',

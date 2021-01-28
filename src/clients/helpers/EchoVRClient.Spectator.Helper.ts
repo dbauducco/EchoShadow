@@ -1,6 +1,6 @@
 import { sendKey, log } from '../../utilities';
 
-export class EchoVRClientCameraHelper {
+export class EchoVRClientSpectatorHelper {
   /**
    * Helper methods to control spectator camera through keysends.
    */
@@ -37,6 +37,21 @@ export class EchoVRClientCameraHelper {
 
   public requestUIToggle() {
     const keyString = 'uuuuu';
+    sendKey(keyString, undefined, 20, 6, 6);
+  }
+
+  public listenOrange() {
+    const keyString = '{F6}';
+    sendKey(keyString, undefined, 20, 6, 6);
+  }
+
+  public listenBlue() {
+    const keyString = '{F7}';
+    sendKey(keyString, undefined, 20, 6, 6);
+  }
+
+  public muteAll() {
+    const keyString = '{F5}';
     sendKey(keyString, undefined, 20, 6, 6);
   }
 }

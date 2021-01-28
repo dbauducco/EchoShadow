@@ -10,9 +10,12 @@ import {
   IEchoSpectatorController,
 } from '../types';
 import { log, Events } from '../utilities';
+import { ListenSpectatorController } from '../spectatorControllers/ListenSpectatorController';
 
 export default class SpectatorManager {
   spectatorController?: IEchoSpectatorController;
+
+  listenSpectatingController: ListenSpectatorController;
 
   constructor(
     private configData: IConfigInfo,
@@ -22,10 +25,14 @@ export default class SpectatorManager {
       EventType.LocalJoinedMatch,
       this.setDefaultSpectatorOption.bind(this)
     );
+    Events.on(EventType.RemoteChangedTeam, this.handleTeamChanged.bind(this));
     Events.on(EventType.NewMatchData, this.updateController.bind(this));
     Events.on(
       EventType.NewSpectatorTarget,
       this.setNewSpectatorTarget.bind(this)
+    );
+    this.listenSpectatingController = new ListenSpectatorController(
+      this.echoVrClient
     );
   }
 
@@ -52,11 +59,18 @@ export default class SpectatorManager {
           this.echoVrClient
         );
         break;
-      case 'none':
+      case 'default':
+        this.spectatorController = new DoNothingSpectatorController();
+        break;
       default:
         this.spectatorController = new DoNothingSpectatorController();
         break;
     }
+
+    await this.listenSpectatingController.handleMutingBasedOnTeam(
+      this.configData.spectatorOptions.listenOptions,
+      matchData
+    );
   }
 
   /**
@@ -98,5 +112,13 @@ export default class SpectatorManager {
         targetPlayer
       );
     }
+  }
+
+  public async handleTeamChanged(matchData: IEchoMatchData) {
+    const listeningResult = await this.listenSpectatingController.handleMutingBasedOnTeam(
+      this.configData.spectatorOptions.listenOptions,
+      matchData
+    );
+    log.info({ message: 'handleTeamChanged', listeningResult });
   }
 }

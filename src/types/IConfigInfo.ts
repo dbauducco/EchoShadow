@@ -11,7 +11,8 @@ export interface IConfigInfo {
   };
   spectatorOptions: {
     hideUI: boolean;
-    mode: string;
+    mode: 'pov' | 'sideline' | 'auto' | 'default' | 'follow';
+    listenOptions: 'same' | 'opponent' | 'both' | 'none';
   };
   dev: {
     logLevel: LogLevel;

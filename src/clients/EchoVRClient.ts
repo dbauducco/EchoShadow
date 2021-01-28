@@ -11,7 +11,7 @@ import {
   spawn,
   Events,
 } from '../utilities';
-import { EchoVRClientCameraHelper } from './helpers/EchoVRClient.Camera.Helper';
+import { EchoVRClientSpectatorHelper } from './helpers/EchoVRClient.Spectator.Helper';
 
 export default class EchoVRClient {
   private SPECTATOR_FLAG = '--spectatorstream';
@@ -20,12 +20,12 @@ export default class EchoVRClient {
 
   private HEADLESS_FLAG = '--headless';
 
-  private cameraHelper: EchoVRClientCameraHelper;
+  private spectatorHelper: EchoVRClientSpectatorHelper;
 
   constructor(private echoPath: string) {
     this.verifyPath();
     this.enableEchoVRAPI();
-    this.cameraHelper = new EchoVRClientCameraHelper();
+    this.spectatorHelper = new EchoVRClientSpectatorHelper();
   }
 
   /**
@@ -220,26 +220,38 @@ export default class EchoVRClient {
   };
 
   public requestFollowByIndex(playerIndex: number) {
-    return this.cameraHelper.requestFollowByIndex(playerIndex);
+    return this.spectatorHelper.requestFollowByIndex(playerIndex);
   }
 
   public requestFollow() {
-    return this.cameraHelper.requestFollow();
+    return this.spectatorHelper.requestFollow();
   }
 
   public requestPOV() {
-    return this.cameraHelper.requestPOV();
+    return this.spectatorHelper.requestPOV();
   }
 
   public requestCameraByIndex(cameraIndex: number) {
-    return this.cameraHelper.requestCameraByIndex(cameraIndex);
+    return this.spectatorHelper.requestCameraByIndex(cameraIndex);
   }
 
   public requestSideline() {
-    return this.cameraHelper.requestSideline();
+    return this.spectatorHelper.requestSideline();
   }
 
   public requestUIToggle() {
-    return this.cameraHelper.requestUIToggle();
+    return this.spectatorHelper.requestUIToggle();
+  }
+
+  public listenOrange() {
+    return this.spectatorHelper.listenOrange();
+  }
+
+  public listenBlue() {
+    return this.spectatorHelper.listenBlue();
+  }
+
+  public muteAll() {
+    return this.spectatorHelper.muteAll();
   }
 }

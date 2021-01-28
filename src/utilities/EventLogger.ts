@@ -4,30 +4,34 @@ import { Events } from './Events';
 
 export class EventLogger {
   constructor() {
-    // Events.on(
-    //   EventType.RemoteJoinedMatch,
-    //   this.logRemoteJoinedMatch.bind(this)
-    // );
-    // Events.on(EventType.RemoteLeftMatch, this.logRemoteLeftMatch.bind(this));
-    // Events.on(EventType.LocalJoinedMatch, this.logLocalJoinedMatch.bind(this));
-    // Events.on(EventType.LocalLeftMatch, this.logLocalLeftMatch.bind(this));
-    // Events.on(
-    //   EventType.LocalWillLeaveMatch,
-    //   this.logLocalWillLeaveMatch.bind(this)
-    // );
-    // Events.on(
-    //   EventType.LocalWillJoinMatch,
-    //   this.logLocalWillJoinMatch.bind(this)
-    // );
-    // Events.on(EventType.NewMatchData, this.logNewMatchData.bind(this));
-    // Events.on(EventType.NewSnapshotData, this.logNewSnapshotData.bind(this));
-    // Events.on(EventType.NewShadowState, this.logNewShadowState.bind(this));
-    // Events.on(EventType.LocalIsSynced, this.logLocalIsSynced.bind(this));
-    // Events.on(EventType.LocalIsUnsynced, this.logLocalIsUnsynced.bind(this));
+    Events.on(
+      EventType.RemoteJoinedMatch,
+      this.logRemoteJoinedMatch.bind(this)
+    );
+    Events.on(EventType.RemoteLeftMatch, this.logRemoteLeftMatch.bind(this));
+    Events.on(EventType.LocalJoinedMatch, this.logLocalJoinedMatch.bind(this));
+    Events.on(EventType.LocalLeftMatch, this.logLocalLeftMatch.bind(this));
+    Events.on(
+      EventType.LocalWillLeaveMatch,
+      this.logLocalWillLeaveMatch.bind(this)
+    );
+    Events.on(
+      EventType.LocalWillJoinMatch,
+      this.logLocalWillJoinMatch.bind(this)
+    );
+    Events.on(EventType.NewMatchData, this.logNewMatchData.bind(this));
+    Events.on(EventType.NewSnapshotData, this.logNewSnapshotData.bind(this));
+    Events.on(EventType.NewShadowState, this.logNewShadowState.bind(this));
+    Events.on(EventType.LocalIsSynced, this.logLocalIsSynced.bind(this));
+    Events.on(EventType.LocalIsUnsynced, this.logLocalIsUnsynced.bind(this));
+    Events.on(
+      EventType.RemoteChangedTeam,
+      this.logRemoteChangedTeam.bind(this)
+    );
   }
 
   private logNewSnapshotData(data: IEchoNewSnapshotEventData) {
-    log.info({
+    log.debug({
       event: EventType.NewSnapshotData,
       eventData: data,
     });
@@ -76,7 +80,7 @@ export class EventLogger {
   }
 
   private logNewMatchData(data: IEchoMatchData) {
-    log.info({
+    log.debug({
       event: EventType.NewMatchData,
       eventData: data,
     });
@@ -99,6 +103,13 @@ export class EventLogger {
   private logNewShadowState(data: IEchoMatchData) {
     log.info({
       event: EventType.NewShadowState,
+      eventData: data,
+    });
+  }
+
+  private logRemoteChangedTeam(data: IEchoMatchData) {
+    log.info({
+      event: EventType.RemoteChangedTeam,
       eventData: data,
     });
   }
