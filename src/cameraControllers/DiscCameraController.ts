@@ -1,3 +1,4 @@
+import SpectatorManager from '../managers/SpectatorManager';
 import { IEchoMatchData, IEchoCameraController } from '../types';
 import { focusWindow, Key, keyboard, log } from '../utilities';
 
@@ -5,12 +6,15 @@ export default class DiscCameraController implements IEchoCameraController {
   lastKey: Key | undefined = undefined;
 
   // Default
-  async getDefault(matchData: IEchoMatchData) {
+  async getDefault(
+    matchData: IEchoMatchData,
+    spectatorManager: SpectatorManager
+  ) {
     return undefined;
   }
 
   // Updating
-  async update(matchData: IEchoMatchData) {
+  async update(matchData: IEchoMatchData, spectatorManager: SpectatorManager) {
     const discPositionWidth = matchData.discPosition[2];
     log.info(discPositionWidth);
     if (discPositionWidth > 2) {

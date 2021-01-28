@@ -1,0 +1,120 @@
+2021-01-27 17:37:13.140, Debug logging enabled
+2021-01-27 17:37:13.141, Window name (-w): Echo VR
+2021-01-27 17:37:13.142, Window name (-w): Echo VR
+2021-01-27 17:37:13.142, Initial send delay (-i): 0
+2021-01-27 17:37:13.142, Initial send delay (-i): 20
+2021-01-27 17:37:13.143, Send delay (-s): 0
+2021-01-27 17:37:13.143, Send delay (-s): 6
+2021-01-27 17:37:13.144, Send down-delay (-sd): 6
+2021-01-27 17:37:13.144, Send down-delay (-sd): 6
+2021-01-27 17:37:13.144, Send delay (-s) of 0 msec set.
+2021-01-27 17:37:13.145, Send delay (-s) of 6 msec set.
+2021-01-27 17:37:13.145, Send down delay (-sd) of 6 msec set.
+2021-01-27 17:37:13.145, Send down delay (-sd) of 6 msec set.
+2021-01-27 17:37:13.146, Window: Echo VR
+2021-01-27 17:37:13.146, Window: Echo VR
+2021-01-27 17:37:13.649, Windowhandle: 0x000C08EA
+2021-01-27 17:37:13.650, Windowhandle: 0x000C08EA
+2021-01-27 17:37:13.650, Window 'Echo VR' activated.
+2021-01-27 17:37:13.650, Window 'Echo VR' activated.
+2021-01-27 17:37:13.652, Send: +6
+2021-01-27 17:37:13.671, Initial delay of 20 msec waited.
+2021-01-27 17:37:13.672, Send: uuuuu
+2021-01-27 17:37:13.738, Exiting application with errorlevel '0'.
+2021-01-27 17:37:13.776, Send: +6
+2021-01-27 17:37:13.899, Send: +6
+2021-01-27 17:37:13.914, Exiting application with errorlevel '0'.
+2021-01-27 17:37:17.494, Debug logging enabled
+2021-01-27 17:37:17.495, Window name (-w): Echo VR
+2021-01-27 17:37:17.496, Initial send delay (-i): 0
+2021-01-27 17:37:17.497, Send delay (-s): 0
+2021-01-27 17:37:17.498, Send down-delay (-sd): 6
+2021-01-27 17:37:17.500, Send delay (-s) of 0 msec set.
+2021-01-27 17:37:17.501, Send down delay (-sd) of 6 msec set.
+2021-01-27 17:37:17.502, Window: Echo VR
+2021-01-27 17:37:18.004, Windowhandle: 0x000C08EA
+2021-01-27 17:37:18.006, Window 'Echo VR' activated.
+2021-01-27 17:37:18.007, Send: +7
+2021-01-27 17:37:18.131, Send: +7
+2021-01-27 17:37:18.245, Send: +7
+2021-01-27 17:37:18.260, Exiting application with errorlevel '0'.
+2021-01-27 17:37:18.992, Debug logging enabled
+2021-01-27 17:37:18.993, Window name (-w): Echo VR
+2021-01-27 17:37:18.994, Initial send delay (-i): 0
+2021-01-27 17:37:18.995, Send delay (-s): 1
+2021-01-27 17:37:18.996, Send down-delay (-sd): 6
+2021-01-27 17:37:18.997, Send delay (-s) of 1 msec set.
+2021-01-27 17:37:18.998, Send down delay (-sd) of 6 msec set.
+2021-01-27 17:37:19.000, Window: Echo VR
+2021-01-27 17:37:19.503, Windowhandle: 0x000C08EA
+2021-01-27 17:37:19.504, Window 'Echo VR' activated.
+2021-01-27 17:37:19.505, Send: pppp
+2021-01-27 17:37:19.538, Exiting application with errorlevel '0'.
+2021-01-27 17:39:06.243, Debug logging enabled
+2021-01-27 17:39:06.244, Window name (-w): Echo VR
+2021-01-27 17:39:06.246, Initial send delay (-i): 0
+2021-01-27 17:39:06.247, Send delay (-s): 0
+2021-01-27 17:39:06.248, Send down-delay (-sd): 6
+2021-01-27 17:39:06.249, Send delay (-s) of 0 msec set.
+2021-01-27 17:39:06.250, Send down delay (-sd) of 6 msec set.
+2021-01-27 17:39:06.252, Window: Echo VR
+2021-01-27 17:39:06.754, Windowhandle: 0x000C08EA
+2021-01-27 17:39:06.755, Window 'Echo VR' activated.
+2021-01-27 17:39:06.756, Send: +8
+2021-01-27 17:39:06.879, Send: +8
+2021-01-27 17:39:07.003, Send: +8
+2021-01-27 17:39:07.018, Exiting application with errorlevel '0'.
+2021-01-27 17:39:08.183, Debug logging enabled
+2021-01-27 17:39:08.184, Window name (-w): Echo VR
+2021-01-27 17:39:08.185, Initial send delay (-i): 0
+2021-01-27 17:39:08.186, Send delay (-s): 0
+2021-01-27 17:39:08.187, Send down-delay (-sd): 6
+2021-01-27 17:39:08.188, Send delay (-s) of 0 msec set.
+2021-01-27 17:39:08.189, Send down delay (-sd) of 6 msec set.
+2021-01-27 17:39:08.190, Window: Echo VR
+2021-01-27 17:39:08.693, Windowhandle: 0x000C08EA
+2021-01-27 17:39:08.694, Window 'Echo VR' activated.
+2021-01-27 17:39:08.696, Send: +9
+2021-01-27 17:39:08.819, Send: +9
+2021-01-27 17:39:08.942, Send: +9
+2021-01-27 17:39:08.959, Exiting application with errorlevel '0'.
+2021-01-27 17:39:09.676, Debug logging enabled
+2021-01-27 17:39:09.677, Window name (-w): Echo VR
+2021-01-27 17:39:09.679, Initial send delay (-i): 0
+2021-01-27 17:39:09.679, Send delay (-s): 0
+2021-01-27 17:39:09.680, Send down-delay (-sd): 6
+2021-01-27 17:39:09.681, Send delay (-s) of 0 msec set.
+2021-01-27 17:39:09.682, Send down delay (-sd) of 6 msec set.
+2021-01-27 17:39:09.683, Window: Echo VR
+2021-01-27 17:39:10.186, Windowhandle: 0x000C08EA
+2021-01-27 17:39:10.187, Window 'Echo VR' activated.
+2021-01-27 17:39:10.188, Send: +6
+2021-01-27 17:39:10.310, Send: +6
+2021-01-27 17:39:10.434, Send: +6
+2021-01-27 17:39:10.449, Exiting application with errorlevel '0'.
+2021-01-27 17:39:11.175, Debug logging enabled
+2021-01-27 17:39:11.177, Window name (-w): Echo VR
+2021-01-27 17:39:11.178, Initial send delay (-i): 0
+2021-01-27 17:39:11.180, Send delay (-s): 0
+2021-01-27 17:39:11.181, Send down-delay (-sd): 6
+2021-01-27 17:39:11.181, Send delay (-s) of 0 msec set.
+2021-01-27 17:39:11.183, Send down delay (-sd) of 6 msec set.
+2021-01-27 17:39:11.184, Window: Echo VR
+2021-01-27 17:39:11.687, Windowhandle: 0x000C08EA
+2021-01-27 17:39:11.688, Window 'Echo VR' activated.
+2021-01-27 17:39:11.689, Send: +7
+2021-01-27 17:39:11.813, Send: +7
+2021-01-27 17:39:11.935, Send: +7
+2021-01-27 17:39:11.950, Exiting application with errorlevel '0'.
+2021-01-27 17:39:13.881, Debug logging enabled
+2021-01-27 17:39:13.883, Window name (-w): Echo VR
+2021-01-27 17:39:13.884, Initial send delay (-i): 0
+2021-01-27 17:39:13.884, Send delay (-s): 1
+2021-01-27 17:39:13.885, Send down-delay (-sd): 6
+2021-01-27 17:39:13.886, Send delay (-s) of 1 msec set.
+2021-01-27 17:39:13.887, Send down delay (-sd) of 6 msec set.
+2021-01-27 17:39:13.888, Window: Echo VR
+2021-01-27 17:39:14.390, Windowhandle: 0x000C08EA
+2021-01-27 17:39:14.391, Window 'Echo VR' activated.
+2021-01-27 17:39:14.392, Send: pppp
+2021-01-27 17:39:14.424, Exiting application with errorlevel '0'.

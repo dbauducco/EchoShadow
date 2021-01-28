@@ -21,6 +21,7 @@ import ShadowStateManager from '../src/managers/ShadowStateManager';
 import { ShadowStateType } from '../src/types/ShadowStateType';
 import EchoDataRedirectManager from '../src/managers/EchoDataRedirectManager';
 import GestureRecognizerManager from '../src/managers/GestureRecognizerManager';
+import sendKey from '../src/utilities/KeySender';
 
 /** *********************************************************************
  ********************* BOILERPLATE ELECTRON *****************************
@@ -51,17 +52,6 @@ const setup = async () => {
     localEchoDataRepository,
     configData,
   };
-};
-
-const winSKTestCode = async () => {
-  // Make sure to have notepad open when testing this out
-  try {
-    const result = await exec(`.\\resources\\winSK.exe -w Notepad Test`);
-    log.info({ execResult: result });
-  } catch (err) {
-    log.error({ message: 'error exec winSk', error: err.message || err });
-  }
-  // This should type out 'Test' to the notepad.
 };
 
 const start = async () => {
@@ -97,9 +87,6 @@ const start = async () => {
       remoteEchoDataRepository
     );
     echoDataEventManager.start();
-
-    /** WINDOWS SEND KEY TEST CODE */
-    await winSKTestCode();
 
     return configData;
   } catch (error) {

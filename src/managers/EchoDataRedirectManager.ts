@@ -8,7 +8,7 @@ import http from 'http';
 import Events from '../utilities/Events';
 import { ShadowStateType } from '../types/ShadowStateType';
 
-export default class SpectatorManager {
+export default class EchoDataRedirectManager {
   endpointPort: number = 1010;
   dataRepository: IEchoDataRepository | undefined;
 
