@@ -1,7 +1,7 @@
 import * as os from 'os';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { ipcMain } from 'electron';
+// import { ipcMain } from 'electron';
 import { merge } from 'lodash';
 import { IConfigInfo, LogLevel } from '../types';
 import { log, initLogger } from './log';
@@ -43,9 +43,9 @@ export class Config {
   // Storing options
   public options?: IConfigInfo;
 
-  constructor() {
-    ipcMain.on('open-config', this.openConfigFile.bind(this));
-  }
+  // constructor() {
+  // ipcMain.on('open-config', this.openConfigFile.bind(this));
+  // }
 
   /**
    * initializes the Config options. This must be called in order to use the config class
@@ -108,7 +108,7 @@ export class Config {
   /**
    * Method to read the config file from appdata.
    */
-  private async readConfig() {
+  public async readConfig() {
     try {
       // Create the data buffer
       const dataBuffer = fse.readFileSync(this.CONFIG_PATH);

@@ -2,7 +2,7 @@
 /** *********************************************************************
  ************************ ECHO SHADOW CODE *******************************
  ********************************************************************** */
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import { log, Config, EventLogger } from '../src/utilities';
@@ -102,9 +102,13 @@ const start = async () => {
 let mainWindow: Electron.BrowserWindow | null;
 
 function createWindow() {
+  const defaultWidth = 450;
+  const defaultHeight = 240;
+  const configWidth = 1200;
+  const configHeight = 800;
   mainWindow = new BrowserWindow({
-    width: 450,
-    height: 240,
+    width: defaultWidth,
+    height: defaultHeight,
     frame: false,
     resizable: false,
     // backgroundColor: '#f9968e', // PINK MODE
@@ -132,6 +136,16 @@ function createWindow() {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+  });
+
+  ipcMain.on('open-config', () => {
+    mainWindow?.setSize(configWidth, configHeight);
+  });
+
+  ipcMain.on('close-config', () => {
+    mainWindow?.setResizable(true);
+    mainWindow?.setSize(defaultWidth, defaultHeight);
+    mainWindow?.setResizable(false);
   });
 }
 

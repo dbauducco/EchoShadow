@@ -43,5 +43,6 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 0,
     '@typescript-eslint/no-explicit-any': 0,
     'import/no-extraneous-dependencies': 0,
+    'react/prop-types': 0,
   },
 };
