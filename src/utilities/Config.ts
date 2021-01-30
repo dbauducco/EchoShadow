@@ -178,4 +178,13 @@ export class Config {
   public openConfigFile() {
     exec(`start ${this.CONFIG_PATH}`);
   }
+
+  public async put(configData: IConfigInfo) {
+    const cleanConfigData = this.mergeConfigsAndClean(configData);
+    await fse.outputFile(
+      this.CONFIG_PATH,
+      JSON.stringify(cleanConfigData, null, 4)
+    );
+    return cleanConfigData;
+  }
 }
