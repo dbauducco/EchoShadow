@@ -12,7 +12,7 @@ mainElement.setAttribute('id', 'react-root');
 document.body.appendChild(mainElement);
 
 const App = () => {
-  const [isConfigOpen, setIsConfigOpen] = React.useState(true);
+  const [isConfigOpen, setIsConfigOpen] = React.useState(false);
   // Function to request to open the config file
   const openConfig = () => {
     if (isConfigOpen) {
