@@ -107,8 +107,10 @@ function createWindow() {
   const configWidth = 1200;
   const configHeight = 800;
   mainWindow = new BrowserWindow({
-    width: defaultWidth,
-    height: defaultHeight,
+    // width: defaultWidth,
+    // height: defaultHeight,
+    width: configWidth,
+    height: configHeight,
     frame: false,
     resizable: false,
     // backgroundColor: '#f9968e', // PINK MODE
