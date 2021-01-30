@@ -1,7 +1,10 @@
+import { BrowserWindow } from 'electron';
 import * as React from 'react';
 import styled from 'styled-components';
 import { IConfigInfo, LogLevel } from '../../../../src/types';
 import { Config } from '../../../../src/utilities';
+const { dialog } = require('electron').remote;
+const { remote } = require('electron');
 
 const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
   const [questIP, setQuestIP] = React.useState(configData.network.questIP);
@@ -38,6 +41,14 @@ const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
       redirectAPI: { enabled, serverPort },
     };
     await new Config().put(newConfig);
+    // Show confirmation dialog
+    const options = {
+      type: 'info',
+      buttons: ['Okay'],
+      title: 'Echo Shadow',
+      message: 'Settings saved. Restart Echo Shadow to apply changes.',
+    };
+    dialog.showMessageBoxSync(remote.getCurrentWindow(), options);
   };
 
   return (
