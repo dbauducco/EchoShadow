@@ -57,7 +57,9 @@ const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
 
 export default ConfigData;
 
-const Section = styled.div``;
+const Section = styled.div`
+  -webkit-app-region: no-drag;
+`;
 const SectionHeader = styled.h2``;
 const Label = styled.label``;
 const Input = styled.input``;
