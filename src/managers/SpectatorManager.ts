@@ -67,10 +67,11 @@ export default class SpectatorManager {
         break;
     }
 
-    await this.listenSpectatingController.handleMutingBasedOnTeam(
+    const listeningResult = await this.listenSpectatingController.handleMutingBasedOnTeam(
       this.configData.spectatorOptions.listenOptions,
       matchData
     );
+    log.info({ message: 'initial listening status', listeningResult });
   }
 
   /**

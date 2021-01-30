@@ -41,17 +41,17 @@ export class EchoVRClientSpectatorHelper {
   }
 
   public listenOrange() {
-    const keyString = '{F6}';
+    const keyString = '{F6}{F6}{F6}{F6}';
     sendKey(keyString, undefined, 20, 6, 6);
   }
 
   public listenBlue() {
-    const keyString = '{F7}';
+    const keyString = '{F7}{F7}{F7}{F7}';
     sendKey(keyString, undefined, 20, 6, 6);
   }
 
   public muteAll() {
-    const keyString = '{F5}';
+    const keyString = '{F5}{F5}{F5}{F5}';
     sendKey(keyString, undefined, 20, 6, 6);
   }
 }

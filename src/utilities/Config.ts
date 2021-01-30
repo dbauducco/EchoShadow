@@ -2,6 +2,7 @@ import * as os from 'os';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { ipcMain } from 'electron';
+import { merge } from 'lodash';
 import { IConfigInfo, LogLevel } from '../types';
 import { log, initLogger } from './log';
 import { exec } from './utils';
@@ -87,6 +88,23 @@ export class Config {
     }
   }
 
+  private mergeConfigsAndClean(dirtyConfigData: IConfigInfo): IConfigInfo {
+    const cleanedConfigData = {
+      ...dirtyConfigData,
+      spectatorOptions: {
+        ...dirtyConfigData.spectatorOptions,
+        mode: dirtyConfigData.spectatorOptions?.mode?.toLowerCase() as 'follow',
+        listenOptions: dirtyConfigData.spectatorOptions?.listenOptions?.toLowerCase() as 'same',
+      },
+      dev: {
+        ...dirtyConfigData.dev,
+        logLevel: dirtyConfigData?.dev?.logLevel?.toLowerCase() as LogLevel.INFO,
+      },
+    };
+    const mergedConfig = merge(this.DEFAULT_CONFIG, cleanedConfigData);
+    return mergedConfig;
+  }
+
   /**
    * Method to read the config file from appdata.
    */
@@ -103,23 +121,16 @@ export class Config {
 
       // Check config format version
       if (dirtyConfigData.configVersion === 'v2') {
-        // The config format is up to date
-        return dirtyConfigData;
+        const cleanConfigData = this.mergeConfigsAndClean(dirtyConfigData);
+        await fse.outputFile(
+          this.CONFIG_PATH,
+          JSON.stringify(cleanConfigData, null, 4)
+        );
+        return cleanConfigData;
       }
       // We need to upgrade the config format
       const newDirtyFormatData = this.upgradeConfig(dirtyConfigData);
-      const newCleanFormatData = {
-        ...newDirtyFormatData,
-        spectatorOptions: {
-          ...newDirtyFormatData.spectatorOptions,
-          mode: newDirtyFormatData.spectatorOptions.mode.toLowerCase() as 'follow',
-          listenOptions: newDirtyFormatData.spectatorOptions.listenOptions.toLowerCase() as 'same',
-        },
-        dev: {
-          ...newDirtyFormatData.dev,
-          logLevel: newDirtyFormatData.dev.logLevel.toLowerCase() as LogLevel.INFO,
-        },
-      };
+      const newCleanFormatData = this.mergeConfigsAndClean(newDirtyFormatData);
       await fse.outputFile(
         this.CONFIG_PATH,
         JSON.stringify(newCleanFormatData, null, 4)
