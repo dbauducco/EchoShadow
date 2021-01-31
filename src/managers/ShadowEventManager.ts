@@ -1,7 +1,9 @@
-import { IEchoNewSnapshotEventData } from '../types';
+import {
+  IEchoNewSnapshotEventData,
+  ShadowStateType,
+  EventType,
+} from '../types';
 import { Events } from '../utilities';
-import { EventType } from '../types/EventType';
-import { ShadowStateType } from '../types/ShadowStateType';
 
 export default class ShadowEventManager {
   WAIT_TIME_SECONDS = 5;

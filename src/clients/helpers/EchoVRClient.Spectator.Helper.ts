@@ -54,4 +54,9 @@ export class EchoVRClientSpectatorHelper {
     const keyString = '{F5}{F5}{F5}{F5}';
     sendKey(keyString, undefined, 20, 6, 6);
   }
+
+  public showScoreBoard(secondsToShow: number) {
+    const keyString = '{TAB}';
+    sendKey(keyString, undefined, 20, 6, secondsToShow * 1000);
+  }
 }

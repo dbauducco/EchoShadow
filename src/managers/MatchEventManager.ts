@@ -1,4 +1,5 @@
 import {
+  EchoGameStatus,
   EchoSessionType,
   IEchoDataRepository,
   IEchoDataSnapshot,
@@ -42,7 +43,13 @@ export default class MatchEventManager {
           forward: [0, 0, 0],
           left: [0, 0, 0],
         },
-        game: { disc: [0, 0, 0], bluePlayers: [], orangePlayers: [] },
+        game: {
+          status: EchoGameStatus.Unknown,
+          clock: 0,
+          disc: [0, 0, 0],
+          bluePlayers: [],
+          orangePlayers: [],
+        },
       };
     }
 
@@ -149,16 +156,31 @@ export default class MatchEventManager {
         ...this.currentMatchData.game,
         bluePlayers: data.blueTeamMembers,
         orangePlayers: data.orangeTeamMembers,
+        status: data.game.status,
+        clock: data.game.clock,
       },
     };
 
-    // check if the remote changed teams
-    if (
-      this.currentMatchData &&
-      remoteTeam !== this.currentMatchData.remote.team
-    ) {
-      Events.emit(EventType.RemoteChangedTeam, newMatchData);
+    if (this.currentMatchData) {
+      if (remoteTeam !== this.currentMatchData.remote.team) {
+        Events.emit(EventType.RemoteChangedTeam, newMatchData);
+      }
+      if (
+        this.currentMatchData.game.status !== EchoGameStatus.RoundOver &&
+        newMatchData.game.status === EchoGameStatus.RoundOver
+      ) {
+        Events.emit(EventType.RoundOver, newMatchData);
+      }
+      if (
+        this.currentMatchData.game.status !== EchoGameStatus.PostMatch &&
+        newMatchData.game.status === EchoGameStatus.PostMatch
+      ) {
+        Events.emit(EventType.MatchOver, newMatchData);
+      }
     }
+
+    // check if the remote changed teams
+
     // Emit the match data
     Events.emit(EventType.NewMatchData, this.currentMatchData);
 

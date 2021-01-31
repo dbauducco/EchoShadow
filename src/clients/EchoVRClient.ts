@@ -1,8 +1,7 @@
 import * as os from 'os';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { EventType } from '../types';
-import { ShadowStateType } from '../types/ShadowStateType';
+import { EventType, ShadowStateType } from '../types';
 import {
   getProcessId,
   log,
@@ -253,5 +252,9 @@ export default class EchoVRClient {
 
   public muteAll() {
     return this.spectatorHelper.muteAll();
+  }
+
+  public showScoreBoard(secondsToShow: number) {
+    return this.spectatorHelper.showScoreBoard(secondsToShow);
   }
 }

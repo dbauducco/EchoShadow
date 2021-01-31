@@ -31,12 +31,18 @@ export default class SpectatorManager {
       EventType.NewSpectatorTarget,
       this.setNewSpectatorTarget.bind(this)
     );
+    Events.on(EventType.RoundOver, this.handleRoundOver.bind(this));
+    Events.on(EventType.MatchOver, this.handleMatchOver.bind(this));
     this.listenSpectatingController = new ListenSpectatorController(
       this.echoVrClient
     );
   }
 
   private async setDefaultSpectatorOption(matchData: IEchoMatchData) {
+    log.verbose({
+      message: 'setDefaultSpectatorOption',
+      mode: this.configData.spectatorOptions.mode,
+    });
     if (this.configData.spectatorOptions.hideUI) {
       this.echoVrClient.requestUIToggle();
     }
@@ -121,5 +127,15 @@ export default class SpectatorManager {
       matchData
     );
     log.info({ message: 'handleTeamChanged', listeningResult });
+  }
+
+  public async handleRoundOver() {
+    await this.echoVrClient.showScoreBoard(15);
+    log.info({ message: 'handleRoundOver' });
+  }
+
+  public async handleMatchOver() {
+    await this.echoVrClient.showScoreBoard(15);
+    log.info({ message: 'handleMatchOver' });
   }
 }

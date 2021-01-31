@@ -1,7 +1,10 @@
 import { Events } from '../utilities';
-import { IEchoDataRepository, IEchoNewSnapshotEventData } from '../types';
-import { EventType } from '../types/EventType';
-import { ShadowStateType } from '../types/ShadowStateType';
+import {
+  IEchoDataRepository,
+  IEchoNewSnapshotEventData,
+  ShadowStateType,
+  EventType,
+} from '../types';
 
 export default class EchoDataEventManager {
   WAIT_TIME_SECONDS = 0.5;

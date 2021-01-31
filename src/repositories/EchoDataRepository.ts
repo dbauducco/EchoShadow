@@ -6,6 +6,7 @@ import {
   IEchoDataSnapshot,
   IEchoMatchPlayerData,
 } from '../types';
+import { IEchoApiResult } from '../types/IEchoApiResult';
 import { log } from '../utilities/log';
 
 // Necessary for electron
@@ -31,7 +32,11 @@ export default class EchoDataRepository implements IEchoDataRepository {
       const echoApiResult = await this.deviceAPI.get('', {
         timeout: 3000,
       });
-      const snapshotData = this.parseData(echoApiResult);
+      log.verbose({
+        message: 'echoApiResult in getSnapshot',
+        echoApiResult: echoApiResult.data,
+      });
+      const snapshotData = this.parseData(echoApiResult.data);
       return snapshotData;
     } catch (error) {
       if (error.code === 'ECONNABORTED') {
@@ -63,7 +68,11 @@ export default class EchoDataRepository implements IEchoDataRepository {
   public async getInstantSnapshot(): Promise<IEchoDataSnapshot | undefined> {
     try {
       const echoApiResult = await axios.get(this.apiSessionUrl);
-      const snapshotData = this.parseData(echoApiResult);
+      log.verbose({
+        message: 'echoApiResult in getInstantSnapshot',
+        echoApiResult: echoApiResult.data,
+      });
+      const snapshotData = this.parseData(echoApiResult.data);
       return snapshotData;
     } catch (error) {
       log.error({
@@ -109,24 +118,26 @@ export default class EchoDataRepository implements IEchoDataRepository {
     this.deviceAPI = axios.create({ baseURL: this.apiSessionUrl });
   }
 
-  private parseData(echoApiResult: any) {
+  private parseData(echoApiResult: IEchoApiResult) {
     const snapshotData: IEchoDataSnapshot = {
-      sessionId: echoApiResult.data.sessionid,
-      sessionType: this.sessionTypeByName(echoApiResult.data.match_type),
+      sessionId: echoApiResult.sessionid,
+      sessionType: this.sessionTypeByName(echoApiResult.match_type),
+      game: {
+        status: echoApiResult.game_status,
+        clock: echoApiResult.game_clock,
+      },
       client: {
-        name: echoApiResult.data.client_name,
+        name: echoApiResult.client_name,
         head: {
-          position: echoApiResult.data.player.vr_position,
-          forward: echoApiResult.data.player.vr_forward,
-          left: echoApiResult.data.player.vr_left,
-          up: echoApiResult.data.player.vr_up,
+          position: echoApiResult.player.vr_position,
+          forward: echoApiResult.player.vr_forward,
+          left: echoApiResult.player.vr_left,
+          up: echoApiResult.player.vr_up,
         },
       },
-      blueTeamMembers: this.mapPlayerData(echoApiResult.data.teams[0].players),
-      orangeTeamMembers: this.mapPlayerData(
-        echoApiResult.data.teams[1].players
-      ),
-      spectatorMembers: this.mapPlayerData(echoApiResult.data.teams[2].players),
+      blueTeamMembers: this.mapPlayerData(echoApiResult.teams[0].players),
+      orangeTeamMembers: this.mapPlayerData(echoApiResult.teams[1].players),
+      spectatorMembers: this.mapPlayerData(echoApiResult.teams[2].players),
       inMatch: false, // Overriden in next line
     };
     // Actually set in match:
@@ -138,12 +149,15 @@ export default class EchoDataRepository implements IEchoDataRepository {
    * Helper method to get the index of a player by name. The index should match the
    * key to spectate them.
    */
-  private getPlayerIndex(echoApiResult: any, playerName?: string): number {
+  private getPlayerIndex(
+    echoApiResult: IEchoApiResult,
+    playerName?: string
+  ): number {
     // Store the player name we are searching for
     const playerToSearchFor = playerName || echoApiResult.client_name;
 
     // Check the orange team first
-    const orangeTeamPlayers = echoApiResult.data.teams[1].players;
+    const orangeTeamPlayers = echoApiResult.teams[1].players;
     if (orangeTeamPlayers !== undefined) {
       const orangeTeamNames = orangeTeamPlayers.map(
         (p: { name: any; playerid: any }) => {
@@ -157,7 +171,7 @@ export default class EchoDataRepository implements IEchoDataRepository {
     }
 
     // Check the blue team
-    const blueTeamPlayers = echoApiResult.data.teams[0].players;
+    const blueTeamPlayers = echoApiResult.teams[0].players;
     if (blueTeamPlayers !== undefined) {
       const blueTeamNames = blueTeamPlayers.map(
         (p: { name: any; playerid: any }) => {
