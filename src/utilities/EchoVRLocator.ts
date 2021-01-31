@@ -33,11 +33,11 @@ const locateInDrive = async (drive: string, file: string) => {
 const locate = async () => {
   const rawDrives: string[] = await findAllDrives();
   const drives: string[] = optimizeDriveSearch(rawDrives);
-  log.debug(drives);
+  log.verbose(drives);
   for (const index in drives) {
     const searchResults = await locateInDrive(drives[index], 'echovr.exe');
     if (searchResults && searchResults.length > 0) {
-      log.debug(`Found in ${drives[index]}`);
+      log.verbose(`Found in ${drives[index]}`);
       return path.join(searchResults[0], '');
     }
   }

@@ -1,7 +1,11 @@
 import http from 'http';
-import { EventType, IConfigInfo, IEchoDataRepository } from '../types';
+import {
+  EventType,
+  IConfigInfo,
+  IEchoDataRepository,
+  ShadowStateType,
+} from '../types';
 import { Events } from '../utilities';
-import { ShadowStateType } from '../types/ShadowStateType';
 
 export default class EchoDataRedirectManager {
   endpointPort = 1010;

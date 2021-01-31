@@ -4,10 +4,10 @@ import {
   IEchoDataSnapshot,
   IEchoMatchData,
   IEchoNewSnapshotEventData,
+  ShadowStateType,
+  EventType,
 } from '../types';
 import EchoVRClient from '../clients/EchoVRClient';
-import { EventType } from '../types/EventType';
-import { ShadowStateType } from '../types/ShadowStateType';
 
 export default class EchoVRManager {
   private currentInstanceProcessId: string | undefined;

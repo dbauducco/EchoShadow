@@ -1,9 +1,8 @@
 import { ipcMain } from 'electron';
-import { IConfigInfo } from '../types';
+import { IConfigInfo, ShadowStateType } from '../types';
 import { Events } from '../utilities';
 import { DeviceStatusEnum } from '../../app/types';
 import { EventType } from '../types/EventType';
-import { ShadowStateType } from '../types/ShadowStateType';
 import { version as appVersion } from '../../package.json';
 
 export default class ShadowStateManager {

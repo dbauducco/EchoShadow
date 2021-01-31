@@ -6,7 +6,7 @@ import { LogLevel } from '../types';
 
 const LOG_PATH = path.join(os.homedir(), 'AppData/Local/EchoShadow/logs');
 
-const fileLogFormat = format.combine(format.timestamp());
+const fileLogFormat = format.timestamp();
 
 const log = createLogger();
 
@@ -32,18 +32,20 @@ const initLogger = (logLevel?: LogLevel) => {
     })
   );
 
-  // log = createLogger({
-  //   level: 'info',
-  //   transports: [
-  //     new ,
-  //     new
-  //   ],
-  // });
-
   if (process.env.NODE_ENV !== 'production') {
     log.add(
       new transports.Console({
         format: format.prettyPrint(),
+      })
+    );
+  }
+
+  if (logLevel === LogLevel.VERBOSE) {
+    log.add(
+      new transports.File({
+        filename: `${LOG_PATH}/verbose.log-${logInitDate}.json`,
+        format: fileLogFormat,
+        level: 'verbose',
       })
     );
   }
@@ -56,22 +58,6 @@ const initLogger = (logLevel?: LogLevel) => {
         level: 'debug',
       })
     );
-  }
-  if (logLevel === LogLevel.VERBOSE) {
-    log.add(
-      new transports.File({
-        filename: `${LOG_PATH}/verbose.log-${logInitDate}.json`,
-        format: fileLogFormat,
-        level: 'verbose',
-      })
-    );
-    // log.add(
-    //   new transports.File({
-    //     filename: `${LOG_PATH}/debug.log-${logInitDate}.json`,
-    //     format: fileLogFormat,
-    //     level: 'debug',
-    //   })
-    // );
   }
 };
 
