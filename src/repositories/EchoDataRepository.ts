@@ -42,16 +42,19 @@ export default class EchoDataRepository implements IEchoDataRepository {
       if (error.code === 'ECONNABORTED') {
         // Message timed out
         // log.error({
+        //   message: 'error getting snapshot',
         //   networkError: 'timed out',
         //   ip: this.endpointIpAddress,
         // });
       } else if (error.code === 'ECONNREFUSED') {
         // log.error({
+        //   message: 'error getting snapshot',
         //   networkError: 'refused to connect',
         //   ip: this.endpointIpAddress,
         // });
       } else {
         // log.error({
+        //   message: 'error getting snapshot',
         //   description: 'Error retrieving snapshot',
         //   error: error.message ? error.message : error,
         // });
@@ -76,7 +79,7 @@ export default class EchoDataRepository implements IEchoDataRepository {
       return snapshotData;
     } catch (error) {
       log.error({
-        description: 'Error retrieving full snapshot',
+        message: 'Error retrieving full snapshot',
         error: error.message ? error.message : error,
       });
       return undefined;
@@ -94,7 +97,7 @@ export default class EchoDataRepository implements IEchoDataRepository {
       return echoApiResult.data;
     } catch (error) {
       log.error({
-        description: 'Error retrieving full snapshot',
+        message: 'Error retrieving full snapshot',
         error: error.message ? error.message : error,
       });
       return undefined;

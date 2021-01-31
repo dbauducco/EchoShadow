@@ -307,6 +307,10 @@ const SaveButton = styled.input`
   align-self: center;
   margin: 1.6rem 0 3.2rem 0;
   box-shadow: rgb(69 50 93 / 11%) 0px 4px 6px, rgb(0 0 0 / 8%) 0px 1px 3px;
+  cursor: pointer;
+  &:hover {
+    background-color: black;
+  }
 `;
 const FormCheckbox = styled(Checkbox)`
   display: inline;

@@ -16,7 +16,7 @@ export default class DiscSpectatorController
   // Updating
   async update(matchData: IEchoMatchData) {
     const discPositionWidth = matchData.discPosition[2];
-    log.info(discPositionWidth);
+    log.info({ message: 'DiscSpectatorController.update ', discPositionWidth });
     if (discPositionWidth > 2) {
       // Orange side
       await this.goToCameraKey(4);

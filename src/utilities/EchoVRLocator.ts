@@ -33,7 +33,7 @@ const locateInDrive = async (drive: string, file: string) => {
 const locate = async () => {
   const rawDrives: string[] = await findAllDrives();
   const drives: string[] = optimizeDriveSearch(rawDrives);
-  log.verbose(drives);
+  log.verbose({ message: 'EchoVRLocator.locate', drives });
   for (const index in drives) {
     const searchResults = await locateInDrive(drives[index], 'echovr.exe');
     if (searchResults && searchResults.length > 0) {

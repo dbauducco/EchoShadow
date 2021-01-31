@@ -171,7 +171,7 @@ export default class EchoVRClient {
         return this.createAndReadConfigFile();
       }
       log.error({
-        description: 'Failed to read EchoVR config.',
+        message: 'Failed to read EchoVR config.',
         error: error.message,
       });
       return undefined;
@@ -193,14 +193,14 @@ export default class EchoVRClient {
           const newFileBuffer = fse.readFileSync(configPath);
           if (!newFileBuffer) {
             log.error({
-              description: 'Failed to read EchoVR config after creating it.',
+              message: 'Failed to read EchoVR config after creating it.',
             });
             res(undefined);
           }
           res(JSON.parse(newFileBuffer.toString()));
         } catch (error) {
           log.error({
-            description: 'Failed to read EchoVR config after creating it.',
+            message: 'Failed to read EchoVR config after creating it.',
             error: error.message,
           });
           res(undefined);
