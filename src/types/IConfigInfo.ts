@@ -13,6 +13,8 @@ export interface IConfigInfo {
     hideUI: boolean;
     mode: 'pov' | 'sideline' | 'auto' | 'default' | 'follow';
     listenOptions: 'same' | 'opponent' | 'both' | 'none';
+    showScoresBetweenRounds: boolean;
+    secondsToShowScoreBetweenRounds: number;
   };
   dev: {
     logLevel: LogLevel;

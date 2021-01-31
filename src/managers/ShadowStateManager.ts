@@ -3,7 +3,9 @@ import { IConfigInfo, ShadowStateType } from '../types';
 import { Events } from '../utilities';
 import { DeviceStatusEnum } from '../../app/types';
 import { EventType } from '../types/EventType';
-import { version as appVersion } from '../../package.json';
+import packageJson from '../../package.json';
+
+const { version: appVersion } = packageJson;
 
 export default class ShadowStateManager {
   shadowState = {

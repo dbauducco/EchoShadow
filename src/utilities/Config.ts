@@ -29,6 +29,8 @@ export class Config {
       hideUI: false,
       mode: 'default',
       listenOptions: 'same',
+      showScoresBetweenRounds: true,
+      secondsToShowScoreBetweenRounds: 10,
     },
     redirectAPI: {
       enabled: false,

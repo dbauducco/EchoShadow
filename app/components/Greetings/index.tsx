@@ -4,7 +4,9 @@ import { ImpulseSpinner, SwapSpinner } from 'react-spinners-kit';
 import { Container, Text, HorizontalContainer } from './styles';
 import DeviceStatus from '../DeviceStatus';
 import { DeviceStatusEnum, DeviceTypeEnum } from '../../types';
-import { version as appVersion } from '../../../package.json';
+import packageJson from '../../../package.json';
+
+const { version: appVersion } = packageJson;
 
 const Greetings: React.FC = () => {
   const [statusMessage, setStatusMessage] = React.useState(
@@ -31,7 +33,7 @@ const Greetings: React.FC = () => {
     //     setRemoteIp(args.remoteIp);
     //   }
     // );
-    setInterval(() => {
+    const interval = setInterval(() => {
       ipcRenderer.invoke('shadowStatusUpdate').then(result => {
         setStatusMessage(result.statusMessage);
         setLocalStatus(result.localStatus);
@@ -43,6 +45,7 @@ const Greetings: React.FC = () => {
     return function cleanup() {
       // we might or might not need this, I just saw it in a stack overflow
       ipcRenderer.removeAllListeners('shadowStatusUpdate');
+      clearInterval(interval);
     };
   }, []);
 

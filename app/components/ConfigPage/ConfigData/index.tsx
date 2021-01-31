@@ -1,10 +1,9 @@
-import { BrowserWindow } from 'electron';
 import * as React from 'react';
 import styled from 'styled-components';
+import { remote } from 'electron';
 import { IConfigInfo, LogLevel } from '../../../../src/types';
 import { Config } from '../../../../src/utilities';
-const { dialog } = require('electron').remote;
-const { remote } = require('electron');
+import Checkbox from '../../Checkbox';
 
 const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
   const [questIP, setQuestIP] = React.useState(configData.network.questIP);
@@ -22,6 +21,15 @@ const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
   const [listenOptions, setListenOptions] = React.useState(
     configData.spectatorOptions.listenOptions
   );
+  const [showScoresBetweenRounds, setShowScoresBetweenRounds] = React.useState(
+    configData.spectatorOptions.showScoresBetweenRounds
+  );
+  const [
+    secondsToShowScoreBetweenRounds,
+    setSecondsToShowScoreBetweenRounds,
+  ] = React.useState(
+    configData.spectatorOptions.secondsToShowScoreBetweenRounds
+  );
   const [logLevel, setLogLevel] = React.useState(configData.dev.logLevel);
   const [debugUI, setDebugUI] = React.useState(configData.dev.debugUI);
   const [enabled, setEnabled] = React.useState(configData.redirectAPI.enabled);
@@ -36,7 +44,13 @@ const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
       configVersion: 'v2',
       echoPath,
       network: { questIP, questPort, localIP, localPort },
-      spectatorOptions: { hideUI, mode, listenOptions },
+      spectatorOptions: {
+        hideUI,
+        mode,
+        listenOptions,
+        showScoresBetweenRounds,
+        secondsToShowScoreBetweenRounds,
+      },
       dev: { logLevel, debugUI },
       redirectAPI: { enabled, serverPort },
     };
@@ -48,7 +62,7 @@ const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
       title: 'Echo Shadow',
       message: 'Settings saved. Restart Echo Shadow to apply changes.',
     };
-    dialog.showMessageBoxSync(remote.getCurrentWindow(), options);
+    remote.dialog.showMessageBoxSync(remote.getCurrentWindow(), options);
   };
 
   return (
@@ -98,14 +112,11 @@ const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
         <SectionHeader>Spectator Options</SectionHeader>
         <Inputs>
           <Label>
-            Hide UI
-            <CheckBox
-              type="checkbox"
-              name="hideUI"
-              value="hideUI"
+            <FormCheckbox
               checked={hideUI}
               onChange={e => setHideUI(e.target.checked)}
             />
+            Hide UI
           </Label>
           <Label>
             Camera Mode
@@ -133,19 +144,36 @@ const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
             </Select>
           </Label>
         </Inputs>
+        <Inputs>
+          <Label>
+            <FormCheckbox
+              checked={showScoresBetweenRounds}
+              onChange={e => setShowScoresBetweenRounds(e.target.checked)}
+            />
+            Show Scores Between Rounds
+          </Label>
+          <Label>
+            Seconds To Show Score Between Rounds
+            <Input
+              type="number"
+              name="secondsToShowScoreBetweenRounds"
+              value={secondsToShowScoreBetweenRounds}
+              onChange={e =>
+                setSecondsToShowScoreBetweenRounds(Number(e.target.value || 0))
+              }
+            />
+          </Label>
+        </Inputs>
       </Section>
       <Section>
         <SectionHeader>Redirect API</SectionHeader>
         <Inputs>
           <Label>
-            Enabled
-            <CheckBox
-              type="checkbox"
-              name="enabled"
-              value="enabled"
+            <FormCheckbox
               checked={enabled}
               onChange={e => setEnabled(e.target.checked)}
             />
+            Redirect API Enabled
           </Label>
           <Label>
             Server Port
@@ -162,14 +190,11 @@ const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
         <SectionHeader>Developer Options</SectionHeader>
         <Inputs>
           <Label>
-            Debug UI
-            <CheckBox
-              type="checkbox"
-              name="debugUI"
-              value="debugUI"
+            <FormCheckbox
               checked={debugUI}
               onChange={e => setDebugUI(e.target.checked)}
             />
+            Debug UI
           </Label>
           <Label>
             Log Level
@@ -212,7 +237,11 @@ const ConfigDataForm = styled.form`
   display: flex;
   flex-direction: column;
   margin: 0 0 0 0;
+  *:focus {
+    outline-color: #8a84a3;
+  }
 `;
+
 const Section = styled.div`
   padding: 0 0 0.8rem 0;
   &:nth-child(odd) {
@@ -261,6 +290,13 @@ const Option = styled.option`
   padding: 8px 10px 8px 10px;
   border: none;
 `;
+// option {
+//   background: #ffffff;
+//   color: #ff0000;
+// }
+// &:focused {
+//   background-color: #8a84a3;
+// }
 const SaveButton = styled.input`
   color: #8a84a3;
   font-size: 20px;
@@ -272,9 +308,9 @@ const SaveButton = styled.input`
   margin: 1.6rem 0 3.2rem 0;
   box-shadow: rgb(69 50 93 / 11%) 0px 4px 6px, rgb(0 0 0 / 8%) 0px 1px 3px;
 `;
-const CheckBox = styled.input`
+const FormCheckbox = styled(Checkbox)`
   display: inline;
-  margin: 0 0 0 0.4rem;
+  margin: 0 0.4rem 0 0;
 `;
 const EchoPathLabel = styled(Label)`
   width: 90%;

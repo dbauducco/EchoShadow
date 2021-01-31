@@ -134,17 +134,29 @@ export default class SpectatorManager {
   }
 
   public async handleRoundOver() {
-    await this.echoVrClient.showScoreBoard(10);
+    if (this.configData.spectatorOptions.showScoresBetweenRounds) {
+      await this.echoVrClient.showScoreBoard(
+        this.configData.spectatorOptions.secondsToShowScoreBetweenRounds
+      );
+    }
     log.info({ message: 'handleRoundOver' });
   }
 
   public async handleMatchOver() {
-    await this.echoVrClient.showScoreBoard(10);
+    if (this.configData.spectatorOptions.showScoresBetweenRounds) {
+      await this.echoVrClient.showScoreBoard(
+        this.configData.spectatorOptions.secondsToShowScoreBetweenRounds
+      );
+    }
     log.info({ message: 'handleMatchOver' });
   }
 
   public async handleSuddenDeath() {
-    await this.echoVrClient.showScoreBoard(10);
+    if (this.configData.spectatorOptions.showScoresBetweenRounds) {
+      await this.echoVrClient.showScoreBoard(
+        this.configData.spectatorOptions.secondsToShowScoreBetweenRounds
+      );
+    }
     log.info({ message: 'handleSuddenDeath' });
   }
 }
