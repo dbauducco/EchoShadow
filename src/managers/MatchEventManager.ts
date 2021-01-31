@@ -177,6 +177,12 @@ export default class MatchEventManager {
       ) {
         Events.emit(EventType.MatchOver, newMatchData);
       }
+      if (
+        this.currentMatchData.game.status !== EchoGameStatus.SuddenDeath &&
+        newMatchData.game.status === EchoGameStatus.SuddenDeath
+      ) {
+        Events.emit(EventType.SuddenDeath, newMatchData);
+      }
     }
 
     // check if the remote changed teams
@@ -191,24 +197,6 @@ export default class MatchEventManager {
       setTimeout(this.pingLocal.bind(this), 0.1 * 1000);
 
     return undefined;
-
-    // this.currentMatchData!.remote.team = playerTeamData[0];
-    // this.currentMatchData!.remote.index = playerTeamData[1];
-    // // Update local position
-    // this.currentMatchData!.local.position = data!.client.head!.position;
-    // this.currentMatchData!.local.forward = data!.client.head!.forward;
-    // this.currentMatchData!.local.up = data!.client.head!.up;
-    // this.currentMatchData!.local.left = data!.client.head!.left;
-    // // Update player postions
-    // this.currentMatchData!.game.bluePlayers = data!.blueTeamMembers;
-    // this.currentMatchData!.game.orangePlayers = data!.orangeTeamMembers;
-
-    // // Emit the match data
-    // Events.emit(EventType.NewMatchData, this.currentMatchData);
-
-    // // Loop the function
-    // if (this.currentMatchData?.local.inMatch)
-    //   setTimeout(this.pingLocal.bind(this), 0.1 * 1000);
   }
 
   // **** HELPER METHODS **** //

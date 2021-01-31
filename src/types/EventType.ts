@@ -19,5 +19,6 @@ export enum EventType {
   NewSpectatorTarget = 'newSpectatorTarget',
   RemoteChangedTeam = 'remoteChangedTeam',
   RoundOver = 'roundOver',
-  MatchOver = 'MatchOver',
+  MatchOver = 'matchOver',
+  SuddenDeath = 'suddenDeath',
 }

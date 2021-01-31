@@ -36,6 +36,10 @@ export default class SpectatorManager {
     this.listenSpectatingController = new ListenSpectatorController(
       this.echoVrClient
     );
+    Events.on(EventType.SuddenDeath, this.handleSuddenDeath.bind(this));
+    this.listenSpectatingController = new ListenSpectatorController(
+      this.echoVrClient
+    );
   }
 
   private async setDefaultSpectatorOption(matchData: IEchoMatchData) {
@@ -130,12 +134,17 @@ export default class SpectatorManager {
   }
 
   public async handleRoundOver() {
-    await this.echoVrClient.showScoreBoard(15);
+    await this.echoVrClient.showScoreBoard(10);
     log.info({ message: 'handleRoundOver' });
   }
 
   public async handleMatchOver() {
-    await this.echoVrClient.showScoreBoard(15);
+    await this.echoVrClient.showScoreBoard(10);
     log.info({ message: 'handleMatchOver' });
+  }
+
+  public async handleSuddenDeath() {
+    await this.echoVrClient.showScoreBoard(10);
+    log.info({ message: 'handleSuddenDeath' });
   }
 }

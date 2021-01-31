@@ -5,6 +5,7 @@ export enum EchoGameStatus {
   Paused = 'paused',
   Score = 'score',
   RoundOver = 'round_over',
+  SuddenDeath = 'sudden_death',
   PostMatch = 'post_match',
   Unknown = 'unknown',
   Undefined = '',
