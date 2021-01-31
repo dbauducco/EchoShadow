@@ -31,7 +31,7 @@ export class EventLogger {
   }
 
   private logNewSnapshotData(data: IEchoNewSnapshotEventData) {
-    log.debug({
+    log.verbose({
       event: EventType.NewSnapshotData,
       eventData: data,
     });
@@ -80,7 +80,7 @@ export class EventLogger {
   }
 
   private logNewMatchData(data: IEchoMatchData) {
-    log.debug({
+    log.verbose({
       event: EventType.NewMatchData,
       eventData: data,
     });

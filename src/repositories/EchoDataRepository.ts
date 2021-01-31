@@ -32,7 +32,7 @@ export default class EchoDataRepository implements IEchoDataRepository {
       const echoApiResult = await this.deviceAPI.get('', {
         timeout: 3000,
       });
-      log.verbose({
+      log.debug({
         message: 'echoApiResult in getSnapshot',
         echoApiResult: echoApiResult.data,
       });
@@ -68,7 +68,7 @@ export default class EchoDataRepository implements IEchoDataRepository {
   public async getInstantSnapshot(): Promise<IEchoDataSnapshot | undefined> {
     try {
       const echoApiResult = await axios.get(this.apiSessionUrl);
-      log.verbose({
+      log.debug({
         message: 'echoApiResult in getInstantSnapshot',
         echoApiResult: echoApiResult.data,
       });

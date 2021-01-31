@@ -6,7 +6,7 @@ import { LogLevel } from '../types';
 
 const LOG_PATH = path.join(os.homedir(), 'AppData/Local/EchoShadow/logs');
 
-const fileLogFormat = format.timestamp();
+const fileLogFormat = format.combine(format.timestamp(), format.json());
 
 const log = createLogger();
 
