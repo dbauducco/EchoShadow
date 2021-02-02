@@ -32,7 +32,7 @@ export class EventLogger {
 
   private logNewSnapshotData(data: IEchoNewSnapshotEventData) {
     log.verbose({
-      message: 'EventLogger.logNewSnapshotData',
+      message: '[EventLogger] New Snapshot Data',
       event: EventType.NewSnapshotData,
       eventData: data,
     });
@@ -40,7 +40,7 @@ export class EventLogger {
 
   private logRemoteJoinedMatch(data: IEchoNewSnapshotEventData) {
     log.info({
-      message: 'EventLogger.logRemoteJoinedMatch',
+      message: '[EventLogger] Remote Joined Match',
       event: EventType.RemoteJoinedMatch,
       eventData: data,
     });
@@ -48,7 +48,7 @@ export class EventLogger {
 
   private logRemoteLeftMatch(data: IEchoNewSnapshotEventData) {
     log.info({
-      message: 'EventLogger.logRemoteLeftMatch',
+      message: '[EventLogger] Remote Left Match',
       event: EventType.RemoteLeftMatch,
       eventData: data,
     });
@@ -56,7 +56,7 @@ export class EventLogger {
 
   private logLocalJoinedMatch(data: IEchoNewSnapshotEventData) {
     log.info({
-      message: 'EventLogger.logLocalJoinedMatch',
+      message: '[EventLogger] Local Joined Match',
       event: EventType.LocalJoinedMatch,
       eventData: data,
     });
@@ -64,7 +64,7 @@ export class EventLogger {
 
   private logLocalLeftMatch(data: IEchoNewSnapshotEventData) {
     log.info({
-      message: 'EventLogger.logLocalLeftMatch',
+      message: '[EventLogger] Local Left Match',
       event: EventType.LocalLeftMatch,
       eventData: data,
     });
@@ -72,7 +72,7 @@ export class EventLogger {
 
   private logLocalWillLeaveMatch() {
     log.info({
-      message: 'EventLogger.logLocalWillLeaveMatch',
+      message: '[EventLogger] Local Will Leave Match',
       event: EventType.LocalWillLeaveMatch,
       eventData: {},
     });
@@ -80,7 +80,7 @@ export class EventLogger {
 
   private logLocalWillJoinMatch() {
     log.info({
-      message: 'EventLogger.logLocalWillJoinMatch',
+      message: '[EventLogger] Local Will Join Match',
       event: EventType.LocalWillJoinMatch,
       eventData: {},
     });
@@ -88,7 +88,7 @@ export class EventLogger {
 
   private logNewMatchData(data: IEchoMatchData) {
     log.verbose({
-      message: 'EventLogger.logNewMatchData',
+      message: '[EventLogger] New Match Data',
       event: EventType.NewMatchData,
       eventData: data,
     });
@@ -96,23 +96,31 @@ export class EventLogger {
 
   private logLocalIsSynced(data: IEchoMatchData) {
     log.info({
-      message: 'EventLogger.logLocalIsSynced',
+      message: '[EventLogger] Local is Synced',
       event: EventType.LocalIsSynced,
-      eventData: data,
+      eventData: {
+        sessionID: data.sessionID,
+        remoteInMatch: data.remote.inMatch,
+        localInMatch: data.local.inMatch,
+      },
     });
   }
 
   private logLocalIsUnsynced(data: IEchoMatchData) {
     log.info({
-      message: 'EventLogger.logLocalIsUnsynced',
+      message: '[EventLogger] Local is Unsynced',
       event: EventType.LocalIsUnsynced,
-      eventData: data,
+      eventData: {
+        sessionID: data.sessionID,
+        remoteInMatch: data.remote.inMatch,
+        localInMatch: data.local.inMatch,
+      },
     });
   }
 
   private logNewShadowState(data: IEchoMatchData) {
     log.info({
-      message: 'EventLogger.logNewShadowState',
+      message: '[EventLogger] New Shadow State',
       event: EventType.NewShadowState,
       eventData: data,
     });
@@ -120,7 +128,7 @@ export class EventLogger {
 
   private logRemoteChangedTeam(data: IEchoMatchData) {
     log.info({
-      message: 'EventLogger.logRemoteChangedTeam',
+      message: '[EventLogger] Remote Changed Team',
       event: EventType.RemoteChangedTeam,
       eventData: data,
     });
