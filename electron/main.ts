@@ -79,7 +79,7 @@ const start = async () => {
         new OBSManager(),
         new MatchEventManager(localEchoDataRepository),
         new SpectatorManager(configData, echoVrClient),
-        new GestureRecognizerManager(),
+        //new GestureRecognizerManager(),
       ];
     }
 
