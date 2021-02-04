@@ -31,12 +31,12 @@ export class EchoVRClientSpectatorHelper {
   }
 
   public requestSideline() {
-    const keyString = 'sssss';
-    sendKey(keyString, undefined, 100, 6, 1);
+    const keyString = 'ssss';
+    sendKey(keyString, undefined, 20, 6, 6);
   }
 
   public requestUIToggle() {
-    const keyString = 'uuuuu';
+    const keyString = 'uuuu';
     sendKey(keyString, undefined, 20, 6, 6);
   }
 

@@ -99,7 +99,7 @@ export default class SpectatorManager {
       return;
     }
 
-    this.spectatorController.update(matchData);
+    await this.spectatorController.update(matchData);
   }
 
   /**
