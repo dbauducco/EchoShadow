@@ -30,6 +30,9 @@ const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
   ] = React.useState(
     configData.spectatorOptions.secondsToShowScoreBetweenRounds
   );
+  const [keyboardAggressiveness, setKeyboardAgressiveness] = React.useState(
+    configData.spectatorOptions.keyboardAggressiveness
+  );
   const [logLevel, setLogLevel] = React.useState(configData.dev.logLevel);
   const [debugUI, setDebugUI] = React.useState(configData.dev.debugUI);
   const [enabled, setEnabled] = React.useState(configData.redirectAPI.enabled);
@@ -50,6 +53,7 @@ const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
         listenOptions,
         showScoresBetweenRounds,
         secondsToShowScoreBetweenRounds,
+        keyboardAggressiveness,
       },
       dev: { logLevel, debugUI },
       redirectAPI: { enabled, serverPort },
@@ -162,6 +166,23 @@ const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
                 setSecondsToShowScoreBetweenRounds(Number(e.target.value || 0))
               }
             />
+          </Label>
+        </Inputs>
+        <Inputs>
+          <Label>
+            Keyboard Emulation Aggressiveness
+            <Select
+              value={keyboardAggressiveness}
+              onChange={e =>
+                setKeyboardAgressiveness(Number(e.target.value || 1))
+              }
+            >
+              <Option value={1}>1</Option>
+              <Option value={2}>2</Option>
+              <Option value={3}>3</Option>
+              <Option value={4}>4</Option>
+              <Option value={5}>5</Option>
+            </Select>
           </Label>
         </Inputs>
       </Section>

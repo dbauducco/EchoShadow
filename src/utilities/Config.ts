@@ -31,6 +31,7 @@ export class Config {
       listenOptions: 'same',
       showScoresBetweenRounds: true,
       secondsToShowScoreBetweenRounds: 10,
+      keyboardAggressiveness: 4,
     },
     redirectAPI: {
       enabled: false,

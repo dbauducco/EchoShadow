@@ -15,6 +15,7 @@ export interface IConfigInfo {
     listenOptions: 'same' | 'opponent' | 'both' | 'none';
     showScoresBetweenRounds: boolean;
     secondsToShowScoreBetweenRounds: number;
+    keyboardAggressiveness: number;
   };
   dev: {
     logLevel: LogLevel;

@@ -1,3 +1,4 @@
+import { log } from './log';
 import { exec } from './utils';
 
 /**
@@ -10,6 +11,7 @@ import { exec } from './utils';
  */
 export const sendKey = async (
   keyString: string,
+  aggresiveness: number,
   windowTitle = 'Echo VR',
   initialDelay = 100,
   characterDelay = 6,
@@ -27,7 +29,9 @@ export const sendKey = async (
   commandBuilder.push(`-i ${initialDelay}`);
   commandBuilder.push(`-s ${characterDelay}`);
   commandBuilder.push(`-sd ${holdTime}`);
-  commandBuilder.push(keyString);
+  const fullKeyString = keyString.repeat(aggresiveness);
+  log.info('Clicked keyString: ' + fullKeyString);
+  commandBuilder.push(fullKeyString);
   // Create a final string from the components seperated with ' '
   const commandString = commandBuilder.join(' ');
   // Execute the command

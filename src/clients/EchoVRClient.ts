@@ -1,7 +1,7 @@
 import * as os from 'os';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { EventType, ShadowStateType } from '../types';
+import { EventType, IConfigInfo, ShadowStateType } from '../types';
 import {
   getProcessId,
   log,
@@ -21,10 +21,12 @@ export default class EchoVRClient {
 
   private spectatorHelper: EchoVRClientSpectatorHelper;
 
-  constructor(private echoPath: string) {
+  constructor(private config: IConfigInfo) {
     this.verifyPath();
     this.enableEchoVRAPI();
-    this.spectatorHelper = new EchoVRClientSpectatorHelper();
+    this.spectatorHelper = new EchoVRClientSpectatorHelper(
+      config.spectatorOptions.keyboardAggressiveness
+    );
   }
 
   /**
@@ -49,7 +51,7 @@ export default class EchoVRClient {
       // Spawning the process
       // const spawnOptions = { detached: true };
       // return spawn(this.echoPath, params, spawnOptions);
-      return exec(`"${this.echoPath}" ${params.join(' ')}`);
+      return exec(`"${this.config.echoPath}" ${params.join(' ')}`);
     } catch (error) {
       log.error({
         message: 'error opening exe',
@@ -66,7 +68,7 @@ export default class EchoVRClient {
    * defined, no lobbyId flag gets added to the end of the command string.
    */
   private buildCommand = (sessionID?: string, headless?: boolean) => {
-    const openCommandWithSpecatator = `"${this.echoPath}"${this.SPECTATOR_FLAG}`; // Add ---spectatorstream to the end
+    const openCommandWithSpecatator = `"${this.config.echoPath}"${this.SPECTATOR_FLAG}`; // Add ---spectatorstream to the end
     if (sessionID) {
       const openCommandWithSpectatorAndLobby = `${openCommandWithSpecatator}${this.LOBBY_FLAG}${sessionID}`; // If we have lobby, add --lobbyid {lobbyId}
       return openCommandWithSpectatorAndLobby;
@@ -112,7 +114,7 @@ export default class EchoVRClient {
 
   /** Helper method that verifies the EchoVR exe path provided */
   verifyPath = async () => {
-    if (!this.echoPath) {
+    if (!this.config.echoPath) {
       // Dirty fix to wait for the event listeners to register first
       setTimeout(() => {
         Events.emit(
@@ -125,7 +127,7 @@ export default class EchoVRClient {
 
     try {
       const newProcess = spawn(
-        this.echoPath,
+        this.config.echoPath,
         [this.HEADLESS_FLAG, this.SPECTATOR_FLAG],
         {}
       );

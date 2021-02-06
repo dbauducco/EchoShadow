@@ -35,7 +35,7 @@ const setup = async () => {
     throw new Error('Error initializing config');
   }
   log.info({ message: 'config', loadedConfig: configData });
-  const echoVrClient = new EchoVRClient(configData.echoPath);
+  const echoVrClient = new EchoVRClient(configData);
   const remoteEchoDataRepository = new EchoDataRepository(
     configData.network.questIP,
     configData.network.questPort

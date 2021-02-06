@@ -94,26 +94,26 @@ export class EventLogger {
     });
   }
 
-  private logLocalIsSynced(data: IEchoMatchData) {
+  private logLocalIsSynced(data: IEchoNewSnapshotEventData) {
+    console.log(data);
     log.info({
       message: '[EventLogger] Local is Synced',
       event: EventType.LocalIsSynced,
       eventData: {
-        sessionID: data.sessionID,
-        remoteInMatch: data.remote.inMatch,
-        localInMatch: data.local.inMatch,
+        localSessionID: data.localSnapshot?.sessionId,
+        remoteSessionID: data.remoteSnapshot?.sessionId,
       },
     });
   }
 
-  private logLocalIsUnsynced(data: IEchoMatchData) {
+  private logLocalIsUnsynced(data: IEchoNewSnapshotEventData) {
+    console.log(data);
     log.info({
       message: '[EventLogger] Local is Unsynced',
       event: EventType.LocalIsUnsynced,
       eventData: {
-        sessionID: data.sessionID,
-        remoteInMatch: data.remote.inMatch,
-        localInMatch: data.local.inMatch,
+        localSessionID: data.localSnapshot?.sessionId,
+        remoteSessionID: data.remoteSnapshot?.sessionId,
       },
     });
   }

@@ -27,9 +27,7 @@ export class MatchCameraAnalyzer {
     }
 
     // Check the current number of predictions
-    const numPredictions = Object.values(this.predictions).reduce(
-      (a, b) => a + b
-    );
+    const numPredictions = this.getNumberOfPredictions();
 
     // Check if we have a large enough sample yet
     if (numPredictions < this.MINIMUM_PREDICTION_THRESHOLD) {
@@ -73,6 +71,7 @@ export class MatchCameraAnalyzer {
 
   /********* PRIVATE HELPER FUNCTIONS *********/
   private predictCurrentCamera(matchData: IEchoMatchData) {
+    const oldPredictionCount = this.getNumberOfPredictions();
     for (const playerIndex in matchData.game.bluePlayers) {
       this.checkCameraOnPlayer(
         matchData,
@@ -84,6 +83,10 @@ export class MatchCameraAnalyzer {
         matchData,
         matchData.game.orangePlayers[playerIndex]
       );
+    }
+    if (this.getNumberOfPredictions() == oldPredictionCount) {
+      // No new predictions were added
+      this.addPrediction('#UNKNOWN');
     }
   }
 
@@ -136,5 +139,12 @@ export class MatchCameraAnalyzer {
     } else {
       this.predictions[cameraName] = 1;
     }
+  }
+
+  private getNumberOfPredictions() {
+    if (Object.keys(this.predictions).length == 0) {
+      return 0;
+    }
+    return Object.values(this.predictions).reduce((a, b) => a + b);
   }
 }
