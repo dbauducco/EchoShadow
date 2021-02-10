@@ -1,6 +1,6 @@
 import EchoVRClient from '../clients/EchoVRClient';
 import { IEchoMatchData } from '../types';
-import { log } from '../utilities';
+import { log, sleep } from '../utilities';
 
 export class ListenSpectatorController {
   constructor(private echoVrClient: EchoVRClient) {}
@@ -19,18 +19,34 @@ export class ListenSpectatorController {
     if (matchData.remote.team === 'orange') {
       if (listenOptions === 'same') {
         await this.echoVrClient.listenOrange();
+        await sleep(2000);
+        await this.echoVrClient.listenOrange();
+        await sleep(2000);
+        await this.echoVrClient.listenOrange();
         return 'listening orange';
       }
       if (listenOptions === 'opponent') {
+        await this.echoVrClient.listenBlue();
+        await sleep(2000);
+        await this.echoVrClient.listenBlue();
+        await sleep(2000);
         await this.echoVrClient.listenBlue();
         return 'listening blue';
       }
     }
     if (listenOptions === 'same') {
       await this.echoVrClient.listenBlue();
+      await sleep(2000);
+      await this.echoVrClient.listenBlue();
+      await sleep(2000);
+      await this.echoVrClient.listenBlue();
       return 'listening blue';
     }
     if (listenOptions === 'opponent') {
+      await this.echoVrClient.listenOrange();
+      await sleep(2000);
+      await this.echoVrClient.listenOrange();
+      await sleep(2000);
       await this.echoVrClient.listenOrange();
       return 'listening orange';
     }

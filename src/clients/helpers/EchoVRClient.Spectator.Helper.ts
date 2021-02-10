@@ -32,7 +32,7 @@ export class EchoVRClientSpectatorHelper {
 
   public requestSideline() {
     const keyString = 's';
-    sendKey(keyString, this.aggressiveness, undefined, 100, 6, 1);
+    sendKey(keyString, this.aggressiveness, undefined, 20, 6, 6);
   }
 
   public requestUIToggle() {
