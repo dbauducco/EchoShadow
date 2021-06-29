@@ -1,6 +1,6 @@
 {
   "name": "echo-shadow",
-  "version": "1.4.0-rc.4",
+  "version": "1.4.0-rc.6",
   "description": "An Application That Follows You Into Echo Arena Matches",
   "main": "./dist/electron/main.js",
   "scripts": {

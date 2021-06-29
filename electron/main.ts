@@ -81,13 +81,13 @@ const start = async () => {
         new SpectatorManager(configData, echoVrClient),
         //new GestureRecognizerManager(),
       ];
-    }
 
-    const echoDataEventManager = new EchoDataEventManager(
-      localEchoDataRepository,
-      remoteEchoDataRepository
-    );
-    echoDataEventManager.start();
+      const echoDataEventManager = new EchoDataEventManager(
+        localEchoDataRepository,
+        remoteEchoDataRepository
+      );
+      echoDataEventManager.start();
+    }
 
     return configData;
   } catch (error) {
@@ -121,7 +121,7 @@ function createWindow() {
   });
 
   // Set the main window to stay ontop
-  mainWindow.setAlwaysOnTop(true, 'screen-saver');
+  //mainWindow.setAlwaysOnTop(true, 'screen-saver');
   if (process.env.NODE_ENV === 'development') {
     mainWindow.loadURL('http://localhost:4000');
   } else {

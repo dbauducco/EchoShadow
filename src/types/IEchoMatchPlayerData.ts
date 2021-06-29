@@ -1,5 +1,6 @@
 export interface IEchoMatchPlayerData {
   name: string;
+  index?: number;
   head?: {
     position: number[];
     forward: number[];

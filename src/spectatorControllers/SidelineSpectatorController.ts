@@ -8,12 +8,13 @@ export default class SidelineSpectatorController
 
   constructor(private echoVrClient: EchoVRClient) {}
 
+  // Default
+  async getDefault(matchData: IEchoMatchData) {
+    return undefined;
+  }
+
   async update(matchData: IEchoMatchData) {
     if (!this.hasRequestedSideline) {
-      this.echoVrClient.requestSideline();
-      await sleep(2000);
-      this.echoVrClient.requestSideline();
-      await sleep(2000);
       this.echoVrClient.requestSideline();
       this.hasRequestedSideline = true;
     }

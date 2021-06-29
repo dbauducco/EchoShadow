@@ -131,6 +131,7 @@ export default class EchoDataRepository implements IEchoDataRepository {
       },
       client: {
         name: echoApiResult.client_name,
+        index: this.getPlayerIndex(echoApiResult, echoApiResult.client_name),
         head: {
           position: echoApiResult.player.vr_position,
           forward: echoApiResult.player.vr_forward,

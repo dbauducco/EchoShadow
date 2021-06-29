@@ -77,6 +77,10 @@ export default class SpectatorManager {
         break;
     }
 
+    if (this.spectatorController != null) {
+      this.spectatorController.getDefault(matchData);
+    }
+
     const listeningResult = await this.listenSpectatingController.handleMutingBasedOnTeam(
       this.configData.spectatorOptions.listenOptions,
       matchData
