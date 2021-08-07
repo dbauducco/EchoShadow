@@ -6,6 +6,7 @@ import {
   IEchoDataSnapshot,
   IEchoMatchPlayerData,
 } from '../types';
+import { IEchoApiResult } from '../types/IEchoApiResult';
 import { log } from '../utilities/log';
 
 // Necessary for electron
@@ -31,22 +32,29 @@ export default class EchoDataRepository implements IEchoDataRepository {
       const echoApiResult = await this.deviceAPI.get('', {
         timeout: 3000,
       });
-      const snapshotData = this.parseData(echoApiResult);
+      log.debug({
+        message: 'echoApiResult in getSnapshot',
+        echoApiResult: echoApiResult.data,
+      });
+      const snapshotData = this.parseData(echoApiResult.data);
       return snapshotData;
     } catch (error) {
       if (error.code === 'ECONNABORTED') {
         // Message timed out
         // log.error({
+        //   message: 'error getting snapshot',
         //   networkError: 'timed out',
         //   ip: this.endpointIpAddress,
         // });
       } else if (error.code === 'ECONNREFUSED') {
         // log.error({
+        //   message: 'error getting snapshot',
         //   networkError: 'refused to connect',
         //   ip: this.endpointIpAddress,
         // });
       } else {
         // log.error({
+        //   message: 'error getting snapshot',
         //   description: 'Error retrieving snapshot',
         //   error: error.message ? error.message : error,
         // });
@@ -63,11 +71,15 @@ export default class EchoDataRepository implements IEchoDataRepository {
   public async getInstantSnapshot(): Promise<IEchoDataSnapshot | undefined> {
     try {
       const echoApiResult = await axios.get(this.apiSessionUrl);
-      const snapshotData = this.parseData(echoApiResult);
+      log.debug({
+        message: 'echoApiResult in getInstantSnapshot',
+        echoApiResult: echoApiResult.data,
+      });
+      const snapshotData = this.parseData(echoApiResult.data);
       return snapshotData;
     } catch (error) {
       log.error({
-        description: 'Error retrieving full snapshot',
+        message: 'Error retrieving full snapshot',
         error: error.message ? error.message : error,
       });
       return undefined;
@@ -85,7 +97,7 @@ export default class EchoDataRepository implements IEchoDataRepository {
       return echoApiResult.data;
     } catch (error) {
       log.error({
-        description: 'Error retrieving full snapshot',
+        message: 'Error retrieving full snapshot',
         error: error.message ? error.message : error,
       });
       return undefined;
@@ -109,22 +121,27 @@ export default class EchoDataRepository implements IEchoDataRepository {
     this.deviceAPI = axios.create({ baseURL: this.apiSessionUrl });
   }
 
-  private parseData(echoApiResult: any) {
+  private parseData(echoApiResult: IEchoApiResult) {
     const snapshotData: IEchoDataSnapshot = {
-      sessionId: echoApiResult.data.sessionid,
-      sessionType: this.sessionTypeByName(echoApiResult.data.match_type),
-      client: {
-        name: echoApiResult.data.client_name,
-        position: echoApiResult.data.player.vr_position,
-        forward: echoApiResult.data.player.vr_forward,
-        left: echoApiResult.data.player.vr_left,
-        up: echoApiResult.data.player.vr_up,
+      sessionId: echoApiResult.sessionid,
+      sessionType: this.sessionTypeByName(echoApiResult.match_type),
+      game: {
+        status: echoApiResult.game_status,
+        clock: echoApiResult.game_clock,
       },
-      blueTeamMembers: this.mapPlayerData(echoApiResult.data.teams[0].players),
-      orangeTeamMembers: this.mapPlayerData(
-        echoApiResult.data.teams[1].players
-      ),
-      spectatorMembers: this.mapPlayerData(echoApiResult.data.teams[2].players),
+      client: {
+        name: echoApiResult.client_name,
+        index: this.getPlayerIndex(echoApiResult, echoApiResult.client_name),
+        head: {
+          position: echoApiResult.player.vr_position,
+          forward: echoApiResult.player.vr_forward,
+          left: echoApiResult.player.vr_left,
+          up: echoApiResult.player.vr_up,
+        },
+      },
+      blueTeamMembers: this.mapPlayerData(echoApiResult.teams[0].players),
+      orangeTeamMembers: this.mapPlayerData(echoApiResult.teams[1].players),
+      spectatorMembers: this.mapPlayerData(echoApiResult.teams[2].players),
       inMatch: false, // Overriden in next line
     };
     // Actually set in match:
@@ -136,12 +153,15 @@ export default class EchoDataRepository implements IEchoDataRepository {
    * Helper method to get the index of a player by name. The index should match the
    * key to spectate them.
    */
-  private getPlayerIndex(echoApiResult: any, playerName?: string): number {
+  private getPlayerIndex(
+    echoApiResult: IEchoApiResult,
+    playerName?: string
+  ): number {
     // Store the player name we are searching for
     const playerToSearchFor = playerName || echoApiResult.client_name;
 
     // Check the orange team first
-    const orangeTeamPlayers = echoApiResult.data.teams[1].players;
+    const orangeTeamPlayers = echoApiResult.teams[1].players;
     if (orangeTeamPlayers !== undefined) {
       const orangeTeamNames = orangeTeamPlayers.map(
         (p: { name: any; playerid: any }) => {
@@ -155,7 +175,7 @@ export default class EchoDataRepository implements IEchoDataRepository {
     }
 
     // Check the blue team
-    const blueTeamPlayers = echoApiResult.data.teams[0].players;
+    const blueTeamPlayers = echoApiResult.teams[0].players;
     if (blueTeamPlayers !== undefined) {
       const blueTeamNames = blueTeamPlayers.map(
         (p: { name: any; playerid: any }) => {
@@ -207,13 +227,33 @@ export default class EchoDataRepository implements IEchoDataRepository {
       return [];
     }
 
-    return listOfPlayers.map((player: { name: string; head: any }) => {
+    return listOfPlayers.map((player: any) => {
       return {
         name: player.name,
-        position: player.head.position,
-        left: player.head.left,
-        up: player.head.up,
-        forward: player.head.forward,
+        head: {
+          position: player.head.position,
+          left: player.head.left,
+          up: player.head.up,
+          forward: player.head.forward,
+        },
+        body: {
+          position: player.head.position,
+          left: player.head.left,
+          up: player.head.up,
+          forward: player.head.forward,
+        },
+        right_hand: {
+          position: player.rhand.pos,
+          left: player.rhand.left,
+          up: player.rhand.up,
+          forward: player.rhand.forward,
+        },
+        left_hand: {
+          position: player.lhand.pos,
+          left: player.lhand.left,
+          up: player.lhand.up,
+          forward: player.lhand.forward,
+        },
       };
     });
   }

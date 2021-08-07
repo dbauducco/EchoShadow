@@ -1,8 +1,5 @@
 import { exec as execNative, spawn } from 'child_process';
 import { promisify } from 'util';
-import * as ffi from 'ffi-napi';
-import KeyboardAction from './keyboard/keyboard-action.class';
-import { Key } from './keyboard/key.enum';
 
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
@@ -32,65 +29,12 @@ const killProcess = async (
   const forceFlag = force ? ' /F' : '';
 
   if (processId) {
-    await exec(`taskkill /pid ${processId} /T` + forceFlag);
+    await exec(`taskkill /pid ${processId} /T${forceFlag}`);
   } else {
-    await exec(`taskkill /IM ${processName} /T` + forceFlag);
+    await exec(`taskkill /IM ${processName} /T${forceFlag}`);
   }
 };
 
-const focusWindow = async (windowName: string) => {
-  const user32 = new ffi.Library('user32', {
-    GetTopWindow: ['long', ['long']],
-    FindWindowA: ['long', ['string', 'string']],
-    SetActiveWindow: ['long', ['long']],
-    SetForegroundWindow: ['bool', ['long']],
-    BringWindowToTop: ['bool', ['long']],
-    ShowWindow: ['bool', ['long', 'int']],
-    SwitchToThisWindow: ['void', ['long', 'bool']],
-    GetForegroundWindow: ['long', []],
-    AttachThreadInput: ['bool', ['int', 'long', 'bool']],
-    GetWindowThreadProcessId: ['int', ['long', 'int']],
-    SetWindowPos: [
-      'bool',
-      ['long', 'long', 'int', 'int', 'int', 'int', 'uint'],
-    ],
-    SetFocus: ['long', ['long']],
-  });
-
-  const kernel32 = new ffi.Library('Kernel32.dll', {
-    GetCurrentThreadId: ['int', []],
-  });
-
-  const winToSetOnTop = user32.FindWindowA(null, windowName);
-  const foregroundHWnd = user32.GetForegroundWindow();
-  const currentThreadId = kernel32.GetCurrentThreadId();
-  const windowThreadProcessId = user32.GetWindowThreadProcessId(
-    foregroundHWnd,
-    null
-  );
-  user32.ShowWindow(winToSetOnTop, 9);
-  user32.SetWindowPos(winToSetOnTop, -1, 0, 0, 0, 0, 3);
-  user32.SetWindowPos(winToSetOnTop, -2, 0, 0, 0, 0, 3);
-  user32.SetForegroundWindow(winToSetOnTop);
-  user32.AttachThreadInput(windowThreadProcessId, currentThreadId, 0);
-  user32.SetFocus(winToSetOnTop);
-  user32.SetActiveWindow(winToSetOnTop);
-
-  await sleep(3000);
-};
-
-const keyboard = new KeyboardAction();
-
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-export {
-  exec,
-  getProcessId,
-  killProcess,
-  focusWindow,
-  keyboard,
-  sleep,
-  Key,
-  spawn,
-  delay,
-};
+export { exec, getProcessId, killProcess, sleep, spawn, delay };

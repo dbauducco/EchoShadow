@@ -27,9 +27,7 @@ export class MatchCameraAnalyzer {
     }
 
     // Check the current number of predictions
-    const numPredictions = Object.values(this.predictions).reduce(
-      (a, b) => a + b
-    );
+    const numPredictions = this.getNumberOfPredictions();
 
     // Check if we have a large enough sample yet
     if (numPredictions < this.MINIMUM_PREDICTION_THRESHOLD) {
@@ -73,6 +71,7 @@ export class MatchCameraAnalyzer {
 
   /********* PRIVATE HELPER FUNCTIONS *********/
   private predictCurrentCamera(matchData: IEchoMatchData) {
+    const oldPredictionCount = this.getNumberOfPredictions();
     for (const playerIndex in matchData.game.bluePlayers) {
       this.checkCameraOnPlayer(
         matchData,
@@ -85,6 +84,10 @@ export class MatchCameraAnalyzer {
         matchData.game.orangePlayers[playerIndex]
       );
     }
+    if (this.getNumberOfPredictions() == oldPredictionCount) {
+      // No new predictions were added
+      this.addPrediction('#UNKNOWN');
+    }
   }
 
   private checkCameraOnPlayer(
@@ -92,13 +95,13 @@ export class MatchCameraAnalyzer {
     playerData: IEchoMatchPlayerData
   ) {
     const pos_x_diff = Math.abs(
-      playerData.position[0] - matchData.local.position[0]
+      playerData.head!.position[0] - matchData.local.position[0]
     );
     const pos_y_diff = Math.abs(
-      playerData.position[1] - matchData.local.position[1]
+      playerData.head!.position[1] - matchData.local.position[1]
     );
     const pos_z_diff = Math.abs(
-      playerData.position[2] - matchData.local.position[2]
+      playerData.head!.position[2] - matchData.local.position[2]
     );
 
     // Check POV
@@ -117,12 +120,12 @@ export class MatchCameraAnalyzer {
     ) {
       if (matchData.local.forward[2] < 0) {
         // Facing blue
-        if (playerData.position[2] < matchData.local.position[2]) {
+        if (playerData.head!.position[2] < matchData.local.position[2]) {
           this.addPrediction(playerData.name + '#FOLLOW');
         }
       } else if (matchData.local.forward[2] > 0) {
         // Facing orange
-        if (playerData.position[2] > matchData.local.position[2]) {
+        if (playerData.head!.position[2] > matchData.local.position[2]) {
           this.addPrediction(playerData.name + '#FOLLOW');
         }
       }
@@ -136,5 +139,12 @@ export class MatchCameraAnalyzer {
     } else {
       this.predictions[cameraName] = 1;
     }
+  }
+
+  private getNumberOfPredictions() {
+    if (Object.keys(this.predictions).length == 0) {
+      return 0;
+    }
+    return Object.values(this.predictions).reduce((a, b) => a + b);
   }
 }

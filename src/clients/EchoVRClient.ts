@@ -1,11 +1,16 @@
-import { session } from 'electron';
 import * as os from 'os';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { EventType } from '../types';
-import { ShadowStateType } from '../types/ShadowStateType';
-import { getProcessId, log, exec, killProcess, spawn } from '../utilities';
-import Events from '../utilities/Events';
+import { EventType, IConfigInfo, ShadowStateType } from '../types';
+import {
+  getProcessId,
+  log,
+  exec,
+  killProcess,
+  spawn,
+  Events,
+} from '../utilities';
+import { EchoVRClientSpectatorHelper } from './helpers/EchoVRClient.Spectator.Helper';
 
 export default class EchoVRClient {
   private SPECTATOR_FLAG = '--spectatorstream';
@@ -14,9 +19,14 @@ export default class EchoVRClient {
 
   private HEADLESS_FLAG = '--headless';
 
-  constructor(private echoPath: string) {
+  private spectatorHelper: EchoVRClientSpectatorHelper;
+
+  constructor(private config: IConfigInfo) {
     this.verifyPath();
     this.enableEchoVRAPI();
+    this.spectatorHelper = new EchoVRClientSpectatorHelper(
+      config.spectatorOptions.keyboardAggressiveness
+    );
   }
 
   /**
@@ -41,7 +51,7 @@ export default class EchoVRClient {
       // Spawning the process
       // const spawnOptions = { detached: true };
       // return spawn(this.echoPath, params, spawnOptions);
-      return exec(`"${this.echoPath}" ${params.join(' ')}`);
+      return exec(`"${this.config.echoPath}" ${params.join(' ')}`);
     } catch (error) {
       log.error({
         message: 'error opening exe',
@@ -58,7 +68,7 @@ export default class EchoVRClient {
    * defined, no lobbyId flag gets added to the end of the command string.
    */
   private buildCommand = (sessionID?: string, headless?: boolean) => {
-    const openCommandWithSpecatator = `"${this.echoPath}"${this.SPECTATOR_FLAG}`; // Add ---spectatorstream to the end
+    const openCommandWithSpecatator = `"${this.config.echoPath}"${this.SPECTATOR_FLAG}`; // Add ---spectatorstream to the end
     if (sessionID) {
       const openCommandWithSpectatorAndLobby = `${openCommandWithSpecatator}${this.LOBBY_FLAG}${sessionID}`; // If we have lobby, add --lobbyid {lobbyId}
       return openCommandWithSpectatorAndLobby;
@@ -104,7 +114,7 @@ export default class EchoVRClient {
 
   /** Helper method that verifies the EchoVR exe path provided */
   verifyPath = async () => {
-    if (this.echoPath == '') {
+    if (!this.config.echoPath) {
       // Dirty fix to wait for the event listeners to register first
       setTimeout(() => {
         Events.emit(
@@ -117,7 +127,7 @@ export default class EchoVRClient {
 
     try {
       const newProcess = spawn(
-        this.echoPath,
+        this.config.echoPath,
         [this.HEADLESS_FLAG, this.SPECTATOR_FLAG],
         {}
       );
@@ -159,13 +169,14 @@ export default class EchoVRClient {
       }
       return JSON.parse(fileBuffer.toString());
     } catch (error) {
-      if (error.code == 'ENOENT') {
-        return await this.createAndReadConfigFile();
+      if (error.code === 'ENOENT') {
+        return this.createAndReadConfigFile();
       }
       log.error({
-        description: 'Failed to read EchoVR config.',
+        message: 'Failed to read EchoVR config.',
         error: error.message,
       });
+      return undefined;
     }
   };
 
@@ -184,14 +195,14 @@ export default class EchoVRClient {
           const newFileBuffer = fse.readFileSync(configPath);
           if (!newFileBuffer) {
             log.error({
-              description: 'Failed to read EchoVR config after creating it.',
+              message: 'Failed to read EchoVR config after creating it.',
             });
             res(undefined);
           }
           res(JSON.parse(newFileBuffer.toString()));
         } catch (error) {
           log.error({
-            description: 'Failed to read EchoVR config after creating it.',
+            message: 'Failed to read EchoVR config after creating it.',
             error: error.message,
           });
           res(undefined);
@@ -208,4 +219,44 @@ export default class EchoVRClient {
     // Write the file
     await fse.outputFile(configPath, JSON.stringify(data, null, 4));
   };
+
+  public requestFollowByIndex(playerIndex: number) {
+    return this.spectatorHelper.requestFollowByIndex(playerIndex);
+  }
+
+  public requestFollow() {
+    return this.spectatorHelper.requestFollow();
+  }
+
+  public requestPOV() {
+    return this.spectatorHelper.requestPOV();
+  }
+
+  public requestCameraByIndex(cameraIndex: number) {
+    return this.spectatorHelper.requestCameraByIndex(cameraIndex);
+  }
+
+  public requestSideline() {
+    return this.spectatorHelper.requestSideline();
+  }
+
+  public requestUIToggle() {
+    return this.spectatorHelper.requestUIToggle();
+  }
+
+  public listenOrange() {
+    return this.spectatorHelper.listenOrange();
+  }
+
+  public listenBlue() {
+    return this.spectatorHelper.listenBlue();
+  }
+
+  public muteAll() {
+    return this.spectatorHelper.muteAll();
+  }
+
+  public showScoreBoard(secondsToShow: number) {
+    return this.spectatorHelper.showScoreBoard(secondsToShow);
+  }
 }

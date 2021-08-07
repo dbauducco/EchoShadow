@@ -1,8 +1,8 @@
 import * as os from 'os';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { ipcMain } from 'electron';
-import { config } from 'winston';
+// import { ipcMain } from 'electron';
+import { merge } from 'lodash';
 import { IConfigInfo, LogLevel } from '../types';
 import { log, initLogger } from './log';
 import { exec } from './utils';
@@ -28,6 +28,10 @@ export class Config {
     spectatorOptions: {
       hideUI: false,
       mode: 'default',
+      listenOptions: 'same',
+      showScoresBetweenRounds: true,
+      secondsToShowScoreBetweenRounds: 10,
+      keyboardAggressiveness: 4,
     },
     redirectAPI: {
       enabled: false,
@@ -42,9 +46,9 @@ export class Config {
   // Storing options
   public options?: IConfigInfo;
 
-  constructor() {
-    ipcMain.on('open-config', this.openConfigFile.bind(this));
-  }
+  // constructor() {
+  // ipcMain.on('open-config', this.openConfigFile.bind(this));
+  // }
 
   /**
    * initializes the Config options. This must be called in order to use the config class
@@ -87,10 +91,27 @@ export class Config {
     }
   }
 
+  private mergeConfigsAndClean(dirtyConfigData: IConfigInfo): IConfigInfo {
+    const cleanedConfigData = {
+      ...dirtyConfigData,
+      spectatorOptions: {
+        ...dirtyConfigData.spectatorOptions,
+        mode: dirtyConfigData.spectatorOptions?.mode?.toLowerCase() as 'follow',
+        listenOptions: dirtyConfigData.spectatorOptions?.listenOptions?.toLowerCase() as 'same',
+      },
+      dev: {
+        ...dirtyConfigData.dev,
+        logLevel: dirtyConfigData?.dev?.logLevel?.toLowerCase() as LogLevel.INFO,
+      },
+    };
+    const mergedConfig = merge(this.DEFAULT_CONFIG, cleanedConfigData);
+    return mergedConfig;
+  }
+
   /**
    * Method to read the config file from appdata.
    */
-  private async readConfig() {
+  public async readConfig() {
     try {
       // Create the data buffer
       const dataBuffer = fse.readFileSync(this.CONFIG_PATH);
@@ -99,20 +120,25 @@ export class Config {
         return undefined;
       }
       // Read the file
-      const configData: IConfigInfo = JSON.parse(dataBuffer.toString());
+      const dirtyConfigData: IConfigInfo = JSON.parse(dataBuffer.toString());
 
       // Check config format version
-      if (configData.configVersion === 'v2') {
-        // The config format is up to date
-        return configData;
+      if (dirtyConfigData.configVersion === 'v2') {
+        const cleanConfigData = this.mergeConfigsAndClean(dirtyConfigData);
+        await fse.outputFile(
+          this.CONFIG_PATH,
+          JSON.stringify(cleanConfigData, null, 4)
+        );
+        return cleanConfigData;
       }
       // We need to upgrade the config format
-      const newFormatData = this.upgradeConfig(configData);
+      const newDirtyFormatData = this.upgradeConfig(dirtyConfigData);
+      const newCleanFormatData = this.mergeConfigsAndClean(newDirtyFormatData);
       await fse.outputFile(
         this.CONFIG_PATH,
-        JSON.stringify(newFormatData, null, 4)
+        JSON.stringify(newCleanFormatData, null, 4)
       );
-      return newFormatData;
+      return newCleanFormatData;
     } catch (error) {
       log.error({
         message: 'Error reading config.',
@@ -154,5 +180,14 @@ export class Config {
    */
   public openConfigFile() {
     exec(`start ${this.CONFIG_PATH}`);
+  }
+
+  public async put(configData: IConfigInfo) {
+    const cleanConfigData = this.mergeConfigsAndClean(configData);
+    await fse.outputFile(
+      this.CONFIG_PATH,
+      JSON.stringify(cleanConfigData, null, 4)
+    );
+    return cleanConfigData;
   }
 }

@@ -1,4 +1,4 @@
-import { LogLevel } from './LogLevel';
+import { LogLevel } from './enums';
 
 export interface IConfigInfo {
   configVersion: string;
@@ -11,7 +11,11 @@ export interface IConfigInfo {
   };
   spectatorOptions: {
     hideUI: boolean;
-    mode: string;
+    mode: 'pov' | 'sideline' | 'auto' | 'default' | 'follow';
+    listenOptions: 'same' | 'opponent' | 'both' | 'none';
+    showScoresBetweenRounds: boolean;
+    secondsToShowScoreBetweenRounds: number;
+    keyboardAggressiveness: number;
   };
   dev: {
     logLevel: LogLevel;

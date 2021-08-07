@@ -4,27 +4,34 @@ import { transports, format, createLogger } from 'winston';
 
 import { LogLevel } from '../types';
 
-const LOG_PATH = path.join(os.homedir(), 'AppData/Local/EchoShadow');
+const LOG_PATH = path.join(os.homedir(), 'AppData/Local/EchoShadow/logs');
 
-const fileLogFormat = format.combine(format.timestamp(), format.prettyPrint());
+const fileLogFormat = format.combine(format.timestamp(), format.json());
 
-const log = createLogger({
-  level: 'info',
-  transports: [
-    new transports.File({
-      filename: `${LOG_PATH}/error.log.json`,
-      level: 'error',
-      format: fileLogFormat,
-    }),
-    new transports.File({
-      filename: `${LOG_PATH}/info.log.json`,
-      level: 'info',
-      format: fileLogFormat,
-    }),
-  ],
-});
+const log = createLogger();
 
 const initLogger = (logLevel?: LogLevel) => {
+  const logInitDate = new Date()
+    .toISOString()
+    .split('.')[0]
+    .split(':')
+    .join('-');
+
+  log.add(
+    new transports.File({
+      filename: `${LOG_PATH}/error.log-${logInitDate}.json`,
+      level: 'error',
+      format: fileLogFormat,
+    })
+  );
+  log.add(
+    new transports.File({
+      filename: `${LOG_PATH}/info.log-${logInitDate}.json`,
+      level: 'info',
+      format: fileLogFormat,
+    })
+  );
+
   if (process.env.NODE_ENV !== 'production') {
     log.add(
       new transports.Console({
@@ -33,11 +40,22 @@ const initLogger = (logLevel?: LogLevel) => {
     );
   }
 
+  if (logLevel === LogLevel.VERBOSE) {
+    log.add(
+      new transports.File({
+        filename: `${LOG_PATH}/verbose.log-${logInitDate}.json`,
+        format: fileLogFormat,
+        level: 'verbose',
+      })
+    );
+  }
+
   if (logLevel === LogLevel.DEBUG) {
     log.add(
       new transports.File({
-        filename: `${LOG_PATH}/debug.log.json`,
+        filename: `${LOG_PATH}/debug.log-${logInitDate}.json`,
         format: fileLogFormat,
+        level: 'debug',
       })
     );
   }

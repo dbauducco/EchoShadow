@@ -1,4 +1,4 @@
-import { EchoSessionType } from './EchoSessionType';
+import { EchoGameStatus, EchoSessionType } from './enums';
 import { IEchoMatchPlayerData } from './IEchoMatchPlayerData';
 
 export interface IEchoMatchData {
@@ -21,6 +21,8 @@ export interface IEchoMatchData {
     left: number[];
   };
   game: {
+    status: EchoGameStatus;
+    clock: number;
     disc: number[];
     bluePlayers: IEchoMatchPlayerData[];
     orangePlayers: IEchoMatchPlayerData[];

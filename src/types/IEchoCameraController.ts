@@ -1,6 +1,6 @@
 import { IEchoMatchData } from './IEchoMatchData';
 
-export interface IEchoCameraController {
+export interface IEchoSpectatorController {
   update(matchData: IEchoMatchData): void;
   getDefault(matchData: IEchoMatchData): void;
 }

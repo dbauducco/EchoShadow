@@ -1,14 +1,14 @@
-import Events from '../utilities/Events';
+import { Events } from '../utilities';
 import {
   IEchoDataRepository,
-  IEchoDataSnapshot,
   IEchoNewSnapshotEventData,
+  ShadowStateType,
+  EventType,
 } from '../types';
-import { EventType } from '../types/EventType';
-import { ShadowStateType } from '../types/ShadowStateType';
 
 export default class EchoDataEventManager {
   WAIT_TIME_SECONDS = 0.5;
+
   updateShouldRun = false;
 
   constructor(
@@ -16,7 +16,7 @@ export default class EchoDataEventManager {
     public remoteDataRepository: IEchoDataRepository
   ) {
     // Auto-Start
-    //this.start();
+    // this.start();
     Events.on(EventType.NewShadowState, this.newShadowState.bind(this));
   }
 
@@ -134,5 +134,5 @@ export default class EchoDataEventManager {
 
     if (this.localDataShouldRun)
       setTimeout(this.updateLocal.bind(this), this.WAIT_TIME_SECONDS * 1000);
-  }*/
+  } */
 }

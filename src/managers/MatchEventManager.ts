@@ -1,4 +1,5 @@
 import {
+  EchoGameStatus,
   EchoSessionType,
   IEchoDataRepository,
   IEchoDataSnapshot,
@@ -6,7 +7,7 @@ import {
   IEchoMatchData,
   EventType,
 } from '../types';
-import Events from '../utilities/Events';
+import { Events } from '../utilities';
 
 export default class MatchEventManager {
   // Storing the current match state
@@ -42,7 +43,13 @@ export default class MatchEventManager {
           forward: [0, 0, 0],
           left: [0, 0, 0],
         },
-        game: { disc: [0, 0, 0], bluePlayers: [], orangePlayers: [] },
+        game: {
+          status: EchoGameStatus.Unknown,
+          clock: 0,
+          disc: [0, 0, 0],
+          bluePlayers: [],
+          orangePlayers: [],
+        },
       };
     }
 
@@ -94,8 +101,9 @@ export default class MatchEventManager {
           data.localSnapshot!,
           this.currentMatchData.remote.name
         );
-        this.currentMatchData.remote.team = playerTeamData[0];
-        this.currentMatchData.remote.index = playerTeamData[1];
+        const [remoteTeam, remotePlayerIndex] = playerTeamData;
+        this.currentMatchData.remote.team = remoteTeam;
+        this.currentMatchData.remote.index = remotePlayerIndex;
         Events.emit(EventType.LocalJoinedMatch, this.currentMatchData);
         this.pingLocal();
       } else {
@@ -112,36 +120,83 @@ export default class MatchEventManager {
       // Reset the current match data
       this.currentMatchData = undefined;
     }
-
-    Events.emit(EventType.NewMatchData, this.currentMatchData);
   }
 
   private async pingLocal() {
     // Get new data
     const data = await this.localDataRepository.getSnapshot();
 
+    if (!data || !this.currentMatchData) {
+      return undefined;
+    }
+
     // Update player team and index
     const playerTeamData = this.findPlayerData(
       data!,
-      this.currentMatchData!.remote.name
+      this.currentMatchData.remote.name
     );
-    this.currentMatchData!.remote.team = playerTeamData[0];
-    this.currentMatchData!.remote.index = playerTeamData[1];
-    // Update local position
-    this.currentMatchData!.local.position = data!.client.position;
-    this.currentMatchData!.local.forward = data!.client.forward;
-    this.currentMatchData!.local.up = data!.client.up;
-    this.currentMatchData!.local.left = data!.client.left;
-    // Update player postions
-    this.currentMatchData!.game.bluePlayers = data!.blueTeamMembers;
-    this.currentMatchData!.game.orangePlayers = data!.orangeTeamMembers;
+
+    const [remoteTeam, remotePlayerIndex] = playerTeamData;
+
+    const newMatchData = {
+      ...this.currentMatchData,
+      remote: {
+        ...this.currentMatchData.remote,
+        team: remoteTeam,
+        index: remotePlayerIndex,
+      },
+      local: {
+        ...this.currentMatchData.local,
+        position: data.client.head?.position || [],
+        forward: data.client.head?.forward || [],
+        up: data.client.head?.up || [],
+        left: data.client.head?.left || [],
+      },
+      game: {
+        ...this.currentMatchData.game,
+        bluePlayers: data.blueTeamMembers,
+        orangePlayers: data.orangeTeamMembers,
+        status: data.game.status,
+        clock: data.game.clock,
+      },
+    };
+
+    if (this.currentMatchData) {
+      if (remoteTeam !== this.currentMatchData.remote.team) {
+        Events.emit(EventType.RemoteChangedTeam, newMatchData);
+      }
+      if (
+        this.currentMatchData.game.status !== EchoGameStatus.RoundOver &&
+        newMatchData.game.status === EchoGameStatus.RoundOver
+      ) {
+        Events.emit(EventType.RoundOver, newMatchData);
+      }
+      if (
+        this.currentMatchData.game.status !== EchoGameStatus.PostMatch &&
+        newMatchData.game.status === EchoGameStatus.PostMatch
+      ) {
+        Events.emit(EventType.MatchOver, newMatchData);
+      }
+      if (
+        this.currentMatchData.game.status !== EchoGameStatus.SuddenDeath &&
+        newMatchData.game.status === EchoGameStatus.SuddenDeath
+      ) {
+        Events.emit(EventType.SuddenDeath, newMatchData);
+      }
+    }
+
+    // check if the remote changed teams
 
     // Emit the match data
     Events.emit(EventType.NewMatchData, this.currentMatchData);
 
+    this.currentMatchData = newMatchData;
+
     // Loop the function
     if (this.currentMatchData?.local.inMatch)
       setTimeout(this.pingLocal.bind(this), 0.1 * 1000);
+
+    return undefined;
   }
 
   // **** HELPER METHODS **** //
@@ -166,7 +221,7 @@ export default class MatchEventManager {
     }
 
     // Let's check if they player is in one of the teams
-    return this.findPlayerData(alternateData, sourceName)[1] != -1;
+    return this.findPlayerData(alternateData, sourceName)[1] !== -1;
   }
 
   private findPlayerData(
@@ -174,27 +229,32 @@ export default class MatchEventManager {
     name: string
   ): [string, number, number[]] {
     const blueIndex = snapshot.blueTeamMembers.findIndex(playerData => {
-      return playerData.name == name;
+      return playerData.name === name;
     });
     const orangeIndex = snapshot.orangeTeamMembers.findIndex(playerData => {
-      return playerData.name == name;
+      return playerData.name === name;
     });
     const spectatorIndex = snapshot.spectatorMembers.findIndex(playerData => {
-      return playerData.name == name;
+      return playerData.name === name;
     });
 
-    if (blueIndex != -1) {
-      return ['blue', blueIndex, snapshot.blueTeamMembers[blueIndex].position];
-    } else if (orangeIndex != -1) {
+    if (blueIndex !== -1) {
+      return [
+        'blue',
+        blueIndex,
+        snapshot.blueTeamMembers[blueIndex].head!.position,
+      ];
+    }
+    if (orangeIndex !== -1) {
       return [
         'orange',
         orangeIndex,
-        snapshot.orangeTeamMembers[orangeIndex].position,
+        snapshot.orangeTeamMembers[orangeIndex].head!.position,
       ];
-    } else if (spectatorIndex != -1) {
-      return ['spectator', 11, [0, 0, 0]];
-    } else {
-      return ['other', -1, [0, 0, 0]];
     }
+    if (spectatorIndex !== -1) {
+      return ['spectator', 11, [0, 0, 0]];
+    }
+    return ['other', -1, [0, 0, 0]];
   }
 }

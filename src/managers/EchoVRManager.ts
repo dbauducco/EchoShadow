@@ -1,25 +1,23 @@
-import { getProcessId, log } from '../utilities';
+import { log, Events } from '../utilities';
 import {
   EchoSessionType,
   IEchoDataSnapshot,
   IEchoMatchData,
   IEchoNewSnapshotEventData,
+  ShadowStateType,
+  EventType,
 } from '../types';
 import EchoVRClient from '../clients/EchoVRClient';
-import Events from '../utilities/Events';
-import { EventType } from '../types/EventType';
-import { ShadowStateType } from '../types/ShadowStateType';
 
 export default class EchoVRManager {
-  private echoVRClient: EchoVRClient;
   private currentInstanceProcessId: string | undefined;
+
   private isLoadingIntoMatch = false;
 
   // Used for checking if the game is stuck
   private undefinedAPICounter = 0;
 
-  constructor(echoPath: string) {
-    this.echoVRClient = new EchoVRClient(echoPath);
+  constructor(private echoVRClient: EchoVRClient) {
     Events.on(EventType.RemoteJoinedMatch, this.remoteJoinedMatch.bind(this));
     Events.on(EventType.RemoteLeftMatch, this.remoteLeftMatch.bind(this));
     Events.on(
@@ -36,8 +34,8 @@ export default class EchoVRManager {
   async remoteJoinedMatch(data: IEchoMatchData) {
     if (
       this.currentInstanceProcessId &&
-      data.local.inMatch == false &&
-      data.remote.inMatch == true
+      !data.local.inMatch &&
+      data.remote.inMatch
     ) {
       // We are gonna close the game first
       this.close();
@@ -74,7 +72,7 @@ export default class EchoVRManager {
     }
   }
 
-  //***********************************************************************************************/
+  //* **********************************************************************************************/
 
   /**
    * Method to open EchoVR.exe with spectator stream automatically set. Using
@@ -123,7 +121,7 @@ export default class EchoVRManager {
   private isRunning = async () => {
     try {
       await this.syncPID();
-      return this.currentInstanceProcessId != undefined;
+      return this.currentInstanceProcessId !== undefined;
     } catch (error) {
       log.error({
         message: 'error determining running state',

@@ -16,4 +16,9 @@ export enum EventType {
   NewMatchData = 'newMatchData',
   TestNewMatchData = 'testNewMatchData',
   TestLocalJoinedMatch = 'testLocalJoinedMatch',
+  NewSpectatorTarget = 'newSpectatorTarget',
+  RemoteChangedTeam = 'remoteChangedTeam',
+  RoundOver = 'roundOver',
+  MatchOver = 'matchOver',
+  SuddenDeath = 'suddenDeath',
 }

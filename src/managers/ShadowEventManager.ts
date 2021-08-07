@@ -1,15 +1,13 @@
 import {
-  EchoSessionType,
-  IEchoDataSnapshot,
-  IEchoSnapshotOverviewsEventData,
   IEchoNewSnapshotEventData,
+  ShadowStateType,
+  EventType,
 } from '../types';
-import Events from '../utilities/Events';
-import { EventType } from '../types/EventType';
-import { ShadowStateType } from '../types/ShadowStateType';
+import { Events } from '../utilities';
 
 export default class ShadowEventManager {
   WAIT_TIME_SECONDS = 5;
+  localIsSynced = false;
 
   constructor() {
     Events.on(EventType.NewSnapshotData, this.checkSync.bind(this));
@@ -84,10 +82,14 @@ export default class ShadowEventManager {
     if (data.localSnapshot?.inMatch && data.remoteSnapshot?.inMatch) {
       if (data.localSnapshot.sessionId === data.remoteSnapshot.sessionId) {
         // Our local instance is synced with the remote
+        if (this.localIsSynced) return;
+        this.localIsSynced = true;
         Events.emit(EventType.LocalIsSynced, data);
         Events.emit(EventType.NewShadowState, ShadowStateType.SyncedWithRemote);
       } else {
         // Our local instance is somehow unsycned with the remote
+        if (!this.localIsSynced) return;
+        this.localIsSynced = false;
         Events.emit(EventType.LocalIsUnsynced, data);
       }
 
@@ -97,12 +99,14 @@ export default class ShadowEventManager {
           EventType.NewShadowState,
           ShadowStateType.WaitingForRemoteMatch
         );
+        this.localIsSynced = false;
       }
     } else if (!data.remoteSnapshot) {
       Events.emit(
         EventType.NewShadowState,
         ShadowStateType.WaitingForRemoteData
       );
+      this.localIsSynced = false;
     }
   }
 

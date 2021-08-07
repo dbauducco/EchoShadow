@@ -1,6 +1,6 @@
 import { IEchoMatchData, IEchoNewSnapshotEventData, EventType } from '../types';
 import { log } from './log';
-import Events from './Events';
+import { Events } from './Events';
 
 export class EventLogger {
   constructor() {
@@ -24,10 +24,15 @@ export class EventLogger {
     Events.on(EventType.NewShadowState, this.logNewShadowState.bind(this));
     Events.on(EventType.LocalIsSynced, this.logLocalIsSynced.bind(this));
     Events.on(EventType.LocalIsUnsynced, this.logLocalIsUnsynced.bind(this));
+    Events.on(
+      EventType.RemoteChangedTeam,
+      this.logRemoteChangedTeam.bind(this)
+    );
   }
 
   private logNewSnapshotData(data: IEchoNewSnapshotEventData) {
-    log.info({
+    log.verbose({
+      message: '[EventLogger] New Snapshot Data',
       event: EventType.NewSnapshotData,
       eventData: data,
     });
@@ -35,6 +40,7 @@ export class EventLogger {
 
   private logRemoteJoinedMatch(data: IEchoNewSnapshotEventData) {
     log.info({
+      message: '[EventLogger] Remote Joined Match',
       event: EventType.RemoteJoinedMatch,
       eventData: data,
     });
@@ -42,6 +48,7 @@ export class EventLogger {
 
   private logRemoteLeftMatch(data: IEchoNewSnapshotEventData) {
     log.info({
+      message: '[EventLogger] Remote Left Match',
       event: EventType.RemoteLeftMatch,
       eventData: data,
     });
@@ -49,6 +56,7 @@ export class EventLogger {
 
   private logLocalJoinedMatch(data: IEchoNewSnapshotEventData) {
     log.info({
+      message: '[EventLogger] Local Joined Match',
       event: EventType.LocalJoinedMatch,
       eventData: data,
     });
@@ -56,6 +64,7 @@ export class EventLogger {
 
   private logLocalLeftMatch(data: IEchoNewSnapshotEventData) {
     log.info({
+      message: '[EventLogger] Local Left Match',
       event: EventType.LocalLeftMatch,
       eventData: data,
     });
@@ -63,6 +72,7 @@ export class EventLogger {
 
   private logLocalWillLeaveMatch() {
     log.info({
+      message: '[EventLogger] Local Will Leave Match',
       event: EventType.LocalWillLeaveMatch,
       eventData: {},
     });
@@ -70,35 +80,56 @@ export class EventLogger {
 
   private logLocalWillJoinMatch() {
     log.info({
+      message: '[EventLogger] Local Will Join Match',
       event: EventType.LocalWillJoinMatch,
       eventData: {},
     });
   }
 
   private logNewMatchData(data: IEchoMatchData) {
-    log.info({
+    log.verbose({
+      message: '[EventLogger] New Match Data',
       event: EventType.NewMatchData,
       eventData: data,
     });
   }
 
-  private logLocalIsSynced(data: IEchoMatchData) {
+  private logLocalIsSynced(data: IEchoNewSnapshotEventData) {
+    console.log(data);
     log.info({
+      message: '[EventLogger] Local is Synced',
       event: EventType.LocalIsSynced,
-      eventData: data,
+      eventData: {
+        localSessionID: data.localSnapshot?.sessionId,
+        remoteSessionID: data.remoteSnapshot?.sessionId,
+      },
     });
   }
 
-  private logLocalIsUnsynced(data: IEchoMatchData) {
+  private logLocalIsUnsynced(data: IEchoNewSnapshotEventData) {
+    console.log(data);
     log.info({
+      message: '[EventLogger] Local is Unsynced',
       event: EventType.LocalIsUnsynced,
-      eventData: data,
+      eventData: {
+        localSessionID: data.localSnapshot?.sessionId,
+        remoteSessionID: data.remoteSnapshot?.sessionId,
+      },
     });
   }
 
   private logNewShadowState(data: IEchoMatchData) {
     log.info({
+      message: '[EventLogger] New Shadow State',
       event: EventType.NewShadowState,
+      eventData: data,
+    });
+  }
+
+  private logRemoteChangedTeam(data: IEchoMatchData) {
+    log.info({
+      message: '[EventLogger] Remote Changed Team',
+      event: EventType.RemoteChangedTeam,
       eventData: data,
     });
   }
