@@ -10,6 +10,7 @@ export interface IEchoDataSnapshot {
     clock: number;
   };
   client: IEchoMatchPlayerData;
+  discPosition: number[];
   blueTeamMembers: IEchoMatchPlayerData[];
   orangeTeamMembers: IEchoMatchPlayerData[];
   spectatorMembers: IEchoMatchPlayerData[];

@@ -11,11 +11,14 @@ import {
 } from '../types';
 import { log, Events } from '../utilities';
 import { ListenSpectatorController } from '../spectatorControllers/ListenSpectatorController';
+import DiscSpectatorController from '../spectatorControllers/DiscSpectatorController';
 
 export default class SpectatorManager {
   spectatorController?: IEchoSpectatorController;
 
   listenSpectatingController: ListenSpectatorController;
+
+  wentIntoAPIMode = false;
 
   constructor(
     private configData: IConfigInfo,
@@ -47,9 +50,10 @@ export default class SpectatorManager {
       message: 'setDefaultSpectatorOption',
       mode: this.configData.spectatorOptions.mode,
     });
-    if (this.configData.spectatorOptions.hideUI) {
-      this.echoVrClient.requestUIToggle();
-    }
+    this.echoVrClient.setUIVisibility(!this.configData.spectatorOptions.hideUI);
+    // if (this.configData.spectatorOptions.hideUI) {
+    //   this.echoVrClient.requestUIToggle();
+    // }
 
     switch (this.configData.spectatorOptions.mode) {
       case 'follow':
@@ -66,6 +70,11 @@ export default class SpectatorManager {
         break;
       case 'sideline':
         this.spectatorController = new SidelineSpectatorController(
+          this.echoVrClient
+        );
+        break;
+      case 'disc':
+        this.spectatorController = new DiscSpectatorController(
           this.echoVrClient
         );
         break;
@@ -100,6 +109,12 @@ export default class SpectatorManager {
 
     // Check that a spectator controller exists
     if (!this.spectatorController) {
+      return;
+    }
+
+    if (this.wentIntoAPIMode == false) {
+      this.echoVrClient.requestAPIMode();
+      this.wentIntoAPIMode = true;
       return;
     }
 

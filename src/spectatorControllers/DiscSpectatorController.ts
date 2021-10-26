@@ -10,13 +10,14 @@ export default class DiscSpectatorController
 
   // Default
   async getDefault(matchData: IEchoMatchData) {
+    this.echoVrClient.requestAPIMode();
     return undefined;
   }
 
   // Updating
   async update(matchData: IEchoMatchData) {
     const discPositionWidth = matchData.discPosition[2];
-    log.info({ message: 'DiscSpectatorController.update ', discPositionWidth });
+    console.log(discPositionWidth);
     if (discPositionWidth > 2) {
       // Orange side
       await this.goToCameraKey(4);
@@ -31,6 +32,7 @@ export default class DiscSpectatorController
 
   public async goToCameraKey(key: number) {
     if (this.lastKey !== key) {
+      console.log('Going to camera ' + key);
       this.lastKey = key;
       this.echoVrClient.requestCameraByIndex(key);
     }

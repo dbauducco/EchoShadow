@@ -132,6 +132,7 @@ const ConfigData: React.FC<{ configData: IConfigInfo }> = ({ configData }) => {
               <Option value="pov">POV</Option>
               <Option value="follow">Follow</Option>
               <Option value="sideline">Sideline</Option>
+              <Option value="disc">Disc Level Follow</Option>
               <Option value="auto">Auto Cam</Option>
             </Select>
           </Label>

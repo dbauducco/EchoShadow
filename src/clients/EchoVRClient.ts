@@ -11,22 +11,26 @@ import {
   Events,
 } from '../utilities';
 import { EchoVRClientSpectatorHelper } from './helpers/EchoVRClient.Spectator.Helper';
+import EchoDataRepository from '../repositories/EchoDataRepository';
 
 export default class EchoVRClient {
   private SPECTATOR_FLAG = '--spectatorstream';
 
   private LOBBY_FLAG = '--lobbyid';
 
+  private NO_OVR_FLAG = '--noovr';
+
   private HEADLESS_FLAG = '--headless';
 
   private spectatorHelper: EchoVRClientSpectatorHelper;
 
-  constructor(private config: IConfigInfo) {
+  constructor(
+    private config: IConfigInfo,
+    private repository: EchoDataRepository
+  ) {
     this.verifyPath();
     this.enableEchoVRAPI();
-    this.spectatorHelper = new EchoVRClientSpectatorHelper(
-      config.spectatorOptions.keyboardAggressiveness
-    );
+    this.spectatorHelper = new EchoVRClientSpectatorHelper(repository);
   }
 
   /**
@@ -39,7 +43,7 @@ export default class EchoVRClient {
   open = (sessionID?: string, headless?: boolean) => {
     try {
       // Setting up params
-      const params: string[] = [this.SPECTATOR_FLAG];
+      const params: string[] = [this.NO_OVR_FLAG, this.SPECTATOR_FLAG];
       if (sessionID) {
         params.push(this.LOBBY_FLAG);
         params.push(sessionID);
@@ -220,28 +224,31 @@ export default class EchoVRClient {
     await fse.outputFile(configPath, JSON.stringify(data, null, 4));
   };
 
-  public requestFollowByIndex(playerIndex: number) {
-    return this.spectatorHelper.requestFollowByIndex(playerIndex);
+  public requestFollow(playerIndex: number) {
+    console.log('Requesting follow: ' + playerIndex);
+    return this.spectatorHelper.requestFollow(playerIndex);
   }
 
-  public requestFollow() {
-    return this.spectatorHelper.requestFollow();
-  }
-
-  public requestPOV() {
-    return this.spectatorHelper.requestPOV();
+  public requestPOV(playerIndex: number) {
+    console.log('Requesting POV: ' + playerIndex);
+    return this.spectatorHelper.requestPOV(playerIndex);
   }
 
   public requestCameraByIndex(cameraIndex: number) {
     return this.spectatorHelper.requestCameraByIndex(cameraIndex);
   }
 
+  public requestAPIMode() {
+    console.log('Request API Mode');
+    return this.spectatorHelper.requestAPIMode();
+  }
+
   public requestSideline() {
     return this.spectatorHelper.requestSideline();
   }
 
-  public requestUIToggle() {
-    return this.spectatorHelper.requestUIToggle();
+  public setUIVisibility(isVisible: boolean) {
+    return this.spectatorHelper.setUIVisibility(isVisible);
   }
 
   public listenOrange() {

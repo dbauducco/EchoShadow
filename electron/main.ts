@@ -35,7 +35,6 @@ const setup = async () => {
     throw new Error('Error initializing config');
   }
   log.info({ message: 'config', loadedConfig: configData });
-  const echoVrClient = new EchoVRClient(configData);
   const remoteEchoDataRepository = new EchoDataRepository(
     configData.network.questIP,
     configData.network.questPort
@@ -44,6 +43,7 @@ const setup = async () => {
     configData.network.localIP,
     configData.network.localPort
   );
+  const echoVrClient = new EchoVRClient(configData, localEchoDataRepository);
   // subscribes to events
   new EchoVRManager(echoVrClient);
   return {
@@ -105,7 +105,7 @@ function createWindow() {
   const defaultWidth = 450;
   const defaultHeight = 240;
   const configWidth = 1200;
-  const configHeight = 1000;
+  const configHeight = 800;
   mainWindow = new BrowserWindow({
     width: defaultWidth,
     height: defaultHeight,

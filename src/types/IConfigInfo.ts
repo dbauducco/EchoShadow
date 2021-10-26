@@ -11,7 +11,7 @@ export interface IConfigInfo {
   };
   spectatorOptions: {
     hideUI: boolean;
-    mode: 'pov' | 'sideline' | 'auto' | 'default' | 'follow';
+    mode: 'pov' | 'sideline' | 'auto' | 'default' | 'follow' | 'disc';
     listenOptions: 'same' | 'opponent' | 'both' | 'none';
     showScoresBetweenRounds: boolean;
     secondsToShowScoreBetweenRounds: number;

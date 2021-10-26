@@ -27,7 +27,7 @@ export default class MatchEventManager {
       this.currentMatchData = {
         sessionID: data.remoteSnapshot.sessionId,
         sessionType: EchoSessionType.Arena_Match,
-        discPosition: [0, 0, 0],
+        discPosition: data.remoteSnapshot.discPosition,
         remote: {
           inMatch: false,
           index: -1,
@@ -140,6 +140,7 @@ export default class MatchEventManager {
 
     const newMatchData = {
       ...this.currentMatchData,
+      discPosition: data.discPosition,
       remote: {
         ...this.currentMatchData.remote,
         team: remoteTeam,

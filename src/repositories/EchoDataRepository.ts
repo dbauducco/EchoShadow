@@ -13,12 +13,17 @@ import { log } from '../utilities/log';
 axios.defaults.adapter = require('axios/lib/adapters/http');
 
 export default class EchoDataRepository implements IEchoDataRepository {
-  private apiSessionUrl: string;
+  public static SESSION_ENDPOINT = '/session';
+  public static CAMERA_MODE_ENDPOINT = '/camera_mode';
+  public static UI_VISIBILITY_ENDPOINT = '/ui_visibility';
+  public static NAMEPLATES_ENDPOINT = '/nameplates_visibility';
+  public static MUTE_ENDPOINT = '/team_muted';
 
+  private apiSessionUrl: string;
   private deviceAPI: AxiosInstance;
 
   constructor(private ipAddress: string, private port: string) {
-    this.apiSessionUrl = `http://${this.ipAddress}:${this.port}/session`;
+    this.apiSessionUrl = `http://${this.ipAddress}:${this.port}`;
     this.deviceAPI = axios.create({ baseURL: this.apiSessionUrl });
   }
 
@@ -29,9 +34,12 @@ export default class EchoDataRepository implements IEchoDataRepository {
    */
   public async getSnapshot(): Promise<IEchoDataSnapshot | undefined> {
     try {
-      const echoApiResult = await this.deviceAPI.get('', {
-        timeout: 3000,
-      });
+      const echoApiResult = await this.deviceAPI.get(
+        EchoDataRepository.SESSION_ENDPOINT,
+        {
+          timeout: 3000,
+        }
+      );
       log.debug({
         message: 'echoApiResult in getSnapshot',
         echoApiResult: echoApiResult.data,
@@ -70,7 +78,9 @@ export default class EchoDataRepository implements IEchoDataRepository {
    */
   public async getInstantSnapshot(): Promise<IEchoDataSnapshot | undefined> {
     try {
-      const echoApiResult = await axios.get(this.apiSessionUrl);
+      const echoApiResult = await this.deviceAPI.get(
+        EchoDataRepository.SESSION_ENDPOINT
+      );
       log.debug({
         message: 'echoApiResult in getInstantSnapshot',
         echoApiResult: echoApiResult.data,
@@ -101,6 +111,18 @@ export default class EchoDataRepository implements IEchoDataRepository {
         error: error.message ? error.message : error,
       });
       return undefined;
+    }
+  }
+
+  /** Method that posts data to the Echo instance with various types */
+  public async postData(endpoint: string, data: any) {
+    try {
+      const result = await this.deviceAPI.post(endpoint, data);
+    } catch (error) {
+      log.error({
+        message: 'Failure posting data',
+        error: error.message ? error.message : error,
+      });
     }
   }
 
@@ -143,6 +165,7 @@ export default class EchoDataRepository implements IEchoDataRepository {
       orangeTeamMembers: this.mapPlayerData(echoApiResult.teams[1].players),
       spectatorMembers: this.mapPlayerData(echoApiResult.teams[2].players),
       inMatch: false, // Overriden in next line
+      discPosition: echoApiResult.disc.position,
     };
     // Actually set in match:
     snapshotData.inMatch = this.isInMatch(snapshotData.sessionType);
