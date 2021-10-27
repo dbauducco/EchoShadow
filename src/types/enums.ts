@@ -14,6 +14,8 @@ export enum EchoGameStatus {
 export enum EchoSessionType {
   Arena_Match = 'Arena_Match',
   Private_Arena_Match = 'Private_Arena_Match',
+  Combat_Match = 'Echo_Combat',
+  Private_Combat_Match = 'Private_Echo_Combat',
   Lobby = 'Lobby',
   Unknown = 'Unknown',
 }

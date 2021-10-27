@@ -92,7 +92,7 @@ export default class EchoVRManager {
       Events.emit(EventType.LocalWillJoinMatch);
       this.isLoadingIntoMatch = true;
       const echoProcessID = this.echoVRClient.open(matchData.sessionID);
-      
+
       await this.syncPID();
     } catch (error) {
       log.error({
@@ -146,7 +146,9 @@ export default class EchoVRManager {
 
     return (
       session.sessionType === EchoSessionType.Arena_Match ||
-      session.sessionType === EchoSessionType.Private_Arena_Match
+      session.sessionType === EchoSessionType.Private_Arena_Match ||
+      session.sessionType === EchoSessionType.Combat_Match ||
+      session.sessionType === EchoSessionType.Private_Combat_Match
     );
   };
 }
