@@ -91,7 +91,8 @@ export default class EchoVRManager {
       Events.emit(EventType.NewShadowState, ShadowStateType.JoiningRemote);
       Events.emit(EventType.LocalWillJoinMatch);
       this.isLoadingIntoMatch = true;
-      const newEchoProcess = this.echoVRClient.open(matchData.sessionID);
+      const echoProcessID = this.echoVRClient.open(matchData.sessionID);
+      
       await this.syncPID();
     } catch (error) {
       log.error({
