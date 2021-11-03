@@ -22,11 +22,11 @@ export default class EchoVRClient {
 
   private HEADLESS_FLAG = '--headless';
 
-  private PORT = "--httpport 6731"
+  private PORT = '--httpport 6731';
 
   private spectatorHelper: EchoVRClientSpectatorHelper;
 
-  private pid: string | undefined
+  private pid: string | undefined;
 
   constructor(
     private config: IConfigInfo,
@@ -55,14 +55,17 @@ export default class EchoVRClient {
       if (headless) {
         params.push(this.HEADLESS_FLAG);
       }
-      params.push(this.PORT)
+      params.push(this.PORT);
 
       // Spawning the process
       // const spawnOptions = { detached: true };
       // return spawn(this.echoPath, params, spawnOptions);
-      const process = await exec(`powershell -command "$tmp = Start-Process -FilePath "${this.config.echoPath}" -ArgumentList \\"${params.join(' ')}\\" -PassThru; $tmp.id"`);
-      this.pid = process.stdout.replace(/\s/g, '')
-      return this.pid
+      const startProccessCommand = `powershell -command "$tmp = Start-Process -FilePath '${
+        this.config.echoPath
+      }' -ArgumentList '${params.join(' ')}' -PassThru; $tmp.id"`;
+      const process = await exec(startProccessCommand);
+      this.pid = process.stdout.replace(/\s/g, '');
+      return this.pid;
     } catch (error) {
       log.error({
         message: 'error opening exe',
@@ -99,6 +102,7 @@ export default class EchoVRClient {
   close = async (processId?: string | number) => {
     try {
       await killProcess(processId, true);
+      processId = '';
     } catch (error) {
       log.error({
         message: 'error while closing echo',
@@ -112,7 +116,7 @@ export default class EchoVRClient {
    */
   findPID = async () => {
     try {
-      return this.pid
+      return this.pid;
     } catch (error) {
       log.error({
         message: 'error while finding echo process id',
