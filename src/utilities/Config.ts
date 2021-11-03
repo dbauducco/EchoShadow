@@ -23,7 +23,7 @@ export class Config {
       questIP: '127.0.0.1',
       questPort: '6721',
       localIP: '127.0.0.1',
-      localPort: '6721',
+      localPort: '6731',
     },
     spectatorOptions: {
       hideUI: false,

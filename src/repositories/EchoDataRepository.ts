@@ -220,16 +220,20 @@ export default class EchoDataRepository implements IEchoDataRepository {
    * @param name The string from the api data
    */
   private sessionTypeByName(name: string): EchoSessionType {
-    if (name === 'Echo_Arena') {
-      return EchoSessionType.Arena_Match;
+    switch(name) {
+      case 'Echo_Arena':
+        return EchoSessionType.Arena_Match;
+      case 'Echo_Arena_Private':
+        return EchoSessionType.Private_Arena_Match;
+      case 'Echo_Combat':
+        return EchoSessionType.Combat_Match;
+      case 'Echo_Combat_Private':
+        return EchoSessionType.Private_Combat_Match;
+      case 'Social_2.0':
+        return EchoSessionType.Lobby;
+      default:
+        return EchoSessionType.Unknown
     }
-    if (name === 'Echo_Arena_Private') {
-      return EchoSessionType.Private_Arena_Match;
-    }
-    if (name === 'Social_2.0') {
-      return EchoSessionType.Lobby;
-    }
-    return EchoSessionType.Unknown;
   }
 
   /**
@@ -238,7 +242,9 @@ export default class EchoDataRepository implements IEchoDataRepository {
   private isInMatch(sessionType: EchoSessionType) {
     return (
       sessionType === EchoSessionType.Arena_Match ||
-      sessionType === EchoSessionType.Private_Arena_Match
+      sessionType === EchoSessionType.Private_Arena_Match ||
+      sessionType === EchoSessionType.Combat_Match ||
+      sessionType === EchoSessionType.Private_Combat_Match
     );
   }
 

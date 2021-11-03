@@ -22,7 +22,11 @@ export default class EchoVRClient {
 
   private HEADLESS_FLAG = '--headless';
 
+  private PORT = '--httpport 6731';
+
   private spectatorHelper: EchoVRClientSpectatorHelper;
+
+  private pid: string | undefined;
 
   constructor(
     private config: IConfigInfo,
@@ -40,7 +44,7 @@ export default class EchoVRClient {
    * @param sessionID (Optional) The sessionID to which join. If not defined,
    * the game will open to a random public match.
    */
-  open = (sessionID?: string, headless?: boolean) => {
+  open = async (sessionID?: string, headless?: boolean) => {
     try {
       // Setting up params
       const params: string[] = [this.NO_OVR_FLAG, this.SPECTATOR_FLAG];
@@ -51,11 +55,17 @@ export default class EchoVRClient {
       if (headless) {
         params.push(this.HEADLESS_FLAG);
       }
+      params.push(this.PORT);
 
       // Spawning the process
       // const spawnOptions = { detached: true };
       // return spawn(this.echoPath, params, spawnOptions);
-      return exec(`"${this.config.echoPath}" ${params.join(' ')}`);
+      const startProccessCommand = `powershell -command "$tmp = Start-Process -FilePath '${
+        this.config.echoPath
+      }' -ArgumentList '${params.join(' ')}' -PassThru; $tmp.id"`;
+      const process = await exec(startProccessCommand);
+      this.pid = process.stdout.replace(/\s/g, '');
+      return this.pid;
     } catch (error) {
       log.error({
         message: 'error opening exe',
@@ -92,6 +102,7 @@ export default class EchoVRClient {
   close = async (processId?: string | number) => {
     try {
       await killProcess(processId, true);
+      processId = '';
     } catch (error) {
       log.error({
         message: 'error while closing echo',
@@ -105,8 +116,7 @@ export default class EchoVRClient {
    */
   findPID = async () => {
     try {
-      const echoPid = await getProcessId('echovr.exe');
-      return echoPid;
+      return this.pid;
     } catch (error) {
       log.error({
         message: 'error while finding echo process id',
