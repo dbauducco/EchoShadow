@@ -103,7 +103,9 @@ export default class EchoDataRepository implements IEchoDataRepository {
    */
   public async getInstantRawSnapshot(): Promise<any | undefined> {
     try {
-      const echoApiResult = await axios.get(this.apiSessionUrl);
+      const echoApiResult = await this.deviceAPI.get(
+        EchoDataRepository.SESSION_ENDPOINT
+      );
       return echoApiResult.data;
     } catch (error) {
       log.error({
@@ -220,7 +222,7 @@ export default class EchoDataRepository implements IEchoDataRepository {
    * @param name The string from the api data
    */
   private sessionTypeByName(name: string): EchoSessionType {
-    switch(name) {
+    switch (name) {
       case 'Echo_Arena':
         return EchoSessionType.Arena_Match;
       case 'Echo_Arena_Private':
@@ -232,7 +234,7 @@ export default class EchoDataRepository implements IEchoDataRepository {
       case 'Social_2.0':
         return EchoSessionType.Lobby;
       default:
-        return EchoSessionType.Unknown
+        return EchoSessionType.Unknown;
     }
   }
 

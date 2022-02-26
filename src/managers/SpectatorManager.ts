@@ -112,7 +112,10 @@ export default class SpectatorManager {
       return;
     }
 
-    if (this.wentIntoAPIMode == false) {
+    if (
+      this.wentIntoAPIMode == false &&
+      !(this.spectatorController instanceof DoNothingSpectatorController)
+    ) {
       this.echoVrClient.requestAPIMode();
       this.wentIntoAPIMode = true;
       return;
